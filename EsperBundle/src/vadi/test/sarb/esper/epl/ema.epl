@@ -1,0 +1,135 @@
+module vadi.test.sarb.epl.ta;
+
+import vadi.test.sarb.event.*;
+import java.sql.Date;
+ 
+import vadi.test.sarb.esper.groovy.*;
+
+create variable integer shortInterval=5;
+create variable integer longInterval=50;
+
+
+@Name('emalong')
+insert into emalong
+select EMA(cast(close,double)) as ema,symbol, timestamp ,close as cl
+ from EODQuote.win:length(longInterval) 
+group by symbol ;
+//output after 25 events;
+
+
+@Name('emalongcross')
+/*select close,Datetime.str(q.timestamp) as eTime ,Datetime.str(em.timestamp) as maTime,*/
+select q.symbol,prev(1,close) as prvs ,ema ,close, q.timestamp from emalong.win:length(longInterval) em,
+EODQuote.win:length(longInterval) q
+where cast(close,double) > ema and cast(prev(1,close),double) <= ema and
+q.timestamp = em.timestamp and em.symbol=q.symbol and
+ema !=0 ;
+
+
+insert into SMA20 select avg(cast(close,float)) as sma, symbol, timestamp
+from EODQuote.win:length(26) group by symbol;
+
+
+insert into SMA10 select avg(cast(close,float)) as sma, symbol, timestamp 
+from EODQuote.win:length(12) group by symbol;
+
+
+insert into EMA10 select cast(close,float)*(2/11)+(1-(2/11))*(select sma from SMA10.win:length(1)) 
+as ema10, symbol,timestamp from EODQuote.win:length(1) group by symbol;
+
+insert into EMA20 select cast(close,float)*(2/27)+(1-(2/27))*(select sma from SMA20.win:length(1)) 
+as ema20, symbol,timestamp from EODQuote.win:length(1) group by symbol;
+
+@Name('EMAdiff')
+insert into emadiff
+select (ema20-ema10) as diff,e1.symbol as symbol,e1.timestamp as timestamp
+from EMA10.win:length(1) e1, EMA20.win:length(1) e2 where
+e1.symbol=e2.symbol and e1.timestamp=e2.timestamp;
+
+insert into sma_macd
+select avg(diff) as macd,symbol,timestamp from emadiff.win:length(9) group by symbol;
+
+insert into MACD
+select (2/10)*macd+(1-(2/10))*(select macd from sma_macd.win:length(1)) as macd,symbol,timestamp
+from sma_macd group by symbol;
+
+@Name("macd_b")
+insert into MACDSignal(signal,symbol,open,high,low,close,volume,timestamp)
+select 'buy',q.symbol,q.open,q.high,q.low,q.close,q.volume,q.timestamp from MACD.win:length(1) m, EODQuote.win:length(5) q , emadiff.win:length(5) d where
+m.timestamp=d.timestamp and prev(1,diff)< macd and diff >= macd
+and q.timestamp=d.timestamp and q.symbol=m.symbol;
+
+@Name("macd_s")
+insert into MACDSignal(signal,symbol,open,high,low,close,volume,timestamp)
+select 'sell',q.symbol,q.open,q.high,q.low,q.close,q.volume,q.timestamp from MACD.win:length(1) m, EODQuote.win:length(5) q , emadiff.win:length(5) d where
+m.timestamp=d.timestamp and prev(1,diff)>= macd and diff < macd
+and q.timestamp=d.timestamp and q.symbol=m.symbol;
+
+//insert into TradeSignal(
+
+
+@Name('MAC-Above')
+insert into above
+select prev(1,macd),macd , eq.timestamp as timestamp,eq.symbol as symbol from MACD.win:length(5) mc, EODQuote.win:length(5) eq
+where prev(1,macd) < 0 and macd > 0 and eq.symbol=mc.symbol
+and mc.timestamp=eq.timestamp;
+
+@Name('Above')
+select * from above.win:length(5) a, EODQuote.win:length(10) e where a.symbol=e.symbol and
+a.timestamp=prev(1,e.timestamp);
+
+
+@Name('Batch')
+select * from EODQuote.win:length_batch(10);
+@Name('EMAAbove')
+insert into Above
+select * from pattern[
+every eq1=EODQuote -> e1=EMA20 -> eq2=EODQuote(
+e1.symbol=eq1.symbol and e1.ema20 > cast(eq1.close,float) and
+e1.symbol=eq2.symbol and e1.ema20 < cast(eq2.close,float))
+];
+
+
+@Name('EMABelow')
+insert into Below select * from pattern[
+every eq1=EODQuote -> e1=EMA20 -> eq2=EODQuote(
+e1.symbol=eq1.symbol and e1.ema20 < cast(eq1.close,float) and
+e1.symbol=eq2.symbol and e1.ema20 > cast(eq2.close,float))
+];
+
+
+
+@Name('CP')
+insert into CP
+select  (cast(close,double)/cast(prev(20,close),double))*100 as cp,
+timestamp,symbol,close from EODQuote.win:length(25) group by symbol output after 20 events;
+ 
+
+insert into HighLow(indicator,symbol)
+select 
+	case 
+	when avg(cast(close,float)) > cast(close,float)  then 'A'
+	 when avg(cast(close,float)) < cast(close,float) then 'B'
+	end
+as indicator,symbol
+ from EODQuote.win:length(longInterval);
+ 
+insert into MAinidcator 
+select * from pattern[
+(every hl1=HighLow(indicator='A')->
+hl2=HighLow(indicator='B')->
+eq=EODQuote(symbol=hl2.symbol and symbol=hl1.symbol))  or
+(every hl1=HighLow(indicator='B')->
+hl2=HighLow(indicator='A')->
+eq=EODQuote(symbol=hl2.symbol and symbol=hl1.symbol) )
+ ]
+ 
+ insert into TradeSignal(indicator,price,symbol,type)
+select 
+case 
+when hl.indicator='A' and h2.indicator='B' then 'SELL'
+when hl1.indicator='B' and h2.indicator='A' then 'BUY'
+end
+as indicator,price,eq.symbol,'sma'
+from mystream
+ 

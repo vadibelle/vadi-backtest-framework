@@ -1,0 +1,17 @@
+module vadi.test.sarb.epl.ta;
+
+import vadi.test.sarb.event.*;
+import java.sql.Date;
+ 
+import vadi.test.sarb.esper.groovy.*;
+
+create variable integer si=15;
+create variable integer li=60;
+
+insert into myfirst 
+select * from EODQuote.win:length(100)
+where symbol='GLD';
+
+insert into mysecond
+select * from EODQuote.win:length(100)
+where symbol='XLE';

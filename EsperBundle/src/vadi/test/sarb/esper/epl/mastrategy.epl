@@ -1,0 +1,173 @@
+module vadi.test.sarb.epl.ta;
+
+import vadi.test.sarb.event.*;
+import java.sql.Date;
+ 
+import vadi.test.sarb.esper.groovy.*;
+
+create variable integer si=15;
+create variable integer li=60;
+
+@Name('volatility')
+select stddev((cast(close,double)-cast(prev(si,close),double))/cast(prev(si,close),double))*100 
+as vol,Datetime.str(timestamp),close from EODQuote.win:length(si) group by symbol;
+
+
+insert into cprice
+select cast(close,double)/cast(prev(li,close),double) as cp,symbol,
+timestamp,close 
+from EODQuote.win:length(li+1) //change li in 2 places
+group by symbol;
+
+//EMA of momemntum or slope
+@Name('cprice')
+insert into ecprice 
+select EMA(cp)   as cp,symbol,timestamp,close from cprice.win:length(li+2) 
+group by symbol;
+
+insert into emashort
+select EMA(cast(close,double)) as ema, 
+max(cast(high,double)) as mxhsi, min(cast(high,double)) as mnhsi,
+max(cast(low,double)) as mxlsi, min(cast(low,double)) as mnlsi,
+symbol, timestamp ,close as cl
+ from EODQuote.win:length(si+1) 
+ group by symbol ;
+
+insert into emalong
+select EMA(cast(close,double)) as ema,  
+max(cast(high,double)) as mxhli, min(cast(high,double)) as mnhli,
+max(cast(low,double)) as mxlli, min(cast(low,double)) as mnlli,
+symbol, timestamp ,close as cl
+ from EODQuote.win:length(li)
+group by symbol ;
+
+//Crossover slope is not used don't know
+
+@Name('slope')
+insert into slope
+select SLOPE(cast(close,double)) as slope, symbol,
+timestamp,close as cl 
+from EODQuote.win:length(si)
+group by symbol;
+//output every 10 events;
+
+
+insert into crossover
+select 'BUY' as signal, el.ema,el.cl,q.timestamp as timestamp,
+q.close,q.symbol as symbol,high,low,
+Datetime.str(el.timestamp) as date
+from emalong.win:length(5) el, 
+ecprice.win:length(5) ec,
+EODQuote.win:length(si+1) q
+where 
+ec.symbol = q.symbol and
+q.symbol = el.symbol and
+cast(q.close,double) > el.ema and
+el.ema != 0 and
+ec.cp > 1.05 and
+el.timestamp = q.timestamp and
+ec.timestamp = q.timestamp and
+cast(prev(1,q.close),double) <= prev(1,el.ema) ;
+
+insert into crossover
+select 'SELL' as signal, el.ema,el.cl,q.timestamp as timestamp,
+q.close,q.symbol as symbol,high,low,
+Datetime.str(el.timestamp) as date
+from emalong.win:length(5) el, 
+ecprice.win:length(5) ec,
+EODQuote.win:length(si+1) q
+where 
+ec.symbol = q.symbol and
+q.symbol = el.symbol and
+cast(q.close,double) < el.ema and
+el.ema != 0 and
+ec.cp < 0.95 and
+el.timestamp = q.timestamp and
+ec.timestamp = q.timestamp and
+cast(prev(1,q.close),double) >= prev(1,el.ema) ;
+
+/*
+@Name('crossover_b')
+insert into crossover
+select 'BUY' as signal, el.ema,es.ema,el.cl,q.timestamp as timestamp,
+q.close,q.symbol as symbol,high,low,
+Datetime.str(el.timestamp) as date
+from emalong.win:length(5) el, 
+emashort.win:length(5) es,
+EODQuote.win:length(si+1) q,
+ecprice.win:length(5) cp
+where 
+q.symbol = el.symbol and
+es.symbol = el.symbol and
+//es.ema > el.ema and 
+cast(q.close,double) > el.ema and
+cp.symbol = q.symbol and
+//cp.cp > 1 and
+//cast(q.high,double) > prev(1,mxhsi) and
+//cast(q.low,double) > prev(1,mxlsi) and
+el.ema != 0 and
+//es.ema != 0 and
+el.timestamp = q.timestamp and
+//es.timestamp = el.timestamp and
+//cp.timestamp = q.timestamp ;
+//prev(1,es.ema) < el.ema;
+cast(prev(1,q.close),double) < prev(1,el.ema) ;
+
+@Name('crossover_s')
+insert into crossover
+select 'SELL' as signal, el.ema,es.ema,el.cl,q.timestamp as timestamp,
+q.close,q.symbol as symbol,high,low,
+Datetime.str(el.timestamp) as date
+from emalong.win:length(5) el, 
+EODQuote.win:length(si+1) q,
+emashort.win:length(5) es,
+ecprice.win:length(5) cp
+where 
+q.symbol = el.symbol and
+es.symbol = el.symbol and
+cast(q.close,double) < el.ema and
+cp.symbol = q.symbol and 
+//es.ema < el.ema and 
+//cast(q.high,double) < prev(1,mnhsi) and
+//cast(q.low,double) < prev(1,mnlsi) and
+//cp.cp < 1 and
+el.ema != 0 and
+//es.ema != 0 and
+//cp.cp != 0 and 
+el.timestamp = q.timestamp and
+//es.timestamp = el.timestamp and
+//cp.timestamp = q.timestamp ;
+//prev(1,es.ema) > el.ema;
+cast(prev(1,q.close),double) > prev(1,el.ema) ;
+
+*/
+// Generate tradesignal.. only simulation.
+@Name('MASignal')
+insert into TradeSignal(symbol,open,high,low,close,type,indicator,price_timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,signal,'MA',cast(q.timestamp,string)
+from 
+EODQuote.win:length(5) q , crossover.win:length(5) cross
+where
+cross.timestamp=prev(1,q.timestamp) and
+cross.symbol=q.symbol;
+
+
+
+
+/*select * from emalong.win:length(1) el, emashort.win:length(10) es,
+slope.win:length(15) s, cprice.win:length(15) c, EODQuote.win:length(15) q
+where
+cast(q.close,double) > es.ema and q.timestamp=es.timestamp and
+es.ema > el.ema and es.timestamp = el.timestamp and
+prev(1,es.ema) < prev(1,el.ema) and
+c.cp > 0 and
+es.symbol = q.symbol and el.symbol = q.symbol ;
+
+
+
+select q.symbol,prev(1,close) as prvs ,ema ,close, q.timestamp from emalong.win:length(li) em,
+EODQuote.win:length(li) q
+where cast(close,double) > ema and cast(prev(1,close),double) <= ema and
+q.timestamp = em.timestamp and em.symbol=q.symbol and
+ema !=0 ;
+*/
