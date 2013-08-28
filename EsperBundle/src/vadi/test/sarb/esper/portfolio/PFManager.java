@@ -419,4 +419,7 @@ public class PFManager {
 			e.printStackTrace();
 		}
 	}
+	
+	public void generateExits(String smb, double price){
+}
 }

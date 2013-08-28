@@ -56,10 +56,10 @@ def execute(sql) {
 
 //sql = "insert into position (symbol,qty,lors,price,cost,date) values "
 //sql += " ('sso',10,'buy',10,100,'2010-11-01')";
-sql="delete  from position;";
+/*sql="delete  from position;";
 execute(sql)
 sql="delete  from position_archive";
-execute(sql)
+execute(sql)*/
 sql="select * from position"
 execute(sql)
 sql = "select * from position_archive  order by curdate asc"
