@@ -16,7 +16,7 @@ public class PFManager {
 	double portfolio = 0;
 	volatile double ammount = 10000;
 	volatile double cash = ammount;
-	 double shortCash = 0;
+	 volatile double shortCash = 0;
 	double tradeSize = 0.2; // 20% each time
 	ConcurrentHashMap<String, Long> positions, short_positions;
 	ConcurrentHashMap<String, Double> lastPrice;
@@ -149,14 +149,14 @@ public class PFManager {
 					} else {
 					positions.put(sig.getSymbol(), n);
 				//	portfolio += n*price;
-					
-					double cb = price*n-100;
+					}
+					double cb = price*n+slippage;
 					Date dt = new Date(Long.parseLong(sig.price_timestamp));
 					insertDb(sig.getSymbol(),n,"BUY",
 							price,cb,dt);
 					
-					updateCash(cash);
-				}
+					updateCash();
+				
 			}
 			m2m(sig.getSymbol(), Double.parseDouble(sig.getClose()));
 		} catch (Throwable e) {
@@ -177,9 +177,10 @@ public class PFManager {
 				cash +=  stock * (price) -slippage;
 				positions.remove(sig.getSymbol());
 			//	portfolio -= stock*price;
+				double cb = stock*price-slippage;
 				Date dt = new Date(Long.parseLong(sig.price_timestamp));
-				removeDb(sig.getSymbol(),stock,"CLOSE_LONG",price,cash,dt);
-				updateCash(cash);
+				removeDb(sig.getSymbol(),stock,"CLOSE_LONG",price,cb,dt);
+				updateCash();
 				
 			}
 			
@@ -254,7 +255,7 @@ public class PFManager {
 			Date dt = new Date(Long.parseLong(sig.price_timestamp));
 			insertDb(sig.getSymbol(),n,"SELL",
 					price,cb,dt);
-			updateCash(cash);
+			updateCash();
 			
 		} catch (Throwable e) {
 			
@@ -280,10 +281,11 @@ public class PFManager {
 					//portfolio += lp*price;
 					short_positions.remove(sig.getSymbol());
 					stopOpen = false;
+					double cb = lp*price+slippage;
 					Date dt = new Date(Long.parseLong(sig.price_timestamp));
 					removeDb(sig.getSymbol(),lp,"CLOSE_SHORT",
-							price,tmpc,dt);
-					updateCash(cash);
+							price,cb,dt);
+					updateCash();
 					
 				} else {
 					log.info("FATAL Cannot cover short " + cash + " " + lp * price);
@@ -367,10 +369,12 @@ public class PFManager {
 		
 	}
 	
-	private void updateCash(double csh)
+	private synchronized void updateCash()
 	{
 		try {
-			String sql="update liquid_cash set cash = "+csh;
+			String sql="update liquid_cash set cash = "+cash+
+					" ,shortCash="+shortCash;
+			
 			dbutil.execute(sql);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -383,7 +387,7 @@ public class PFManager {
 	{
 		
 		try {
-			String sql = "select symbol,qty,lors from position group by symbol";
+			String sql = "select symbol,sum(qty),lors from position group by symbol";
 			ArrayList<ArrayList> res = dbutil.execute(sql);
 			
 			int i = res.size();
@@ -401,7 +405,7 @@ public class PFManager {
 								Long.parseLong(arr.get(1).toString()));
 					
 				}
-			sql = "select cash from liquid_cash";
+			sql = "select cash,shortcash from liquid_cash";
 			 res = dbutil.execute(sql);
 			
 			 i = res.size();
@@ -410,10 +414,16 @@ public class PFManager {
 				 ArrayList arr = res.get(1);
 				 //i=0 meta data, i=1 cash has only one row
 				 cash = (Double)arr.get(0);
+				 shortCash = (Double)arr.get(1);
 				 
 				 
 			 }
 			}
+		String str = "Positions long "+positions+" short "+short_positions+
+				" cash "+cash+" shortCash "+shortCash;
+		
+		log.info(str);
+		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -421,5 +431,18 @@ public class PFManager {
 	}
 	
 	public void generateExits(String smb, double price){
-}
+		String sql = "select sum(qty),sum(cost),lors from position where" +
+				"symbol="+smb;
+		ArrayList<ArrayList> res = dbutil.execute(sql);
+		int i = res.size();
+		log.info(res.toString() +" no of rows "+i);
+		int j=1;
+		if (i > 1 ) 
+		{
+			while ( j < i ){
+				ArrayList arr = res.get(j++);
+		
+			}
+	}
+	}
 }

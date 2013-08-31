@@ -39,6 +39,7 @@ println  db.execute("select * from position_archive");
 sql="";
 sql = "create table liquid_cash( "
 sql += " cash float,"
+sql+= " shortcash float ,"
 sql += "currdate datetime default (current_timestamp()))";
 print "sql "+sql
 db.execute("drop table liquid_cash")
@@ -52,18 +53,27 @@ def execute(sql) {
 	println e
 	
 }
+
+def cleanDB(){
+	def sql="delete  from position;";
+	execute(sql)
+	sql="delete  from position_archive";
+	execute(sql)
+	sql="delete from liquid_cash"
+	execute(sql);
+	
+}
 //initDB()
 
 //sql = "insert into position (symbol,qty,lors,price,cost,date) values "
 //sql += " ('sso',10,'buy',10,100,'2010-11-01')";
-/*sql="delete  from position;";
-execute(sql)
-sql="delete  from position_archive";
-execute(sql)*/
+cleanDB()
+
 sql="select * from position"
 execute(sql)
 sql = "select * from position_archive  order by curdate asc"
 execute(sql)
 sql = "select * from  liquid_cash"
 execute(sql)
+
 
