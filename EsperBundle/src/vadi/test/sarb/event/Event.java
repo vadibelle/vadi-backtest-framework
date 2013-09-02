@@ -6,5 +6,9 @@ public abstract class Event {
 	public void enqueue(){
 		Utility.getInstance().getEpService().getEPRuntime().sendEvent(this);
 	}
+	public void route()
+	{
+		Utility.getInstance().getEpService().getEPRuntime().route(this);
+	}
 
 }

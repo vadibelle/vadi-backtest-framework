@@ -23,6 +23,7 @@ import vadi.test.sarb.event.StatArb;
 import vadi.test.sarb.event.TradeSignal
 import vadi.test.sarb.listeners.DummyListener
 import vadi.test.sarb.listeners.EODHandler
+import vadi.test.sarb.listeners.ExitGenerator
 import vadi.test.sarb.listeners.LongPosition
 import vadi.test.sarb.listeners.MAIndicator
 import vadi.test.sarb.listeners.MacdListerner
@@ -150,7 +151,7 @@ def TradeHandler() {
 	//u.addModuleListener("crossover_s", new GenericListener())
 	
 	u.registerEventListener("select * from EODQuote",new EODHandler());
-	
+	u.registerEventListener("select * from EODQuote",new ExitGenerator());
 
 //Utility.addEPLFunction("EMA","vadi.test.sarb.esper.util.EsperEMA")
 //u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")

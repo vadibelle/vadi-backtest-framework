@@ -152,7 +152,13 @@ cross.timestamp=prev(1,q.timestamp) and
 cross.symbol=q.symbol;
 
 
-
+insert into TradeSignal(Symbol,open,high,low,close,type,indicator,price_timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,signal,"STOPLOSS",cast(q.timestamp,string)
+from
+EODQuote.win:length(5) q, StopLoss.win:length(1) sl
+where
+sl.timestamp=prev(1,q.timestamp) and
+sl.symbol=q.symbol;
 
 /*select * from emalong.win:length(1) el, emashort.win:length(10) es,
 slope.win:length(15) s, cprice.win:length(15) c, EODQuote.win:length(15) q

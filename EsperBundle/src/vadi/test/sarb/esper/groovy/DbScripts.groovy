@@ -61,6 +61,8 @@ def cleanDB(){
 	execute(sql)
 	sql="delete from liquid_cash"
 	execute(sql);
+	sql="insert into liquid_cash (cash,shortcash) values (0,0)"
+	execute(sql)
 	
 }
 //initDB()
@@ -68,12 +70,17 @@ def cleanDB(){
 //sql = "insert into position (symbol,qty,lors,price,cost,date) values "
 //sql += " ('sso',10,'buy',10,100,'2010-11-01')";
 cleanDB()
-
+sql="update liquid_cash set cash=0,shortcash=0";
+//execute(sql);
 sql="select * from position"
 execute(sql)
 sql = "select * from position_archive  order by curdate asc"
 execute(sql)
 sql = "select * from  liquid_cash"
 execute(sql)
+
+//sql="select sum(price*qty)/sum(qty) as cb,lors,symbol from position_archive "+
+//" group by symbol,lors"
+//execute(sql)
 
 
