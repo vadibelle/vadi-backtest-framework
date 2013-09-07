@@ -86,6 +86,7 @@ el.timestamp = q.timestamp and
 ec.timestamp = q.timestamp and
 cast(prev(1,q.close),double) >= prev(1,el.ema) ;
 
+
 /*
 @Name('crossover_b')
 insert into crossover
@@ -155,7 +156,7 @@ cross.symbol=q.symbol;
 insert into TradeSignal(Symbol,open,high,low,close,type,indicator,price_timestamp)
 select q.symbol,q.open,q.high,q.low,q.close,signal,"STOPLOSS",cast(q.timestamp,string)
 from
-EODQuote.win:length(5) q, StopLoss.win:length(1) sl
+EODQuote.win:length(100) q, StopLoss.win:length(5) sl
 where
 sl.timestamp=prev(1,q.timestamp) and
 sl.symbol=q.symbol;

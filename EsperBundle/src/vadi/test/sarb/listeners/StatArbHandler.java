@@ -94,9 +94,10 @@ public class StatArbHandler implements UpdateListener {
 		//t2.enqueue();
 		/*StringBuffer sb = new StringBuffer(" all vadi.test.event.EODQuote(symbol=\""+tick1+"\"):t1");
 		sb.append(" and "+" all vadi.test.event.EODQuote(symbol=\""+tick2+"\"):t2");*/
-		StringBuffer sb = new StringBuffer("select * from myfirst.win:length(10) as t1 , mysecond.win:length(10) as  t2 ");
-	//	sb.append(" where t1.symbol=\'"+tick1+"\' and t2.symbol=\'"+tick2+"\'");
-		sb.append(" where t1.timestamp=t2.timestamp");
+		StringBuffer sb = new StringBuffer("select * from EODQuote.win:length(500)  t1 , EODQuote.win:length(500)   t2 ");
+		sb.append(" where t1.symbol=\'"+tick1+"\' and t2.symbol=\'"+tick2+"\'");
+	
+		sb.append(" and t1.timestamp=t2.timestamp");
 		log.info("new match string "+sb.toString());
 		
 		Utility.getInstance().registerEventListener(sb.toString(), calc);
@@ -172,8 +173,8 @@ public class StatArbHandler implements UpdateListener {
 		//	EODQuote t1 = (EODQuote)arg0.getMatchingEvent("t1");
 			//EODQuote t2 = (EODQuote)arg0.getMatchingEvent("t2");
 		//	log.info("STAT ARB "+t1.toString()+t2.toString());
-			if (( t1.timestamp-t2.timestamp) != 0 )
-				return;
+			//if (( t1.timestamp-t2.timestamp) != 0 )
+				//return;
 			
 			//log.info("STAT ARB "+t1.toString()+t2.toString());
 			String series = t1.symbol+"vs"+t2.symbol;

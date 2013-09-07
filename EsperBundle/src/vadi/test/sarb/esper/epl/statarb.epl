@@ -7,11 +7,7 @@ import vadi.test.sarb.esper.groovy.*;
 
 create variable integer si=15;
 create variable integer li=60;
+create variable string first='GLD'
+create variable string second='SLV'
 
-insert into myfirst 
-select * from EODQuote.win:length(100)
-where symbol='GLD';
 
-insert into mysecond
-select * from EODQuote.win:length(100)
-where symbol='XLE';

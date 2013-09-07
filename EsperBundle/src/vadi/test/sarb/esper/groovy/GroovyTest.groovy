@@ -137,7 +137,8 @@ def TradeHandler() {
 	//u.registerEventListener("select * from TradeSignal", new ShortPosition());
 	u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 	u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
-	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
+//	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
+		u.deployModule(vadi.test.sarb.esper.Messages.getString("trade.epl"))
 	u.registerEventListener(sb, new StartEOD());
 	//u.registerEventListener('select * from emalong',new GenericListener())
 	//su.registerEventListener('select * from emashort',new GenericListener())
@@ -145,7 +146,8 @@ def TradeHandler() {
 	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
 	u.registerEventListener('select * from TradeSignal', new LongPosition())
-//	u.registerEventListener('select * from TradeSignal', new ShortPosition())
+	u.registerEventListener('select * from TradeSignal', new ShortPosition())
+	//u.registerEventListener('select * from TradeSignal', new TradeListener());
 	
 	//u.addModuleListener("crossover_b", new GenericListener())
 	//u.addModuleListener("crossover_s", new GenericListener())
@@ -177,8 +179,12 @@ def TradeHandler() {
 //Utility.addModuleListener("macd_b", new GenericListener())
 //Utility.addModuleListener("macd_s", new GenericListener())
 //Utility.addModuleListener("SMA20", new GenericListener())
-//u.registerEventListener("select * from StatArb", new StatArbHandler())
-//u.registerEventListener("select * from EODQuote", new DummyListener());
+u.registerEventListener("select * from StatArb", new StatArbHandler())
+def sbstr="select * from EODQuote.win:length(5)  t1 , EODQuote.win:length(5)   t2  where t1.symbol='gld' and t2.symbol='xle' and t1.timestamp=t2.timestamp"
+//u.registerEventListener(sbstr, new DummyListener());
+
+
+u.registerEventListener("select * from EODQuote", new DummyListener());
 
 	
 }
@@ -197,6 +203,8 @@ lp = new LoadPortfolio();
 lp.setCash(10000);
 lp.enqueue()
 
+sb = new StatArb('gld','xle')
+sb.enqueue();
 for( st in vadi.test.sarb.esper.Messages.getString("EOD.quote.list").split(",")){
 	print st+"\n"
 	evt = new StartEODQuote(st);

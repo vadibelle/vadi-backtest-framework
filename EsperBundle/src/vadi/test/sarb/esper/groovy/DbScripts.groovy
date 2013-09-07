@@ -69,9 +69,7 @@ def cleanDB(){
 
 //sql = "insert into position (symbol,qty,lors,price,cost,date) values "
 //sql += " ('sso',10,'buy',10,100,'2010-11-01')";
-cleanDB()
-sql="update liquid_cash set cash=0,shortcash=0";
-//execute(sql);
+//cleanDB()
 sql="select * from position"
 execute(sql)
 sql = "select * from position_archive  order by curdate asc"

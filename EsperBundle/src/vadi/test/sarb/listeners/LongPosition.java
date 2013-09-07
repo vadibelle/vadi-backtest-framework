@@ -34,7 +34,7 @@ public class LongPosition implements UpdateListener,Serializable  {
 						
 		TradeSignal sig = (TradeSignal)(arg0[0].getUnderlying());
 		log.info(sig.toString());
-		if ( sig.getType().equalsIgnoreCase("BUY"))
+		if ( sig.getType().equalsIgnoreCase("BUY") && !sig.getIndicator().equals("STOPLOSS"))
 			pfm.addLongPosition(sig);
 		
 			

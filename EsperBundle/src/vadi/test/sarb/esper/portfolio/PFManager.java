@@ -126,6 +126,7 @@ public class PFManager {
 				log.info("Cannot open, short cover reached");
 				return;
 			}
+			
 			//double price = Double.parseDouble(sig.getHigh());
 			//buy on open +100 slippage
 			double price = Double.parseDouble(sig.getOpen());
@@ -452,8 +453,8 @@ public class PFManager {
 				
 				 ArrayList arr = res.get(1);
 				 //i=0 meta data, i=1 cash has only one row
-				 cash = (Double)arr.get(0);
-				 shortCash = (Double)arr.get(1);
+				 cash = Double.parseDouble(arr.get(0).toString());
+				 shortCash =  Double.parseDouble(arr.get(1).toString());
 				 
 				 
 			 }
@@ -503,12 +504,14 @@ public class PFManager {
 				if ( arr.get(1).equals("BUY")){
 					
 					double chp = highPrice.get(symbol);
-					if ( close < chp*0.9)
+					if ( close < chp*0.90){
+						log.info("Buy: close<.9*high");
 						eSig=true;
-					
-					if ((cb - close*qty) > 1200 )
+					}
+					if ((cb - close*qty) > 1200 ){
 						eSig=true;
-					
+						log.info("cb-close*qty >1200");
+					}
 					
 					/*cb = (1-stopLoss)*cb; // for long if stock price falls below stoploss
 					if ( close <= cb )
@@ -518,10 +521,14 @@ public class PFManager {
 				else if ( arr.get(1).equals("SELL")){
 					
 					double chp = lowPrice.get(symbol);
-					if ( close > chp*0.9)
+					if ( close > chp*1.1){
 						eSig=true;
-					if ((cb -close*qty)> -1200 )
+						log.info("sell: close<.9*high");
+					}
+					if ((cb -close*qty) < -1200 ){
 						eSig=true;
+						log.info("cb-close*qty >-1200");
+					}
 					/*cb = (1+stopLoss)*cb; // long if price goes above costbasis
 					if ( close >= cb )
 						eSig = true;*/
@@ -532,7 +539,7 @@ public class PFManager {
 							 new Timestamp(eq.getTimestamp()).toString());
 					StopLoss exitSig = new StopLoss(eq.getSymbol(),act,eq.getClose(),
 						eq.getTimestamp());
-					exitSig.route();
+					exitSig.enqueue();
 				}
 					
 		}

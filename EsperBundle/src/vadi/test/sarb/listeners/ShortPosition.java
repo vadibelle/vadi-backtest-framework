@@ -35,7 +35,7 @@ public class ShortPosition implements UpdateListener  {
 			pfm.closeShortPosition(sig);
 		
 			
-		if ( sig.getType().equalsIgnoreCase("SELL"))
+		if ( sig.getType().equalsIgnoreCase("SELL") && !sig.getIndicator().equals("STOPLOSS"))
 			pfm.openShortPosition(sig);
 		
 		pfm.positionValue();

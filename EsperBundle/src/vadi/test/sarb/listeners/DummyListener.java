@@ -9,7 +9,7 @@ public class DummyListener implements UpdateListener {
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		// TODO Auto-generated method stub
 
-		System.out.println("Event recived "+arg0[0].getUnderlying());
+		System.out.println(" dummy Event recived "+arg0[0].getUnderlying());
 	}
 
 }
