@@ -345,6 +345,7 @@ public class PFManager {
 		String price = eq.getClose();
 		synchronized (lastPrice) {
 			lastPrice.put(symbol, Double.parseDouble(price));
+							
 		}
 		
 	}
@@ -504,6 +505,10 @@ public class PFManager {
 				if ( arr.get(1).equals("BUY")){
 					
 					double chp = highPrice.get(symbol);
+					if ( close > chp ) {
+						highPrice.put(symbol, close);
+						return;
+					}
 					if ( close < chp*0.90){
 						log.info("Buy: close<.9*high");
 						eSig=true;
@@ -521,6 +526,11 @@ public class PFManager {
 				else if ( arr.get(1).equals("SELL")){
 					
 					double chp = lowPrice.get(symbol);
+					if ( close < chp )
+					{
+						lowPrice.put(symbol, close);
+						return;
+					}
 					if ( close > chp*1.1){
 						eSig=true;
 						log.info("sell: close<.9*high");
@@ -539,7 +549,7 @@ public class PFManager {
 							 new Timestamp(eq.getTimestamp()).toString());
 					StopLoss exitSig = new StopLoss(eq.getSymbol(),act,eq.getClose(),
 						eq.getTimestamp());
-					exitSig.enqueue();
+					exitSig.route();
 				}
 					
 		}

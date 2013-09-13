@@ -153,7 +153,7 @@ def TradeHandler() {
 	//u.addModuleListener("crossover_s", new GenericListener())
 	
 	u.registerEventListener("select * from EODQuote",new EODHandler());
-	u.registerEventListener("select * from EODQuote",new ExitGenerator());
+//	u.registerEventListener("select * from EODQuote",new ExitGenerator());
 
 //Utility.addEPLFunction("EMA","vadi.test.sarb.esper.util.EsperEMA")
 //u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
@@ -180,11 +180,11 @@ def TradeHandler() {
 //Utility.addModuleListener("macd_s", new GenericListener())
 //Utility.addModuleListener("SMA20", new GenericListener())
 u.registerEventListener("select * from StatArb", new StatArbHandler())
-def sbstr="select * from EODQuote.win:length(5)  t1 , EODQuote.win:length(5)   t2  where t1.symbol='gld' and t2.symbol='xle' and t1.timestamp=t2.timestamp"
-//u.registerEventListener(sbstr, new DummyListener());
+def sbstr="select * from EODQuote.win:length(100)  t1 , EODQuote.win:length(100)   t2  where t1.symbol='gld' and t2.symbol='xle' and t1.timestamp=t2.timestamp"
+//u.registerEventListener(sbstr, new StatArbHandler().getCalc());
 
 
-u.registerEventListener("select * from EODQuote", new DummyListener());
+//u.registerEventListener("select * from EODQuote", new DummyListener());
 
 	
 }
@@ -203,7 +203,7 @@ lp = new LoadPortfolio();
 lp.setCash(10000);
 lp.enqueue()
 
-sb = new StatArb('gld','xle')
+sb = new StatArb('SSO','QQQ')
 sb.enqueue();
 for( st in vadi.test.sarb.esper.Messages.getString("EOD.quote.list").split(",")){
 	print st+"\n"

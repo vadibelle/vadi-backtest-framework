@@ -1,0 +1,14 @@
+module vadi.test.sarb.epl.ta;
+
+import vadi.test.sarb.event.*;
+import java.sql.Date;
+ 
+import vadi.test.sarb.esper.groovy.*;
+
+insert into TradeSignal(Symbol,open,high,low,close,type,indicator,price_timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,signal,"STOPLOSS",cast(q.timestamp,string)
+from
+EODQuote.win:length(10) q, StopLoss.win:length(1) sl
+where
+sl.timestamp=prev(1,q.timestamp) and
+sl.symbol=q.symbol;

@@ -144,7 +144,7 @@ public class StartEOD implements UpdateListener,Serializable {
 					Date dt = df.parse(rec[0]);
 					q.setTimestamp(dt.getTime());
 					q.enqueue();
-					Thread.sleep(100);
+					Thread.sleep(300);
 				}
 				LastEOD last = new LastEOD(getTick());
 				Thread.sleep(10000);
