@@ -139,6 +139,7 @@ def TradeHandler() {
 	u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
 //	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
 		u.deployModule(vadi.test.sarb.esper.Messages.getString("trade.epl"))
+	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
 	u.registerEventListener(sb, new StartEOD());
 	//u.registerEventListener('select * from emalong',new GenericListener())
 	//su.registerEventListener('select * from emashort',new GenericListener())
@@ -153,7 +154,7 @@ def TradeHandler() {
 	//u.addModuleListener("crossover_s", new GenericListener())
 	
 	u.registerEventListener("select * from EODQuote",new EODHandler());
-//	u.registerEventListener("select * from EODQuote",new ExitGenerator());
+	u.registerEventListener("select * from EODQuote",new ExitGenerator());
 
 //Utility.addEPLFunction("EMA","vadi.test.sarb.esper.util.EsperEMA")
 //u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
@@ -179,12 +180,13 @@ def TradeHandler() {
 //Utility.addModuleListener("macd_b", new GenericListener())
 //Utility.addModuleListener("macd_s", new GenericListener())
 //Utility.addModuleListener("SMA20", new GenericListener())
-u.registerEventListener("select * from StatArb", new StatArbHandler())
-def sbstr="select * from EODQuote.win:length(100)  t1 , EODQuote.win:length(100)   t2  where t1.symbol='gld' and t2.symbol='xle' and t1.timestamp=t2.timestamp"
+//u.registerEventListener("select * from StatArb", new StatArbHandler())
+//def sbstr="select * from EODQuote.win:length(100)  t1 , EODQuote.win:length(100)   t2  where t1.symbol='gld' and t2.symbol='xle' and t1.timestamp=t2.timestamp"
 //u.registerEventListener(sbstr, new StatArbHandler().getCalc());
+	
 
 
-//u.registerEventListener("select * from EODQuote", new DummyListener());
+//u.registerEventListener("select * from highlow", new DummyListener());
 
 	
 }

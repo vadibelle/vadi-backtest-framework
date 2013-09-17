@@ -1,0 +1,25 @@
+module vadi.test.sarb.epl.ta;
+
+import vadi.test.sarb.event.*;
+import java.sql.Date;
+ 
+import vadi.test.sarb.esper.groovy.*;
+
+create variable integer li=65;
+
+insert into highlow
+select q.symbol as symbol,q.open as open,q.high as high,q.low as low,q.close as close,"BUY" as signal,
+"HIGH_LOW" as indicator,q.timestamp as timestamp
+ from EODQuote.win:length(li+5) q where
+q.high > prev(li,q.high) and 
+q.low > prev(li,q.low) and
+q.close = q.high
+group by symbol;
+
+insert into TradeSignal(symbol,open,high,low,close,type,indicator,price_timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,signal,indicator,cast(q.timestamp,string)
+ from EODQuote.win:length(10) q , highlow.win:length(3) hl where
+ hl.symbol=q.symbol and
+ q.close > hl.close and
+ q.timestamp = prev(1,hl.timestamp);
+ 
