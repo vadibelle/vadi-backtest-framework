@@ -11,15 +11,21 @@ insert into highlow
 select q.symbol as symbol,q.open as open,q.high as high,q.low as low,q.close as close,"BUY" as signal,
 "HIGH_LOW" as indicator,q.timestamp as timestamp
  from EODQuote.win:length(li+5) q where
-q.high > prev(li,q.high) and 
-q.low > prev(li,q.low) and
-q.close = q.high
+cast(prev(1,q.high),double)> 1.05*cast(prev(li+1,q.high),double) and 
+prev(1,q.low) > prev(li+1,q.low) and
+prev(1,q.close) = prev(1,q.high) and
+q.close > prev(1,q.close)
 group by symbol;
+
+
+insert into highlow
+select symbol,close as open,close as high,close as low ,close,signal,"STOPLOSS" as indicator,timestamp from
+StopLoss;
+
 
 insert into TradeSignal(symbol,open,high,low,close,type,indicator,price_timestamp)
 select q.symbol,q.open,q.high,q.low,q.close,signal,indicator,cast(q.timestamp,string)
- from EODQuote.win:length(10) q , highlow.win:length(3) hl where
+ from EODQuote.win:length(5) q , highlow.win:length(1) hl where
  hl.symbol=q.symbol and
- q.close > hl.close and
- q.timestamp = prev(1,hl.timestamp);
+ prev(1,q.timestamp) = hl.timestamp;
  

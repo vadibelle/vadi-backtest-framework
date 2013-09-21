@@ -545,9 +545,10 @@ public class PFManager {
 					act = "BUY";
 				}
 				if ( eSig) {
-					log.info("Genering stop loss for symbol "+eq.symbol+" price "+eq.getClose()+
+					log.info("Genering stop loss for symbol "+symbol+" price "+close+" "+
 							 new Timestamp(eq.getTimestamp()).toString());
-					StopLoss exitSig = new StopLoss(eq.getSymbol(),act,eq.getClose(),
+					
+					StopLoss exitSig = new StopLoss(symbol,act,eq.getClose(),
 						eq.getTimestamp());
 					exitSig.route();
 				}
