@@ -147,7 +147,7 @@ def TradeHandler() {
 	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
 	u.registerEventListener('select * from TradeSignal', new LongPosition())
-	u.registerEventListener('select * from TradeSignal', new ShortPosition())
+	//u.registerEventListener('select * from TradeSignal', new ShortPosition())
 	//u.registerEventListener('select * from TradeSignal', new TradeListener());
 	
 	//u.addModuleListener("crossover_b", new GenericListener())
@@ -185,7 +185,7 @@ def TradeHandler() {
 //u.registerEventListener(sbstr, new StatArbHandler().getCalc());
 	
 
-
+//u.registerEventListener("select * from EODQuote", new DummyListener());
 u.registerEventListener("select * from highlow", new DummyListener());
 
 	

@@ -13,8 +13,18 @@ select q.symbol as symbol,q.open as open,q.high as high,q.low as low,q.close as 
  from EODQuote.win:length(li+5) q where
 cast(prev(1,q.high),double)> 1.05*cast(prev(li+1,q.high),double) and 
 prev(1,q.low) > prev(li+1,q.low) and
-prev(1,q.close) = prev(1,q.high) and
+//prev(1,q.close) = prev(1,q.high) and
 q.close > prev(1,q.close)
+group by symbol;
+
+insert into highlow
+select q.symbol as symbol,q.open as open,q.high as high,q.low as low,q.close as close,"SELL" as signal,
+"HIGH_LOW" as indicator,q.timestamp as timestamp
+ from EODQuote.win:length(li+5) q where
+prev(1,q.high) < prev(li+1,q.high) and 
+cast(prev(1,q.low),double) < 0.95*cast(prev(li+1,q.low),double) and
+//prev(1,q.close) = prev(1,q.low) and
+q.close < prev(1,q.close)
 group by symbol;
 
 

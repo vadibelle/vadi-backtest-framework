@@ -22,6 +22,8 @@ public class PFManager {
 	ConcurrentHashMap<String, Double> lastPrice;
 	ConcurrentHashMap<String, Double> highPrice;
 	ConcurrentHashMap<String, Double> lowPrice;
+	ConcurrentHashMap<String, Boolean> hasExit;
+	
 	
 	double slippage = 100;
 	long stocks = 0;
@@ -39,6 +41,7 @@ public class PFManager {
 		lowPrice = new ConcurrentHashMap<String, Double>();
 		// pfMgr = new PFManager();
 		dbutil = new DbUtil();
+		hasExit = new ConcurrentHashMap<String, Boolean>();
 
 	}
 
@@ -204,6 +207,8 @@ public class PFManager {
 				updateCash();
 				if ( highPrice.containsKey(symbol))
 					highPrice.remove(symbol);
+				if ( hasExit.containsKey(symbol))
+					hasExit.remove(symbol);
 				
 			}
 			
@@ -326,6 +331,8 @@ public class PFManager {
 					updateCash();
 					if ( lowPrice.containsKey(symbol))
 						lowPrice.remove(symbol);
+					if ( hasExit.containsKey(symbol))
+						hasExit.remove(symbol);
 					
 				} else {
 					log.info("FATAL Cannot cover short " + cash + " " + lp * price);
@@ -479,6 +486,8 @@ public class PFManager {
 			//log.info("no position for "+symbol);
 			return;
 		}
+		
+				
 		//String sql = "select sum(price*qty)/sum(qty) as cb,lors,symbol from position "+
 		String sql = "select sum(price*qty) as cb,lors,symbol,sum(qty) as tot from position "+
 		//String sql="select max(price) as cb,lors,symbol,sum(qty) from position "+
@@ -503,7 +512,15 @@ public class PFManager {
 				
 				String act = "";
 				if ( arr.get(1).equals("BUY")){
-					
+					if ( hasExit.containsKey(symbol)){
+						//log.info("printing hasExit "+hasExit.toString());
+						TradeSignal ts = new TradeSignal(symbol,
+								eq.getOpen(),eq.getHigh(),eq.getLow(),eq.getClose(),
+								"SELL","STOPLOSS",Long.toString(eq.getTimestamp()));
+						this.closeLongPosition(ts);
+						
+					}
+						
 					double chp = highPrice.get(symbol);
 					if ( close > chp ) {
 						highPrice.put(symbol, close);
@@ -522,9 +539,17 @@ public class PFManager {
 					if ( close <= cb )
 						eSig = true;*/
 					act = "SELL";
+					
 				}
 				else if ( arr.get(1).equals("SELL")){
-					
+						if ( hasExit.containsKey(symbol)){
+						
+						TradeSignal ts = new TradeSignal(symbol,
+								eq.getOpen(),eq.getHigh(),eq.getLow(),eq.getClose(),
+								"BUY","STOPLOSS",Long.toString(eq.getTimestamp()));
+						this.closeShortPosition(ts);
+						
+					}
 					double chp = lowPrice.get(symbol);
 					if ( close < chp )
 					{
@@ -547,7 +572,7 @@ public class PFManager {
 				if ( eSig) {
 					log.info("Genering stop loss for symbol "+symbol+" price "+close+" "+
 							 new Timestamp(eq.getTimestamp()).toString());
-					
+					hasExit.put(symbol, true);
 					StopLoss exitSig = new StopLoss(symbol,act,eq.getClose(),
 						eq.getTimestamp());
 					exitSig.route();
