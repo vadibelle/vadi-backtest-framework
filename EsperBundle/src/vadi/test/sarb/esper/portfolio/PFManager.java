@@ -479,6 +479,7 @@ public class PFManager {
 	}
 	
 	public synchronized void  generateExits(EODQuote eq){
+		try {
 		String symbol = eq.getSymbol();
 		
 		if ( !positions.containsKey(symbol) && !short_positions.containsKey(symbol))
@@ -518,7 +519,7 @@ public class PFManager {
 								eq.getOpen(),eq.getHigh(),eq.getLow(),eq.getClose(),
 								"SELL","STOPLOSS",Long.toString(eq.getTimestamp()));
 						this.closeLongPosition(ts);
-						
+						return;
 					}
 						
 					double chp = highPrice.get(symbol);
@@ -548,6 +549,7 @@ public class PFManager {
 								eq.getOpen(),eq.getHigh(),eq.getLow(),eq.getClose(),
 								"BUY","STOPLOSS",Long.toString(eq.getTimestamp()));
 						this.closeShortPosition(ts);
+						return;
 						
 					}
 					double chp = lowPrice.get(symbol);
@@ -578,6 +580,11 @@ public class PFManager {
 					exitSig.route();
 				}
 					
+		}
+		}
+		catch(Throwable e)
+		{
+			e.printStackTrace();
 		}
 		
 	

@@ -7,25 +7,39 @@ import vadi.test.sarb.esper.groovy.*;
 
 create variable integer li=65;
 
+insert into highlowavg
+select EMA(cast(q.high,double)) as ahp ,EMA(cast(q.low,double)) as alp,
+EMA(cast(q.close,double)) as acl ,q.symbol as symbol, q.timestamp as timestamp 
+from EODQuote.win:length(li+2) q group by symbol;
+
 insert into highlow
 select q.symbol as symbol,q.open as open,q.high as high,q.low as low,q.close as close,"BUY" as signal,
 "HIGH_LOW" as indicator,q.timestamp as timestamp
- from EODQuote.win:length(li+5) q where
-cast(prev(1,q.high),double)> 1.05*cast(prev(li+1,q.high),double) and 
-prev(1,q.low) > prev(li+1,q.low) and
+ from EODQuote.win:length(li+5) q , highlowavg.win:length(5) hl
+  where
+cast(q.high,double)>  1.1*hl.ahp and
+cast(prev(1,q.high),double) <1.1* hl.ahp and 
+cast(q.low,double) > hl.alp and
+//cast(prev(1,q.low),double) < hl.alp and
 //prev(1,q.close) = prev(1,q.high) and
-q.close > prev(1,q.close)
-group by symbol;
+q.timestamp=hl.timestamp and
+q.symbol=hl.symbol ;
+//q.close > prev(1,q.close);
+
 
 insert into highlow
 select q.symbol as symbol,q.open as open,q.high as high,q.low as low,q.close as close,"SELL" as signal,
 "HIGH_LOW" as indicator,q.timestamp as timestamp
- from EODQuote.win:length(li+5) q where
-prev(1,q.high) < prev(li+1,q.high) and 
-cast(prev(1,q.low),double) < 0.95*cast(prev(li+1,q.low),double) and
-//prev(1,q.close) = prev(1,q.low) and
-q.close < prev(1,q.close)
-group by symbol;
+ from EODQuote.win:length(li+5) q , highlowavg.win:length(5) hl 
+ where
+cast(q.high,double)<  hl.ahp and
+//cast(prev(1,q.high),double)  > hl.ahp and 
+cast(q.low,double) < 0.9* hl.alp and
+cast(prev(1,q.low),double) > 0.90 *hl.alp and
+//prev(1,q.close) = prev(1,q.high) and
+q.timestamp=hl.timestamp and
+q.symbol=hl.symbol ;//and
+//q.close < prev(1,q.close);
 
 
 insert into highlow

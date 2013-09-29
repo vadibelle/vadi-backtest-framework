@@ -186,7 +186,7 @@ def TradeHandler() {
 	
 
 //u.registerEventListener("select * from EODQuote", new DummyListener());
-u.registerEventListener("select * from highlow", new DummyListener());
+//u.registerEventListener("select * from highlowavg", new DummyListener());
 
 	
 }
