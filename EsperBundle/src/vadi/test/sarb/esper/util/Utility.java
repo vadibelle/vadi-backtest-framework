@@ -24,6 +24,7 @@ import com.espertech.esper.client.deploy.DeploymentOptions;
 import com.espertech.esper.client.deploy.EPDeploymentAdmin;
 import com.espertech.esper.client.deploy.Module;
 import com.espertech.esper.client.deploy.ParseException;
+import com.espertech.esper.client.time.CurrentTimeEvent;
 
 import vadi.test.sarb.esper.db.DbUtil;
 import vadi.test.sarb.listeners.DummyListener;
@@ -32,13 +33,14 @@ import vadi.test.sarb.listeners.MyListener;
 public class Utility {
 
 	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
-	static final int NUM_THREADS = 10;
+	static final int NUM_THREADS = 40;
 	private static volatile Utility instance = null;
 	private ExecutorService executor = null;
 	private  DbUtil dbUtil = null;
 	private   EPServiceProvider epService ;
 	private ConcurrentHashMap<Object,HashMap> map = null;
 	static final JFrame container ;
+	private static boolean simulationMode = false;
 
 	static {
 		System.out.println("Initializing esper engine");
@@ -87,13 +89,31 @@ public class Utility {
 	
 	
 	private Utility(){
-		
+		String mode = vadi.test.sarb.esper.Messages.getString("sim.mode");
 		Configuration config = new Configuration();
+		if ( mode != null && mode.equals("true"))
+		{
+			simulationMode = true;
+			config.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
+			
+		}
+		
         config.addEventTypeAutoName("vadi.test.sarb.event");
         epService = EPServiceProviderManager.getDefaultProvider(config);
        // epService.getEPAdministrator().getConfiguration().addPlugInAggregationFunction(arg0, arg1)
       //  init();
-		
+
+       if ( simulationMode){
+    	   epService.getEPRuntime().sendEvent(new CurrentTimeEvent(0));
+    	   SendTimeEvents sd = new SendTimeEvents();
+    	   getExecutor().submit(sd);
+       }
+       
+	}
+	
+	public static boolean isSimMode()
+	{
+		return simulationMode;
 	}
 	
 	public void init() {
@@ -210,8 +230,10 @@ public static void createStmt(String eventExpr){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+			
 	}
+			
+	
 	public static JFrame getContainer() {
 		return container;
 	}

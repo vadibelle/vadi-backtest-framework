@@ -137,7 +137,7 @@ def TradeHandler() {
 	//u.registerEventListener("select * from TradeSignal", new ShortPosition());
 	u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 	u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
-//	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
+	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
 //		u.deployModule(vadi.test.sarb.esper.Messages.getString("trade.epl"))
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
 	u.registerEventListener(sb, new StartEOD());

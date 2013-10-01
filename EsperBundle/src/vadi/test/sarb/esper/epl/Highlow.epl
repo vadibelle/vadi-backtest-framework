@@ -5,17 +5,17 @@ import java.sql.Date;
  
 import vadi.test.sarb.esper.groovy.*;
 
-create variable integer li=65;
+create variable integer lt=65;
 
 insert into highlowavg
 select EMA(cast(q.high,double)) as ahp ,EMA(cast(q.low,double)) as alp,
 EMA(cast(q.close,double)) as acl ,q.symbol as symbol, q.timestamp as timestamp 
-from EODQuote.win:length(li+2) q group by symbol;
+from EODQuote.win:length(lt+2) q group by symbol;
 
 insert into highlow
 select q.symbol as symbol,q.open as open,q.high as high,q.low as low,q.close as close,"BUY" as signal,
 "HIGH_LOW" as indicator,q.timestamp as timestamp
- from EODQuote.win:length(li+5) q , highlowavg.win:length(5) hl
+ from EODQuote.win:length(lt+5) q , highlowavg.win:length(5) hl
   where
 cast(q.high,double)>  1.1*hl.ahp and
 cast(prev(1,q.high),double) <1.1* hl.ahp and 
@@ -30,7 +30,7 @@ q.symbol=hl.symbol ;
 insert into highlow
 select q.symbol as symbol,q.open as open,q.high as high,q.low as low,q.close as close,"SELL" as signal,
 "HIGH_LOW" as indicator,q.timestamp as timestamp
- from EODQuote.win:length(li+5) q , highlowavg.win:length(5) hl 
+ from EODQuote.win:length(lt+5) q , highlowavg.win:length(5) hl 
  where
 cast(q.high,double)<  hl.ahp and
 //cast(prev(1,q.high),double)  > hl.ahp and 
