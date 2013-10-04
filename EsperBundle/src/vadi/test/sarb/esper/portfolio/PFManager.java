@@ -316,7 +316,7 @@ public class PFManager {
 
 				long lp = short_positions.get(sig.getSymbol());
 				log.info("@@@ Short cover " + lp + " " + sig.getSymbol());
-				if (cash+shortCash >= lp * price) {
+				if ((cash+shortCash)*0.9 >= lp * price) {
 					double tmpc = cash+shortCash-slippage;
 					cash = tmpc - lp * price;
 					shortCash = 0;
@@ -560,12 +560,14 @@ public class PFManager {
 					}
 					if ( close > chp*1.1){
 						eSig=true;
-						log.info("sell: close<.9*high");
+						log.info("sell: close>.1.1*low");
 					}
 					if ((cb -close*qty) < -1200 ){
 						eSig=true;
 						log.info("cb-close*qty >-1200");
 					}
+					
+					
 					/*cb = (1+stopLoss)*cb; // long if price goes above costbasis
 					if ( close >= cb )
 						eSig = true;*/

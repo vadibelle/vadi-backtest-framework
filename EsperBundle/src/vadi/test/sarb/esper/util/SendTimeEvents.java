@@ -1,5 +1,6 @@
 package vadi.test.sarb.esper.util;
 
+import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPException;
 import com.espertech.esper.client.EPServiceDestroyedException;
 import com.espertech.esper.client.time.CurrentTimeEvent;
@@ -11,7 +12,11 @@ public class SendTimeEvents implements Runnable {
 	{
 		init = System.currentTimeMillis();
 		ctime = init;
-	}
+						
+		Utility.getInstance().getEpService()
+	    	   .getEPRuntime().sendEvent(new CurrentTimeEvent(0));
+	    	  
+	   }
 
 	@Override
 	public void run() {

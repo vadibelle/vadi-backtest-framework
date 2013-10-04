@@ -104,8 +104,7 @@ public class Utility {
       //  init();
 
        if ( simulationMode){
-    	   epService.getEPRuntime().sendEvent(new CurrentTimeEvent(0));
-    	   SendTimeEvents sd = new SendTimeEvents();
+    	     SendTimeEvents sd = new SendTimeEvents();
     	   getExecutor().submit(sd);
        }
        

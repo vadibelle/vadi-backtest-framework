@@ -147,11 +147,12 @@ def TradeHandler() {
 	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
 	u.registerEventListener('select * from TradeSignal', new LongPosition())
-	//u.registerEventListener('select * from TradeSignal', new ShortPosition())
+	u.registerEventListener('select * from TradeSignal', new ShortPosition())
 	//u.registerEventListener('select * from TradeSignal', new TradeListener());
 	
 	//u.addModuleListener("crossover_b", new GenericListener())
 	//u.addModuleListener("crossover_s", new GenericListener())
+	
 	
 	u.registerEventListener("select * from EODQuote",new EODHandler());
 	u.registerEventListener("select * from EODQuote",new ExitGenerator());
@@ -186,7 +187,7 @@ def TradeHandler() {
 	
 
 //u.registerEventListener("select * from EODQuote", new DummyListener());
-//u.registerEventListener("select * from highlowavg", new DummyListener());
+//u.registerEventListener("select * from OrderStockQuotes order by timestamp", new DummyListener());
 
 	
 }

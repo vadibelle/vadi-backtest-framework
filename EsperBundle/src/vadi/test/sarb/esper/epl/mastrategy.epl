@@ -8,6 +8,10 @@ import vadi.test.sarb.esper.groovy.*;
 create variable integer si=15;
 create variable integer li=60;
 
+
+insert into OrderStockQuotes
+select * from EODQuote.win:length(1000) order by timestamp;
+
 @Name('volatility')
 select stddev((cast(close,double)-cast(prev(si,close),double))/cast(prev(si,close),double))*100 
 as vol,Datetime.str(timestamp),close from EODQuote.win:length(si) group by symbol;

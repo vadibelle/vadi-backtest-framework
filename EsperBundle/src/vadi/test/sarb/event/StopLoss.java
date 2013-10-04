@@ -1,5 +1,7 @@
 package vadi.test.sarb.event;
 
+import java.sql.Timestamp;
+
 public class StopLoss extends Event{
 	public String symbol;
 	public String signal;
@@ -49,7 +51,7 @@ public class StopLoss extends Event{
 	@Override
 	public String toString() {
 		return "StopLoss [symbol=" + symbol + ", signal=" + signal + ", close="
-				+ close + ", timestamp=" + timestamp + "]";
+				+ close + ", timestamp=" + new Timestamp((timestamp)).toString()+ "]";
 	}
 
 }

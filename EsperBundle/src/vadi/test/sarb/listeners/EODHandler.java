@@ -19,7 +19,7 @@ public class EODHandler implements UpdateListener  {
 		// TODO Auto-generated method stub
 		//log.info("EOD Received count="+(count++)+" "+arg0[0].getUnderlying().toString());
 		pfm.updateLastPrice((EODQuote)arg0[0].getUnderlying());
-				
+						
 	}
 
 }
