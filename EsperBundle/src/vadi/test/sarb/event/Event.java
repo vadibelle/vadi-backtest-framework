@@ -4,7 +4,7 @@ import vadi.test.sarb.esper.util.Utility;
 
 public abstract class Event {
 	
-	public void enqueue(){
+	public synchronized void enqueue(){
 		Utility.getInstance().getEpService().getEPRuntime().sendEvent(this);
 	}
 	public void route()

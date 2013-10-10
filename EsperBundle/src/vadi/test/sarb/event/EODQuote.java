@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.espertech.esper.client.time.CurrentTimeEvent;
+
 import vadi.test.sarb.esper.data.OHLCAverage;
 import vadi.test.sarb.esper.util.*;
 
@@ -42,6 +44,10 @@ public EODQuote(String symbol, String open, String high, String low,
 	this.close = close;
 	this.volume = volume;
 	this.timestamp = time;
+	if (Utility.getInstance().isSimMode() ) {
+	CurrentTimeEvent timeEvent = new CurrentTimeEvent(time);
+	Utility.getInstance().getEpService().getEPRuntime().sendEvent(timeEvent);
+	}
 	}
 public String getSymbol() {
 	return symbol;

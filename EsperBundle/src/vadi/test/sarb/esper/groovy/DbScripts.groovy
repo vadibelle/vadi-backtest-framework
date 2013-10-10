@@ -28,7 +28,7 @@ sql += " lors varchar(20), "
 sql += " price float, "
 sql += " cost float,"
 sql += " date datetime, "
-sql += " curdate datetime default (CURRENT_TIMESTAMP()))"
+sql += " curdate datetime default (CURRENT_TIMESTAMP())"
 println "sql "+sql
 db.execute("drop table position_archive;");
 db.execute(sql);
@@ -45,6 +45,12 @@ print "sql "+sql
 db.execute("drop table liquid_cash")
 db.execute(sql)
 
+sql = "";
+sql = "create table signals( "
+sql += " id  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+sql += " signal varchar(255),"
+sql += " currdate datetime default (current_timestamp()))"
+execute(sql)
 }
 
 def execute(sql) {
@@ -63,21 +69,22 @@ def cleanDB(){
 	execute(sql);
 	sql="insert into liquid_cash (cash,shortcash) values (0,0)"
 	execute(sql)
-	
+	sql="delete from signals"
+	execute(sql)
 }
 //initDB()
 
 //sql = "insert into position (symbol,qty,lors,price,cost,date) values "
 //sql += " ('sso',10,'buy',10,100,'2010-11-01')";
-
-cleanDB()
+//cleanDB()
 sql="select * from position"
 execute(sql)
 sql = "select * from position_archive  order by curdate asc"
 execute(sql)
 sql = "select * from  liquid_cash"
 execute(sql)
-
+sql= "select * from signals order by currdate asc"
+execute (sql)
 //sql="select sum(price*qty)/sum(qty) as cb,lors,symbol from position_archive "+
 //" group by symbol,lors"
 //execute(sql)

@@ -103,11 +103,7 @@ public class Utility {
        // epService.getEPAdministrator().getConfiguration().addPlugInAggregationFunction(arg0, arg1)
       //  init();
 
-       if ( simulationMode){
-    	     SendTimeEvents sd = new SendTimeEvents();
-    	   getExecutor().submit(sd);
-       }
-       
+              
 	}
 	
 	public static boolean isSimMode()

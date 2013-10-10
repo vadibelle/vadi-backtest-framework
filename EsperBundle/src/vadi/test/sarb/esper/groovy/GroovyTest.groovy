@@ -111,18 +111,30 @@ class TradeListener implements UpdateListener {
 			//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
 			println "TradeReceived "+arg0[0].getUnderlying();
 			TradeSignal sig = arg0[0].getUnderlying();
+			Utility.getInstance().dbUtil.execute("insert into signals ("+
+				" signal) values ('"+sig.toString()+"')");
 			//sig.enqueue();
-			
-		/*	
-			if( ind != "" ) {
-			TradeSignal sig = new TradeSignal(eq2.symbol,eq2.open,eq2.high,
-				eq2.low,eq2.close,ind,'ema',eq1.timestamp.toString());
-			sig.enqueue();
-			}*/
-			
-			
 			}
-			catch(e){
+		catch(e){
+				e.printStackTrace();
+			}
+				
+		}
+	}
+
+class StopSignal implements UpdateListener {
+	
+		public void update(EventBean[] arg0, EventBean[] arg1) {
+			try{
+			// TODO Auto-generated method stub
+			//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
+			println "TradeReceived "+arg0[0].getUnderlying();
+			StopSignal sig = arg0[0].getUnderlying();
+			Utility.getInstance().dbUtil.execute("insert into signals ("+
+				" signal) values ('"+sig.toString()+"')");
+			//sig.enqueue();
+			}
+		catch(e){
 				e.printStackTrace();
 			}
 				
@@ -147,8 +159,9 @@ def TradeHandler() {
 	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
 	u.registerEventListener('select * from TradeSignal', new LongPosition())
-	u.registerEventListener('select * from TradeSignal', new ShortPosition())
+	//u.registerEventListener('select * from TradeSignal', new ShortPosition())
 	//u.registerEventListener('select * from TradeSignal', new TradeListener());
+	//u.registerEventListener('select * from StopSignal', new TradeListener());
 	
 	//u.addModuleListener("crossover_b", new GenericListener())
 	//u.addModuleListener("crossover_s", new GenericListener())
@@ -195,7 +208,13 @@ def TradeHandler() {
 //String ema = new File(vadi.test.sarb.esper.Messages.getString("ema.epl")).text
 //print "Contents of ema "+ema
 
-
+def debug() {
+	Utility u = Utility.getInstance();
+	
+	
+	u.registerEventListener("select * from OrderStockQuotes order by timestamp", new DummyListener());
+	
+}
 
 
 //main lo
@@ -222,5 +241,6 @@ new File("C:\\temp\\test.csv").delete();
 
  
 TradeHandler()
+//debug()
 main()
 
