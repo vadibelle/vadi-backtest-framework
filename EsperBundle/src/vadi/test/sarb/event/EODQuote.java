@@ -48,6 +48,8 @@ public EODQuote(String symbol, String open, String high, String low,
 	CurrentTimeEvent timeEvent = new CurrentTimeEvent(time);
 	Utility.getInstance().getEpService().getEPRuntime().sendEvent(timeEvent);
 	}
+	 if ( Utility.getInstance().getCurrentTime() < time)
+		 Utility.getInstance().setCurrentTime(time);
 	}
 public String getSymbol() {
 	return symbol;

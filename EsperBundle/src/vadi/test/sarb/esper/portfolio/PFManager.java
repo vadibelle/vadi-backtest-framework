@@ -445,12 +445,20 @@ public class PFManager {
 			{
 				while ( j < i ){
 					ArrayList arr = res.get(j++);
-					if (arr.get(2).toString().equalsIgnoreCase("BUY"))
+					if (arr.get(2).toString().equalsIgnoreCase("BUY")){
 						positions.put(arr.get(0).toString(),
 								Long.parseLong(arr.get(1).toString()));
-					else
+						highPrice.put(arr.get(0).toString(),
+								Double.parseDouble(arr.get(1).toString()));
+						
+					}
+					else {
 						short_positions.put(arr.get(0).toString(),
 								Long.parseLong(arr.get(1).toString()));
+						lowPrice.put(arr.get(0).toString(),
+								Double.parseDouble(arr.get(1).toString()));
+						
+					}
 					
 				}
 			sql = "select cash,shortcash from liquid_cash";

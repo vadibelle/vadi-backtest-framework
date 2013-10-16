@@ -41,6 +41,7 @@ public class Utility {
 	private ConcurrentHashMap<Object,HashMap> map = null;
 	static final JFrame container ;
 	private static boolean simulationMode = false;
+	private long currentTime = 0;
 
 	static {
 		System.out.println("Initializing esper engine");
@@ -242,4 +243,16 @@ public static void createStmt(String eventExpr){
 		return c;
 		 
 	}
+
+
+	public long getCurrentTime() {
+		return currentTime;
+	}
+
+
+	public void setCurrentTime(long currentTime) {
+		this.currentTime = currentTime;
+	}
+	
+	
 }

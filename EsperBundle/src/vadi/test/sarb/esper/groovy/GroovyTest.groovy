@@ -110,9 +110,9 @@ class TradeListener implements UpdateListener {
 			// TODO Auto-generated method stub
 			//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
 			println "TradeReceived "+arg0[0].getUnderlying();
-			TradeSignal sig = arg0[0].getUnderlying();
+			//TradeSignal sig = arg0[0].getUnderlying();
 			Utility.getInstance().dbUtil.execute("insert into signals ("+
-				" signal) values ('"+sig.toString()+"')");
+				" signal) values ('"+arg0[0].getUnderlying().toString()+"')");
 			//sig.enqueue();
 			}
 		catch(e){
@@ -141,27 +141,39 @@ class StopSignal implements UpdateListener {
 		}
 	}
 
-def TradeHandler() {
-	println "Registering handlers"
+
+def loadModules() {
 	Utility u = Utility.getInstance();
-	sb = "select * from StartEODQuote";
-	//u.registerEventListener("select * from TradeSignal.win:length(10)", new LongPosition());
-	//u.registerEventListener("select * from TradeSignal", new ShortPosition());
 	u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 	u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
-//		u.deployModule(vadi.test.sarb.esper.Messages.getString("trade.epl"))
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
+	sb = "select * from StartEODQuote";
 	u.registerEventListener(sb, new StartEOD());
+	
+}
+
+def TradeHandler() {
+	println "Registering handlers"
+	Utility u = Utility.getInstance();
+	
+	//u.registerEventListener("select * from TradeSignal.win:length(10)", new LongPosition());
+	//u.registerEventListener("select * from TradeSignal", new ShortPosition());
+	
 	//u.registerEventListener('select * from emalong',new GenericListener())
 	//su.registerEventListener('select * from emashort',new GenericListener())
 	
 	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
-	u.registerEventListener('select * from TradeSignal', new LongPosition())
+	trdExp = 'select * from TradeSignal.win:length(10)'+
+	'.std:unique(price_timestamp) group by symbol'
+	u.registerEventListener(trdExp, new LongPosition())
 	//u.registerEventListener('select * from TradeSignal', new ShortPosition())
-	//u.registerEventListener('select * from TradeSignal', new TradeListener());
-	//u.registerEventListener('select * from StopSignal', new TradeListener());
+	trdExp='select * from TradeSignal'
+	u.registerEventListener(trdExp, new TradeListener())
+	trdExp='select * from StopLoss'
+	u.registerEventListener(trdExp, new TradeListener());
+
 	
 	//u.addModuleListener("crossover_b", new GenericListener())
 	//u.addModuleListener("crossover_s", new GenericListener())
@@ -212,7 +224,13 @@ def debug() {
 	Utility u = Utility.getInstance();
 	
 	
-	u.registerEventListener("select * from OrderStockQuotes order by timestamp", new DummyListener());
+	//u.registerEventListener("select * from OrderStockQuotes order by timestamp", new DummyListener());
+	//str='select * from volatility'
+	//str='select symbol,close, ((cast(close,float)-cast(prev(1,close),double))) as std '+
+	//'from EODQuote.win:length(20)'+
+	//' group by symbol '
+	str="select * from slope"
+	u.registerEventListener(str,new DummyListener());
 	
 }
 
@@ -225,8 +243,9 @@ lp = new LoadPortfolio();
 lp.setCash(10000);
 lp.enqueue()
 
+
 sb = new StatArb('SSO','QQQ')
-sb.enqueue();
+//sb.enqueue();
 for( st in vadi.test.sarb.esper.Messages.getString("EOD.quote.list").split(",")){
 	print st+"\n"
 	evt = new StartEODQuote(st);
@@ -240,7 +259,8 @@ new File("C:\\temp\\test.csv").delete();
 }
 
  
-TradeHandler()
-//debug()
+//TradeHandler()
+loadModules()
+debug()
 main()
 

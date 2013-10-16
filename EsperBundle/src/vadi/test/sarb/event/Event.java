@@ -7,7 +7,7 @@ public abstract class Event {
 	public synchronized void enqueue(){
 		Utility.getInstance().getEpService().getEPRuntime().sendEvent(this);
 	}
-	public void route()
+	public  synchronized void  route()
 	{
 		Utility.getInstance().getEpService().getEPRuntime().route(this);
 	}

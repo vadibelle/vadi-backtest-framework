@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.logging.Logger;
 
 import vadi.test.sarb.esper.portfolio.PFManager;
+import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.TradeSignal;
 
 import com.espertech.esper.client.EventBean;
@@ -34,6 +35,11 @@ public class LongPosition implements UpdateListener,Serializable  {
 						
 		TradeSignal sig = (TradeSignal)(arg0[0].getUnderlying());
 		log.info(sig.toString());
+		if ( Long.parseLong(sig.price_timestamp) < Utility.getInstance().getCurrentTime() )
+		{
+			Utility.getInstance().info("Old event ignoring "+sig.toString());
+			return;
+		}
 		if ( sig.getType().equalsIgnoreCase("BUY") && !sig.getIndicator().equals("STOPLOSS"))
 			pfm.addLongPosition(sig);
 		

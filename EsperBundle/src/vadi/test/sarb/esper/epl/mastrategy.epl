@@ -5,21 +5,24 @@ import java.sql.Date;
  
 import vadi.test.sarb.esper.groovy.*;
 
-create variable integer si=15;
-create variable integer li=60;
+create variable integer si=10;
+create variable integer li=10;
 
 
 //insert into OrderStockQuotes
 //select * from EODQuote.win:length(1000) order by timestamp;
 
 @Name('volatility')
-select stddev((cast(close,double)-cast(prev(si,close),double))/cast(prev(si,close),double))*100 
-as vol,Datetime.str(timestamp),close from EODQuote.win:length(si) group by symbol;
+insert into volatility
+//select symbol,close, stddev((cast(close,double)-cast(prev(li,close),double))/cast(prev(li,close),double))*100
+select symbol,close, avg(cast(close,float)) as std, prev(li,close)
+ as vol,Datetime.str(timestamp) as date from EODQuote.win:length(li+1)
+  group by symbol;
 
 
 insert into cprice
 select cast(close,double)/cast(prev(li,close),double) as cp,symbol,
-timestamp,close 
+timestamp,close,prev(1,close)
 from EODQuote.win:length(li+1) //change li in 2 places
 group by symbol;
 
@@ -51,7 +54,7 @@ group by symbol ;
 insert into slope
 select SLOPE(cast(close,double)) as slope, symbol,
 timestamp,close as cl 
-from EODQuote.win:length(si)
+from EODQuote.win:length(li)
 group by symbol;
 //output every 10 events;
 
