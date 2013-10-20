@@ -37,7 +37,11 @@ public class EsperEMA implements AggregationMethod {
 		counter ++;
 		if ( max < counter )
 			max = counter;
+		
+		log.log(level,"arg0 "+arg0.toString());
 		double d = Double.parseDouble(arg0.toString());
+		if (Double.isNaN(d))
+			return;
 		if ( !start ){
 			ema = ema*(counter-1);
 			ema = ema+d;

@@ -1,0 +1,9 @@
+module vadi.test.sarb.epl.ta;
+
+import vadi.test.sarb.event.*;
+import java.sql.Date;
+ 
+import vadi.test.sarb.esper.groovy.*;
+
+create variable integer si=10;
+create variable integer li=65;

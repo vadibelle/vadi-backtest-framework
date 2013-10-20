@@ -91,6 +91,7 @@ public class Utility {
 	
 	private Utility(){
 		String mode = vadi.test.sarb.esper.Messages.getString("sim.mode");
+		//String logLevel = vadi.test.sarb.esper.Messages.getString("log.level");
 		Configuration config = new Configuration();
 		if ( mode != null && mode.equals("true"))
 		{
@@ -99,6 +100,7 @@ public class Utility {
 			
 		}
 		
+		//config.getEngineDefaults().getLogging().setEnableExecutionDebug(true);
         config.addEventTypeAutoName("vadi.test.sarb.event");
         epService = EPServiceProviderManager.getDefaultProvider(config);
        // epService.getEPAdministrator().getConfiguration().addPlugInAggregationFunction(arg0, arg1)

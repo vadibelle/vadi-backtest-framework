@@ -1,4 +1,4 @@
-module vadi.test.sarb.epl.ta;
+/*module vadi.test.sarb.epl.ta;
 
 import vadi.test.sarb.event.*;
 import java.sql.Date;
@@ -6,8 +6,8 @@ import java.sql.Date;
 import vadi.test.sarb.esper.groovy.*;
 
 create variable integer si=10;
-create variable integer li=10;
-
+create variable integer li=65;
+*/
 
 //insert into OrderStockQuotes
 //select * from EODQuote.win:length(1000) order by timestamp;
@@ -51,13 +51,17 @@ group by symbol ;
 //Crossover slope is not used don't know
 
 @Name('slope')
-insert into slope
+insert into slopestr
 select SLOPE(cast(close,double)) as slope, symbol,
-timestamp,close as cl 
+timestamp,close 
 from EODQuote.win:length(li)
 group by symbol;
 //output every 10 events;
 
+insert into emaslope
+select EMA(slope) as ema,symbol,timestamp,close 
+from slopestr.win:length(li)
+group by symbol;
 
 insert into crossover
 select 'BUY' as signal, el.ema,el.cl,q.timestamp as timestamp,

@@ -146,6 +146,7 @@ def loadModules() {
 	Utility u = Utility.getInstance();
 	u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 	u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
+	u.deployModule(vadi.test.sarb.esper.Messages.getString("init.epl"))
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
 	sb = "select * from StartEODQuote";
@@ -229,7 +230,9 @@ def debug() {
 	//str='select symbol,close, ((cast(close,float)-cast(prev(1,close),double))) as std '+
 	//'from EODQuote.win:length(20)'+
 	//' group by symbol '
-	str="select * from slope"
+	str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
+	'EODQuote.win:length(390) group by symbol'
+	
 	u.registerEventListener(str,new DummyListener());
 	
 }

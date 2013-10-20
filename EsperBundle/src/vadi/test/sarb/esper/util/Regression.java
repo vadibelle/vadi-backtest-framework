@@ -33,6 +33,8 @@ public class Regression  implements AggregationFunctionFactory,com.espertech.esp
 	@Override
 	public void enter(Object arg0) {
 	//	counter ++;
+		if (arg0 == null )
+			return;
 		queue.add(arg0);
 //		if ( max < counter)
 //			max = counter;
@@ -54,7 +56,11 @@ public class Regression  implements AggregationFunctionFactory,com.espertech.esp
 		int j = 0;
 		while ( i.hasNext()){
 			String obj = i.next().toString();
-			reg.addData(j++,Double.parseDouble(obj));
+			Double d = Double.parseDouble(obj);
+			if ( Double.isNaN(d))
+				continue;
+				
+			reg.addData(j++,d);
 			//System.out.println(" items "+obj);
 		}
 		//System.out.println("Total "+j);
