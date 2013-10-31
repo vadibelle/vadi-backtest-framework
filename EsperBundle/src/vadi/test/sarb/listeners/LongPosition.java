@@ -35,11 +35,11 @@ public class LongPosition implements UpdateListener,Serializable  {
 						
 		TradeSignal sig = (TradeSignal)(arg0[0].getUnderlying());
 		log.info(sig.toString());
-		if ( Long.parseLong(sig.price_timestamp) < Utility.getInstance().getCurrentTime() )
+		/*if ( Long.parseLong(sig.price_timestamp) < Utility.getInstance().getCurrentTime() )
 		{
 			Utility.getInstance().info("Old event ignoring "+sig.toString());
 			return;
-		}
+		}*/
 		if ( sig.getType().equalsIgnoreCase("BUY") && !sig.getIndicator().equals("STOPLOSS"))
 			pfm.addLongPosition(sig);
 		

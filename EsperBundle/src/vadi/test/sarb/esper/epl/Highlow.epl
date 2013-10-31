@@ -1,11 +1,4 @@
-module vadi.test.sarb.epl.ta;
 
-import vadi.test.sarb.event.*;
-import java.sql.Date;
- 
-import vadi.test.sarb.esper.groovy.*;
-
-create variable integer lt=65;
 
 insert into highlowavg
 select EMA(cast(q.high,double)) as ahp ,EMA(cast(q.low,double)) as alp,

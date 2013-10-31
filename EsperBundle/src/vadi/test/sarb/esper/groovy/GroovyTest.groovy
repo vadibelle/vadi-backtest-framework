@@ -148,7 +148,7 @@ def loadModules() {
 	u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("init.epl"))
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
-	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
+//	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
 	sb = "select * from StartEODQuote";
 	u.registerEventListener(sb, new StartEOD());
 	
@@ -166,8 +166,8 @@ def TradeHandler() {
 	
 	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
-	trdExp = 'select * from TradeSignal.win:length(10)'+
-	'.std:unique(price_timestamp) group by symbol'
+	trdExp = 'select * from TradeSignal'
+	//'.std:unique(price_timestamp) group by symbol'
 	u.registerEventListener(trdExp, new LongPosition())
 	//u.registerEventListener('select * from TradeSignal', new ShortPosition())
 	trdExp='select * from TradeSignal'
@@ -222,6 +222,7 @@ def TradeHandler() {
 //print "Contents of ema "+ema
 
 def debug() {
+	try {
 	Utility u = Utility.getInstance();
 	
 	
@@ -230,10 +231,15 @@ def debug() {
 	//str='select symbol,close, ((cast(close,float)-cast(prev(1,close),double))) as std '+
 	//'from EODQuote.win:length(20)'+
 	//' group by symbol '
-	str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
-	'EODQuote.win:length(390) group by symbol'
+	//str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
+	//'EODQuote.win:length(390) group by symbol'
+	str='select * from crossover'
 	
 	u.registerEventListener(str,new DummyListener());
+	}
+	catch(Throwable e){
+		e.printStackTrace();
+	}
 	
 }
 
@@ -262,8 +268,9 @@ new File("C:\\temp\\test.csv").delete();
 }
 
  
-//TradeHandler()
+
 loadModules()
-debug()
+TradeHandler()
+//debug()
 main()
 

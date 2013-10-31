@@ -18,11 +18,11 @@ public class ExitGenerator implements UpdateListener {
 				// TODO Auto-generated method stub
 			//log.info("EOD Received count="+(count++)+" "+arg0[0].getUnderlying().toString());
 		EODQuote q = (EODQuote)arg0[0].getUnderlying();
-		if ( q.getTimestamp() < Utility.getInstance().getCurrentTime() )
+		/*if ( q.getTimestamp() < Utility.getInstance().getCurrentTime() )
 		{
 			Utility.getInstance().info("Old event ignoring "+q.toString());
 			return;
-		}
+		}*/
 			pfm.generateExits(q);
 					
 		}

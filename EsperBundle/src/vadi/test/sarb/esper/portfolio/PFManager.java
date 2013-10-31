@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 import vadi.test.sarb.esper.db.DbUtil;
+import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.*;
 
 public class PFManager {
@@ -129,7 +130,12 @@ public class PFManager {
 				log.info("Cannot open, short cover reached");
 				return;
 			}
-			
+			if ( Utility.isSimMode() && Long.parseLong(sig.getPrice_timestamp()) <
+					Utility.getInstance().getCurrentTime())
+			{
+				log.info("add long old event "+sig.getPrice_timestamp());
+				return;
+			}
 			//double price = Double.parseDouble(sig.getHigh());
 			//buy on open +100 slippage
 			double price = Double.parseDouble(sig.getOpen());
@@ -193,6 +199,12 @@ public class PFManager {
 		//	double price = Double.parseDouble(sig.getLow());
 			double price = Double.parseDouble(sig.getOpen());
 			String symbol = sig.getSymbol();
+			if ( Utility.isSimMode() && Long.parseLong(sig.getPrice_timestamp()) <
+					Utility.getInstance().getCurrentTime())
+			{
+				log.info("close long old event "+sig.getPrice_timestamp());
+				return;
+			}
 			if (positions.containsKey(sig.getSymbol())) {
 				// log.info("@@Selling "+positions.get(evt.getSymbol())+" stocks");
 				log.info("@@Selling signal received " + cash + " " + price
@@ -263,6 +275,12 @@ public class PFManager {
 	public synchronized void openShortPosition(TradeSignal sig) {
 		try {
 			//double price = Double.parseDouble(sig.getLow());
+			if ( Utility.isSimMode() && Long.parseLong(sig.getPrice_timestamp()) <
+					Utility.getInstance().getCurrentTime())
+			{
+				log.info("add short old event "+sig.getPrice_timestamp());
+				return;
+			}
 			double price = Double.parseDouble(sig.getOpen());
 			String symbol = sig.getSymbol();
 			double close = Double.parseDouble(sig.getClose());
@@ -312,6 +330,12 @@ public class PFManager {
 			double price = Double.parseDouble(sig.getOpen());
 			String symbol = sig.getSymbol();
 
+			if ( Utility.isSimMode() && Long.parseLong(sig.getPrice_timestamp()) <
+					Utility.getInstance().getCurrentTime())
+			{
+				log.info("close short old event "+sig.getPrice_timestamp());
+				return;
+			}
 			if (short_positions.containsKey(sig.getSymbol())) {
 
 				long lp = short_positions.get(sig.getSymbol());
@@ -495,7 +519,11 @@ public class PFManager {
 			//log.info("no position for "+symbol);
 			return;
 		}
-		
+		if ( Utility.isSimMode() && eq.getTimestamp() < Utility.getInstance().getCurrentTime())
+		{
+			log.info("Old event ignore");
+			return;
+		}
 				
 		//String sql = "select sum(price*qty)/sum(qty) as cb,lors,symbol from position "+
 		String sql = "select sum(price*qty) as cb,lors,symbol,sum(qty) as tot from position "+

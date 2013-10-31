@@ -7,3 +7,5 @@ import vadi.test.sarb.esper.groovy.*;
 
 create variable integer si=10;
 create variable integer li=65;
+create variable integer lt=65;
+create variable integer numSym=1;
