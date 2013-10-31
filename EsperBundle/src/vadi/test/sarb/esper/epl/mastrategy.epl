@@ -1,7 +1,7 @@
 
 //insert into OrderStockQuotes
 //select * from EODQuote.win:length(1000) order by timestamp;
-
+/*
 @Name('volatility')
 insert into volatility
 //select symbol,close, stddev((cast(close,double)-cast(prev(li,close),double))/cast(prev(li,close),double))*100
@@ -21,7 +21,7 @@ group by symbol;
 insert into ecprice 
 select EMA(cp)   as cp,symbol,timestamp,close from cprice.win:length(li+2) 
 group by symbol;
-
+*/
 insert into emashort
 select EMA(cast(close,double)) as ema, 
 max(cast(high,double)) as mxhsi, min(cast(high,double)) as mnhsi,
@@ -44,7 +44,7 @@ group by symbol ;
 insert into slopestr
 select SLOPE(cast(close,double)) as slope, symbol,
 timestamp,close 
-from EODQuote.win:length(li*numSym)
+from EODQuote.win:length(si*numSym)
 group by symbol;
 //output every 10 events;
 
@@ -55,37 +55,45 @@ group by symbol;
 
 insert into crossover
 select 'BUY' as signal, es.ema,es.cl,q.timestamp as timestamp,
-q.close,q.symbol as symbol,high,low,el.ema,
+q.close,q.symbol as symbol,high,low,el.ema,sl.ema,
 Datetime.str(q.timestamp) as date
 from emalong.win:length(si*numSym) el, 
 emashort.win:length(si*numSym) es,
-EODQuote.win:length(si*numSym) q
+EODQuote.win:length(si*numSym) q,
+emaslope.win:length(si*numSym) sl
 where 
 el.symbol = q.symbol and
 q.symbol = es.symbol and
+sl.symbol = q.symbol and
 cast(q.close,double) > es.ema and
 es.ema > el.ema and
 el.ema > 0 and
 es.ema > 0 and
+sl.ema > 1.0 and
 el.timestamp = q.timestamp and
 es.timestamp = q.timestamp and
+sl.timestamp = q.timestamp and
 cast(prev(numSym,q.close),double) <= prev(1,es.ema)
 group by q.symbol ;
 
 insert into crossover
 select 'SELL' as signal, es.ema,es.cl,q.timestamp as timestamp,
-q.close,q.symbol as symbol,high,low,el.ema,
+q.close,q.symbol as symbol,high,low,el.ema,sl.ema,
 Datetime.str(el.timestamp) as date
 from emalong.win:length(si*numSym) el, 
 emashort.win:length(si*numSym) es,
-EODQuote.win:length(si*numSym) q
+EODQuote.win:length(si*numSym) q,
+emaslope.win:length(si*numSym) sl
 where 
 el.symbol = q.symbol and
 q.symbol = es.symbol and
+sl.symbol = q.symbol and
 cast(q.close,double) < es.ema and
+sl.ema < 1.0 and
 es.ema < el.ema and
 el.timestamp = q.timestamp and
 es.timestamp = q.timestamp and
+sl.timestamp = q.timestamp and
 cast(prev(numSym,q.close),double) >= prev(1,es.ema)
 group by q.symbol ;
 

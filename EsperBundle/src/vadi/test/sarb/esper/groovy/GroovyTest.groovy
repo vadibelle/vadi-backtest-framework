@@ -169,7 +169,7 @@ def TradeHandler() {
 	trdExp = 'select * from TradeSignal'
 	//'.std:unique(price_timestamp) group by symbol'
 	u.registerEventListener(trdExp, new LongPosition())
-	//u.registerEventListener('select * from TradeSignal', new ShortPosition())
+	u.registerEventListener(trdExp, new ShortPosition())
 	trdExp='select * from TradeSignal'
 	u.registerEventListener(trdExp, new TradeListener())
 	trdExp='select * from StopLoss'
