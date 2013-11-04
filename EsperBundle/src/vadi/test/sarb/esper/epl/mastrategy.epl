@@ -19,9 +19,15 @@ group by symbol;
 //EMA of momemntum or slope
 @Name('cprice')
 insert into ecprice 
-select EMA(cp)   as cp,symbol,timestamp,close from cprice.win:length(li+2) 
+select EMA(cp)   as ema,symbol,timestamp,close from cprice.win:length(li+2) 
 group by symbol;
 */
+
+insert into ddiff
+select (close-open) as dvol,symbol, timestamp 
+from EODQuote.win:length(si+1);
+
+
 insert into emashort
 select EMA(cast(close,double)) as ema, 
 max(cast(high,double)) as mxhsi, min(cast(high,double)) as mnhsi,
@@ -40,6 +46,7 @@ group by symbol ;
 
 //Crossover slope is not used don't know
 
+
 @Name('slope')
 insert into slopestr
 select SLOPE(cast(close,double)) as slope, symbol,
@@ -54,13 +61,14 @@ from slopestr.win:length(li*numSym)
 group by symbol;
 
 insert into crossover
-select 'BUY' as signal, es.ema,es.cl,q.timestamp as timestamp,
+select 'BUY' as signal, es.ema,q.timestamp as timestamp,
 q.close,q.symbol as symbol,high,low,el.ema,sl.ema,
 Datetime.str(q.timestamp) as date
 from emalong.win:length(si*numSym) el, 
 emashort.win:length(si*numSym) es,
 EODQuote.win:length(si*numSym) q,
-emaslope.win:length(si*numSym) sl
+//emaslope.win:length(si*numSym) sl
+ecprice.win:length(si*numSym) sl
 where 
 el.symbol = q.symbol and
 q.symbol = es.symbol and
@@ -69,7 +77,7 @@ cast(q.close,double) > es.ema and
 es.ema > el.ema and
 el.ema > 0 and
 es.ema > 0 and
-sl.ema > 1.0 and
+sl.ema > 1.05 and
 el.timestamp = q.timestamp and
 es.timestamp = q.timestamp and
 sl.timestamp = q.timestamp and
@@ -77,19 +85,20 @@ cast(prev(numSym,q.close),double) <= prev(1,es.ema)
 group by q.symbol ;
 
 insert into crossover
-select 'SELL' as signal, es.ema,es.cl,q.timestamp as timestamp,
+select 'SELL' as signal, es.ema,q.timestamp as timestamp,
 q.close,q.symbol as symbol,high,low,el.ema,sl.ema,
 Datetime.str(el.timestamp) as date
 from emalong.win:length(si*numSym) el, 
 emashort.win:length(si*numSym) es,
 EODQuote.win:length(si*numSym) q,
-emaslope.win:length(si*numSym) sl
+//emaslope.win:length(si*numSym) sl
+ecprice.win:length(si*numSym) sl
 where 
 el.symbol = q.symbol and
 q.symbol = es.symbol and
 sl.symbol = q.symbol and
 cast(q.close,double) < es.ema and
-sl.ema < 1.0 and
+sl.ema < 0.95 and
 es.ema < el.ema and
 el.timestamp = q.timestamp and
 es.timestamp = q.timestamp and

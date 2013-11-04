@@ -233,7 +233,7 @@ def debug() {
 	//' group by symbol '
 	//str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
 	//'EODQuote.win:length(390) group by symbol'
-	str='select * from crossover'
+	str='select * from ddiff'
 	
 	u.registerEventListener(str,new DummyListener());
 	}
