@@ -1,2 +1,39 @@
+insert into avgq
+select  avg(diff(close,open)) as q , timestamp,symbol,close
+from EODQuote.win:length(numSym*si) 
+group by symbol;
 
+insert into avgQ
+select  avg(q) as Q ,symbol,timestamp,close
+from avgq.win:length(numSym*si)
+group by symbol;
+
+insert into qstick
+select 'sell' as signal , q,Q,aq.symbol as symbol,aq.timestamp as timestamp,aq.close as close
+from avgq.win:length(numSym*si) aq, avgQ.win:length(numSym*si) aQ
+where q < Q and 
+prev(numSym,q) > Q and
+aq.symbol = aQ.symbol and
+aq.timestamp = aQ.timestamp and
+aq.q < 0 
+group by aq.symbol;
+
+insert into qstick
+select 'buy' as signal , q,Q,aq.symbol as symbol,aq.timestamp as timestamp,aq.close as close
+from avgq.win:length(numSym*si) aq, avgQ.win:length(numSym*si) aQ
+where q > Q and 
+prev(numSym,q) < Q and
+aq.symbol = aQ.symbol and
+aq.timestamp = aQ.timestamp and
+aq.q > 0 
+group by aq.symbol;
+
+
+insert into TradeSignal(symbol,open,high,low,close,type,indicator,price_timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,signal,'qstick',cast(q.timestamp,string)
+from 
+EODQuote.win:length(si*numSym) q , qstick.win:length(numSym) cross
+where
+cross.timestamp=prev(numSym,q.timestamp) and
+cross.symbol=q.symbol ;
 

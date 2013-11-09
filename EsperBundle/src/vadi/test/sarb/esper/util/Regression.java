@@ -2,9 +2,6 @@ package vadi.test.sarb.esper.util;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import com.espertech.esper.client.hook.AggregationFunctionFactory;
@@ -83,18 +80,21 @@ public class Regression  implements AggregationFunctionFactory,com.espertech.esp
 	}
 
 	
+	@Override
 	public AggregationMethod newAggregator() {
 		// TODO Auto-generated method stub
 		return new Regression();
 	}
 
 	
+	@Override
 	public void setFunctionName(String arg0) {
 		// TODO Auto-generated method stub
 		name = arg0;
 		
 	}
 
+	@Override
 	public void validate(AggregationValidationContext arg0) {
 		if ((arg0.getParameterTypes().length != 1) ||
 			    (arg0.getParameterTypes()[0] != Double.class)) {

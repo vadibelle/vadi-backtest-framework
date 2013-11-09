@@ -4,7 +4,6 @@ import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.HeadlessException;
-import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JPanel;
@@ -39,9 +38,11 @@ public class LineChart extends JFrame {
 	public void setChartType(String chartType) {
 		this.chartType = chartType;
 	}
+	@Override
 	public String getTitle() {
 		return title;
 	}
+	@Override
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -188,7 +189,8 @@ public class LineChart extends JFrame {
         this.setVisible(true);
              
         this.addWindowListener(new java.awt.event.WindowAdapter(){
-            public void windowClosing(java.awt.event.WindowEvent e){
+            @Override
+			public void windowClosing(java.awt.event.WindowEvent e){
                         System.exit(0);
                 }});
 

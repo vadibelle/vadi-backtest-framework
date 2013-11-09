@@ -14,12 +14,9 @@ import vadi.test.sarb.esper.DownloadTask;
 import vadi.test.sarb.esper.Messages;
 import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.EODQuote;
-import vadi.test.sarb.event.Event;
 import vadi.test.sarb.event.LastEOD;
 import vadi.test.sarb.event.OptionPrice;
 import vadi.test.sarb.event.StartEODQuote;
-import vadi.test.sarb.event.StockQuote;
-
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
 
@@ -40,7 +37,8 @@ public class StartEOD implements UpdateListener,Serializable {
 		queue = new LinkedBlockingQueue<Future<String>>();
 	}
 
-	 public void update(EventBean[] newEvents, EventBean[] oldEvents) {
+	 @Override
+	public void update(EventBean[] newEvents, EventBean[] oldEvents) {
 
 		// TODO Auto-generated method stub
 		 if (newEvents == null || newEvents.length == 0)
@@ -79,6 +77,7 @@ public class StartEOD implements UpdateListener,Serializable {
 		}
 
 
+		@Override
 		public void run()
 		{
 			try {
@@ -117,6 +116,7 @@ public class StartEOD implements UpdateListener,Serializable {
 			this.data = ft;
 		}
 		
+		@Override
 		public void run() {
 			// TODO Auto-generated method stub
 		//	Future<String> ft;

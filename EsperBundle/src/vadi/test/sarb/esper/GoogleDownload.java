@@ -3,7 +3,6 @@ package vadi.test.sarb.esper;
 
 import java.awt.FlowLayout;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

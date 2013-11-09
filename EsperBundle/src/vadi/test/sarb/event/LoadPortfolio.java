@@ -1,7 +1,5 @@
 package vadi.test.sarb.event;
 
-import java.io.Serializable;
-
 public class LoadPortfolio extends Event {
 	public double cash = 0;
 

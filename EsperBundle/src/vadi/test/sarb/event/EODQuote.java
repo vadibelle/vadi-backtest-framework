@@ -44,7 +44,8 @@ public EODQuote(String symbol, String open, String high, String low,
 	this.close = close;
 	this.volume = volume;
 	this.timestamp = time;
-	if (Utility.getInstance().isSimMode() ) {
+	Utility.getInstance();
+	if (Utility.isSimMode() ) {
 	CurrentTimeEvent timeEvent = new CurrentTimeEvent(time);
 	Utility.getInstance().getEpService().getEPRuntime().sendEvent(timeEvent);
 	}

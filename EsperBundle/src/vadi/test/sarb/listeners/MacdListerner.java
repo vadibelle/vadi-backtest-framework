@@ -54,6 +54,7 @@ public class MacdListerner implements UpdateListener {
 	}
 
 	
+	@Override
 	public void update(EventBean[] arg0,EventBean[] arg1) {
 		// TODO Auto-generated method stub
 		//log.info("Macd "+arg0.length);

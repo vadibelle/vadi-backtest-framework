@@ -3,7 +3,6 @@ package vadi.test.sarb.esper.util;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.HeadlessException;
-import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JPanel;

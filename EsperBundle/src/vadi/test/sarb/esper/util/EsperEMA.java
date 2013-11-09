@@ -1,13 +1,8 @@
 package vadi.test.sarb.esper.util;
 
-import groovy.util.logging.Log;
-
 import java.util.logging.Level;
 
 import com.espertech.esper.epl.agg.aggregator.AggregationMethod;
-import com.espertech.esper.epl.agg.service.AggregationSupport;
-import com.espertech.esper.epl.agg.service.AggregationValidationContext;
-import com.espertech.esper.client.hook.AggregationFunctionFactory;
 public class EsperEMA implements AggregationMethod {
 	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
 	
@@ -16,6 +11,7 @@ public class EsperEMA implements AggregationMethod {
 	private int max = 0;
 	private boolean start = false;
 	private  Level level = Level.OFF;
+	@Override
 	public void clear() {
 		log.log(level,"Clear called");
 		counter=0;
@@ -30,6 +26,7 @@ public class EsperEMA implements AggregationMethod {
 		max=0;
 		log.setLevel(level);
 	}
+	@Override
 	public synchronized void enter(Object arg0) {
 		// TODO Auto-generated method stub
 		//log.log(level,"entering "+arg0.toString());
@@ -53,7 +50,7 @@ public class EsperEMA implements AggregationMethod {
 		sz++;
 		log.log(level,"size is "+sz);
 		float ef = (float)2/sz;
-		float f = (float)( 1 - ef);
+		float f = 1 - ef;
 		log.log(level,"ema before "+ema+" "+ef*d);
 		log.log(level,"ema factor "+f*ema);
 		ema = ef*d+f*ema;

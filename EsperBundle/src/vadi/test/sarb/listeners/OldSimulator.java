@@ -2,11 +2,8 @@ package vadi.test.sarb.listeners;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicLong;
-
 import javax.swing.JLabel;
 
 import com.espertech.esper.client.EventBean;
@@ -66,6 +63,7 @@ public class OldSimulator implements UpdateListener {
 
 	}
 
+	@Override
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		// TODO Auto-generated method stub
 
@@ -144,6 +142,7 @@ public class OldSimulator implements UpdateListener {
 			log.info("@@Setting " + indicator + " indicator");
 		}
 
+		@Override
 		public void update(EventBean[] arg0, EventBean[] arg1) {
 			// TODO Auto-generated method stub
 			/*if ( done )

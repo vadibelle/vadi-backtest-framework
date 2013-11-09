@@ -30,6 +30,7 @@ public class StartEODQuote extends Event implements Serializable, EventHandler{
 	}
 
 
+	@Override
 	public void handle(ConcurrentHashMap<String,Object> state) {
 		// TODO Auto-generated method stub
 		

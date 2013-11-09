@@ -19,6 +19,7 @@ public class DummyListener implements UpdateListener {
 		e.printStackTrace();
 	}
 	}
+	@Override
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		// TODO Auto-generated method stub
 		try {

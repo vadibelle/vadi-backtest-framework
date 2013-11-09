@@ -1,6 +1,5 @@
 package vadi.test.sarb.esper.util;
 
-import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPException;
 import com.espertech.esper.client.EPServiceDestroyedException;
 import com.espertech.esper.client.time.CurrentTimeEvent;

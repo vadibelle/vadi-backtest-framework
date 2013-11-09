@@ -5,20 +5,9 @@ package vadi.test.sarb.esper;
 import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.StartEODQuote;
 import vadi.test.sarb.event.StatArb;
-import vadi.test.sarb.event.StockQuote;
-import vadi.test.sarb.listeners.EODHandler;
-import vadi.test.sarb.listeners.MacdListerner;
-import vadi.test.sarb.listeners.MyListener;
 import vadi.test.sarb.listeners.StartEOD;
 import vadi.test.sarb.listeners.StatArbHandler;
 import vadi.test.sarb.listeners.OldSimulator;
-
-
-import com.espertech.esper.client.Configuration;
-import com.espertech.esper.client.EPRuntime;
-import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EPServiceProviderManager;
-import com.espertech.esper.client.EPStatement;
 
 /**
  * Hello world!
@@ -40,7 +29,8 @@ public class App {
     	
     	Utility.getInstance().info("Feeding events");
     	String sb = "select * from StartEODQuote";
-    	Utility.getInstance().registerEventListener(sb, new StartEOD());
+    	Utility.getInstance();
+		Utility.registerEventListener(sb, new StartEOD());
     	StartEODQuote evt = new StartEODQuote("SSO"); //$NON-NLS-1$
     	evt.enqueue();
     	evt = new StartEODQuote("GLD");
@@ -48,7 +38,8 @@ public class App {
     	
     	
     	sb = "select * from StatArb";
-    	Utility.getInstance().registerEventListener(sb, new StatArbHandler());
+    	Utility.getInstance();
+		Utility.registerEventListener(sb, new StatArbHandler());
     	
     	StatArb evt1 = new StatArb("CSCO","MSFT");
     	//evt1.enqueue();
@@ -64,7 +55,8 @@ public class App {
     	
     	sb = "select * from TradeSignal";
     	
-    	Utility.getInstance().registerEventListener(sb, new OldSimulator());
+    	Utility.getInstance();
+		Utility.registerEventListener(sb, new OldSimulator());
         	System.out.println("One batch sent"); //$NON-NLS-1$
   
         	System.out.println(Runtime.getRuntime().totalMemory()/1024);

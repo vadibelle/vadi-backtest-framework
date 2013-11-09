@@ -11,11 +11,13 @@ public class EMAFactory implements AggregationFunctionFactory{
 	private  Level level = Level.FINEST;
 	private  String fName = "";
 	
+	@Override
 	public Class getValueType() {
 		// TODO Auto-generated method stub
 		return Double.class;
 	}
 
+	@Override
 	public AggregationMethod newAggregator() {
 		// TODO Auto-generated method stub
 	log.log(level,"Creating EsperEMA");
@@ -23,12 +25,14 @@ public class EMAFactory implements AggregationFunctionFactory{
 	}
 
 
+	@Override
 	public void setFunctionName(String arg0) {
 		// TODO Auto-generated method stub
 		fName = arg0;
 		
 	}
 
+	@Override
 	public void validate(AggregationValidationContext arg0) {
 		// TODO Auto-generated method stub
 		log.log(level,"validated");

@@ -31,6 +31,7 @@ public class EODMACDCalculator implements Callable<HashMap> {
 	}
 	
 	
+	@Override
 	public HashMap call() throws Exception {
 		MInteger outBegIdx = new MInteger();
 		     MInteger outNbElement = new MInteger();

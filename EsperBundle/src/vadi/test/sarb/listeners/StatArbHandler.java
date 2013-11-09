@@ -75,6 +75,7 @@ public class StatArbHandler implements UpdateListener {
 	    	GoogleDownload.getContainer().pack();
 		}
 	
+		@Override
 		public void update(EventBean[] newEvents, EventBean[] oldEvents) {
 		// TODO Auto-generated method stub
 		if ( newEvents == null || newEvents.length == 0)
@@ -145,6 +146,7 @@ public class StatArbHandler implements UpdateListener {
 		 */
 		private static final long serialVersionUID = 1L;
 
+		@Override
 		public void update(EventBean[] newEvents,EventBean[] oldEvents) {
 			
 			try {

@@ -3,7 +3,6 @@ package vadi.test.sarb.esper.util;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -19,16 +18,12 @@ import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.UpdateListener;
-import com.espertech.esper.client.deploy.DeploymentException;
 import com.espertech.esper.client.deploy.DeploymentOptions;
 import com.espertech.esper.client.deploy.EPDeploymentAdmin;
 import com.espertech.esper.client.deploy.Module;
 import com.espertech.esper.client.deploy.ParseException;
-import com.espertech.esper.client.time.CurrentTimeEvent;
-
 import vadi.test.sarb.esper.db.DbUtil;
 import vadi.test.sarb.listeners.DummyListener;
-import vadi.test.sarb.listeners.MyListener;
 
 public class Utility {
 
@@ -212,6 +207,7 @@ public static void createStmt(String eventExpr){
 		
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static void addEPLFunction(String name, String cls){
 		getInstance().getEpService().getEPAdministrator().getConfiguration()
 		.addPlugInAggregationFunction(name, cls);

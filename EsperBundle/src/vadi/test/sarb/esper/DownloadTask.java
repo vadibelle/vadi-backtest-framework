@@ -2,7 +2,6 @@ package vadi.test.sarb.esper;
 
 import java.util.concurrent.Callable;
 
-import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -31,6 +30,7 @@ public class DownloadTask implements Callable<String> {
 	String url;
 	
 	
+	@Override
 	public String call() throws Exception {
 		// TODO Auto-generated method stub
 		 HttpClient httpclient = new DefaultHttpClient();

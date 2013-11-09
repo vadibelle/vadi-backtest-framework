@@ -1,8 +1,5 @@
 package vadi.test.sarb.listeners;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-
 import vadi.test.sarb.esper.portfolio.PFManager;
 import vadi.test.sarb.event.TradeSignal;
 

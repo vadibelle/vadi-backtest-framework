@@ -9,7 +9,7 @@ select symbol,close, avg(cast(close,float)) as std, prev(li,close)
  as vol,Datetime.str(timestamp) as date from EODQuote.win:length(li+1)
   group by symbol;
 
-
+*/
 insert into cprice
 select cast(close,double)/cast(prev(li,close),double) as cp,symbol,
 timestamp,close,prev(1,close)
@@ -21,11 +21,12 @@ group by symbol;
 insert into ecprice 
 select EMA(cp)   as ema,symbol,timestamp,close from cprice.win:length(li+2) 
 group by symbol;
-*/
 
-insert into ddiff
-select (close-open) as dvol,symbol, timestamp 
-from EODQuote.win:length(si+1);
+
+insert into bupnumber
+select BUP(close,open) as bup,symbol,close ,timestamp 
+from EODQuote.win:length(si+1) 
+group by symbol;
 
 
 insert into emashort
@@ -62,13 +63,14 @@ group by symbol;
 
 insert into crossover
 select 'BUY' as signal, es.ema,q.timestamp as timestamp,
-q.close,q.symbol as symbol,high,low,el.ema,sl.ema,
+q.close,q.symbol as symbol,high,low,el.ema,sl.bup,
 Datetime.str(q.timestamp) as date
 from emalong.win:length(si*numSym) el, 
 emashort.win:length(si*numSym) es,
 EODQuote.win:length(si*numSym) q,
 //emaslope.win:length(si*numSym) sl
-ecprice.win:length(si*numSym) sl
+//ecprice.win:length(si*numSym) sl
+bupnumber.win:length(si*numSym) sl
 where 
 el.symbol = q.symbol and
 q.symbol = es.symbol and
@@ -77,33 +79,36 @@ cast(q.close,double) > es.ema and
 es.ema > el.ema and
 el.ema > 0 and
 es.ema > 0 and
-sl.ema > 1.05 and
+sl.bup > 0.7 and
 el.timestamp = q.timestamp and
 es.timestamp = q.timestamp and
 sl.timestamp = q.timestamp and
-cast(prev(numSym,q.close),double) <= prev(1,es.ema)
+cast(prev(numSym,q.close),double) <= prev(numSym,es.ema) and
+prev(numSym,sl.bup) < 0.7
 group by q.symbol ;
 
 insert into crossover
 select 'SELL' as signal, es.ema,q.timestamp as timestamp,
-q.close,q.symbol as symbol,high,low,el.ema,sl.ema,
+q.close,q.symbol as symbol,high,low,el.ema,sl.bup,
 Datetime.str(el.timestamp) as date
 from emalong.win:length(si*numSym) el, 
 emashort.win:length(si*numSym) es,
 EODQuote.win:length(si*numSym) q,
 //emaslope.win:length(si*numSym) sl
-ecprice.win:length(si*numSym) sl
+//ecprice.win:length(si*numSym) sl
+bupnumber.win:length(si*numSym) sl
 where 
 el.symbol = q.symbol and
 q.symbol = es.symbol and
 sl.symbol = q.symbol and
 cast(q.close,double) < es.ema and
-sl.ema < 0.95 and
+sl.bup < 0.55 and
+sl.bup > 0 and
 es.ema < el.ema and
 el.timestamp = q.timestamp and
 es.timestamp = q.timestamp and
 sl.timestamp = q.timestamp and
-cast(prev(numSym,q.close),double) >= prev(1,es.ema)
+cast(prev(numSym,q.close),double) >= prev(numSym,es.ema)
 group by q.symbol ;
 
 /*

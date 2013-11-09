@@ -1,7 +1,6 @@
 package vadi.test.sarb.listeners;
 
 import vadi.test.sarb.esper.portfolio.PFManager;
-import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.EODQuote;
 
 import com.espertech.esper.client.EventBean;

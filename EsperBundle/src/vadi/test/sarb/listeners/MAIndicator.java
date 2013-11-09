@@ -1,14 +1,10 @@
 package vadi.test.sarb.listeners;
 
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
-
 import vadi.test.sarb.event.EODQuote;
-import vadi.test.sarb.event.HighLow;
 import vadi.test.sarb.event.TradeSignal;
 
 import com.espertech.esper.client.EventBean;
-import com.espertech.esper.client.PropertyAccessException;
 import com.espertech.esper.client.UpdateListener;
 
 public class MAIndicator implements UpdateListener {

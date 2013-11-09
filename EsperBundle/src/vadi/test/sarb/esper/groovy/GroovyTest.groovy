@@ -143,14 +143,31 @@ class StopSignal implements UpdateListener {
 
 
 def loadModules() {
+	try {
 	Utility u = Utility.getInstance();
 	u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 	u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
-	u.deployModule(vadi.test.sarb.esper.Messages.getString("init.epl"))
-	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
-//	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
+	u.addEPLFactory("BUP", "vadi.test.sarb.esper.data.BupCalculator")
+	
+	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("toDouble",
+		"vadi.test.sarb.esper.util.SingleRowFunction", "toDouble");
+	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("diff",
+		"vadi.test.sarb.esper.util.SingleRowFunction", "diff");
 	sb = "select * from StartEODQuote";
+	
+	
+	u.deployModule(vadi.test.sarb.esper.Messages.getString("init.epl"))
+//	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
+	u.deployModule(vadi.test.sarb.esper.Messages.getString("qstick.epl"))
+//	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
+	
+	
 	u.registerEventListener(sb, new StartEOD());
+	}
+	catch(Throwable e){
+		e.printStackTrace();
+	}
+	
 	
 }
 
@@ -169,7 +186,7 @@ def TradeHandler() {
 	trdExp = 'select * from TradeSignal'
 	//'.std:unique(price_timestamp) group by symbol'
 	u.registerEventListener(trdExp, new LongPosition())
-	u.registerEventListener(trdExp, new ShortPosition())
+	//u.registerEventListener(trdExp, new ShortPosition())
 	trdExp='select * from TradeSignal'
 	u.registerEventListener(trdExp, new TradeListener())
 	trdExp='select * from StopLoss'
@@ -182,7 +199,7 @@ def TradeHandler() {
 	
 	u.registerEventListener("select * from EODQuote",new EODHandler());
 	u.registerEventListener("select * from EODQuote",new ExitGenerator());
-
+ 
 //Utility.addEPLFunction("EMA","vadi.test.sarb.esper.util.EsperEMA")
 //u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 //u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
@@ -233,9 +250,9 @@ def debug() {
 	//' group by symbol '
 	//str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
 	//'EODQuote.win:length(390) group by symbol'
-	str='select * from ddiff'
+	str='select * from qstick'
 	
-	u.registerEventListener(str,new DummyListener());
+	u.registerEventListener(str,new GenericListener());
 	}
 	catch(Throwable e){
 		e.printStackTrace();

@@ -2,9 +2,6 @@ package vadi.test.sarb.event;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 import vadi.test.sarb.esper.data.OHLCAverage;
 import vadi.test.sarb.esper.util.LineChart;
 import vadi.test.sarb.esper.util.Utility;
@@ -36,7 +33,8 @@ public class LastEOD extends Event implements EventHandler {
     }
 	
     
-    public void handle(ConcurrentHashMap<String,Object> state) {
+    @Override
+	public void handle(ConcurrentHashMap<String,Object> state) {
 		// TODO Auto-generated method stubt
     	Utility log = Utility.getInstance();
     	log.info("####LastEOD received ###"+this.getSymbol());
@@ -75,6 +73,7 @@ public class LastEOD extends Event implements EventHandler {
 			result = hm;
 		}
 		
+		@Override
 		public void run() {
 			// TODO Auto-generated method stub
 			//LineChart chart = new  LineChart();

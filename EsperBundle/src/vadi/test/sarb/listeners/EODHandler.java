@@ -15,6 +15,7 @@ public class EODHandler implements UpdateListener  {
 	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
 	volatile int count=0;
 	PFManager pfm = PFManager.getInstance();
+	@Override
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		// TODO Auto-generated method stub
 		//log.info("EOD Received count="+(count++)+" "+arg0[0].getUnderlying().toString());

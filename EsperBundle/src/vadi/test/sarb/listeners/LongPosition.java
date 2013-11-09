@@ -1,11 +1,7 @@
 package vadi.test.sarb.listeners;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.logging.Logger;
-
 import vadi.test.sarb.esper.portfolio.PFManager;
-import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.TradeSignal;
 
 import com.espertech.esper.client.EventBean;
@@ -29,6 +25,7 @@ public class LongPosition implements UpdateListener,Serializable  {
 	}
 
 	
+	@Override
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		// TODO Auto-generated method stub
 		try {

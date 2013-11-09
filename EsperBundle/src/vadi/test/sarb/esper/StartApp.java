@@ -15,12 +15,13 @@ public class StartApp implements BundleActivator {
 		
 	}
 
+	@Override
 	public void start(BundleContext arg0) throws Exception {
 			// TODO Auto-generated method stub
 		try {
 		//String [] args = {};
 		//vadi.test.sarb.esper.App.main(args);
-			myApp.feedEvents();
+			App.feedEvents();
 		
 		}
 		catch (Throwable e)
@@ -30,6 +31,7 @@ public class StartApp implements BundleActivator {
 		
 	}
 
+	@Override
 	public void stop(BundleContext arg0) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("Ending Esperdemo");

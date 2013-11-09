@@ -4,8 +4,9 @@ import vadi.test.sarb.event.*;
 import java.sql.Date;
  
 import vadi.test.sarb.esper.groovy.*;
+import vadi.test.sarb.esper.util.*;
 
-create variable integer si=50;
+create variable integer si=15;
 create variable integer li=150;
 create variable integer lt=65;
 create variable integer numSym=1;
