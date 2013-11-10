@@ -153,14 +153,18 @@ def loadModules() {
 		"vadi.test.sarb.esper.util.SingleRowFunction", "toDouble");
 	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("diff",
 		"vadi.test.sarb.esper.util.SingleRowFunction", "diff");
+	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("pnl",
+		"vadi.test.sarb.esper.util.SingleRowFunction", "pnl");
 	sb = "select * from StartEODQuote";
 	
 	
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("init.epl"))
-//	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
+
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("qstick.epl"))
 //	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
 	
+	u.deployModule(vadi.test.sarb.esper.Messages.getString("volatility.epl"))
+	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
 	
 	u.registerEventListener(sb, new StartEOD());
 	}
@@ -250,7 +254,7 @@ def debug() {
 	//' group by symbol '
 	//str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
 	//'EODQuote.win:length(390) group by symbol'
-	str='select * from qstick'
+	str='select * from volatility'
 	
 	u.registerEventListener(str,new GenericListener());
 	}
@@ -287,7 +291,7 @@ new File("C:\\temp\\test.csv").delete();
  
 
 loadModules()
-TradeHandler()
-//debug()
+///TradeHandler()
+debug()
 main()
 

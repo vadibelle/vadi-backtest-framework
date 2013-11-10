@@ -1,0 +1,3 @@
+insert into volatility
+select stddev(pnl(close,prev(numSym,close))) as vol, symbol, timestamp,close
+from EODQuote.win:length(numSym+1)

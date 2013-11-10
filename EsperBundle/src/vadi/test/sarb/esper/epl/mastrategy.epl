@@ -1,15 +1,3 @@
-
-//insert into OrderStockQuotes
-//select * from EODQuote.win:length(1000) order by timestamp;
-/*
-@Name('volatility')
-insert into volatility
-//select symbol,close, stddev((cast(close,double)-cast(prev(li,close),double))/cast(prev(li,close),double))*100
-select symbol,close, avg(cast(close,float)) as std, prev(li,close)
- as vol,Datetime.str(timestamp) as date from EODQuote.win:length(li+1)
-  group by symbol;
-
-*/
 insert into cprice
 select cast(close,double)/cast(prev(li,close),double) as cp,symbol,
 timestamp,close,prev(1,close)

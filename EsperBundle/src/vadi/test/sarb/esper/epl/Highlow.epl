@@ -1,8 +1,10 @@
 
 
 insert into highlowavg
-select EMA(cast(q.high,double)) as ahp ,EMA(cast(q.low,double)) as alp,
-EMA(cast(q.close,double)) as acl ,q.symbol as symbol, q.timestamp as timestamp 
+//select EMA(cast(q.high,double)) as ahp ,EMA(cast(q.low,double)) as alp,
+select max(cast(q.high,double)) as ahp ,max(cast(q.low,double)) as alp,
+//EMA(cast(q.close,double)) as acl ,q.symbol as symbol, q.timestamp as timestamp 
+max(cast(q.close,double)) as acl ,q.symbol as symbol, q.timestamp as timestamp
 from EODQuote.win:length(lt+2) q group by symbol;
 
 insert into highlow
