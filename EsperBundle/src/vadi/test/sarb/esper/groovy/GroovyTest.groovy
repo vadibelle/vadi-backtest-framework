@@ -142,12 +142,32 @@ class StopSignal implements UpdateListener {
 	}
 
 
+class StopSystem implements UpdateListener {
+	
+		public void update(EventBean[] arg0, EventBean[] arg1) {
+			try{
+			// TODO Auto-generated method stub
+			//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
+			println "Signal "+arg0[0].getUnderlying();
+			println "Shutting down"
+			System.exit(0);
+			
+			}
+		catch(e){
+				e.printStackTrace();
+			}
+				
+		}
+	}
+
+
+
 def loadModules() {
 	try {
 	Utility u = Utility.getInstance();
 	u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 	u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
-	u.addEPLFactory("BUP", "vadi.test.sarb.esper.data.BupCalculator")
+	u.addEPLFactory("BUP", "vadi.test.sarb.esper.data.UpIndicator")
 	
 	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("toDouble",
 		"vadi.test.sarb.esper.util.SingleRowFunction", "toDouble");
@@ -160,11 +180,11 @@ def loadModules() {
 	
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("init.epl"))
 
-	u.deployModule(vadi.test.sarb.esper.Messages.getString("qstick.epl"))
-//	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
+//	u.deployModule(vadi.test.sarb.esper.Messages.getString("qstick.epl"))
+	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
 	
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("volatility.epl"))
-	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
+	//u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
 	
 	u.registerEventListener(sb, new StartEOD());
 	}
@@ -185,7 +205,7 @@ def TradeHandler() {
 	//u.registerEventListener('select * from emalong',new GenericListener())
 	//su.registerEventListener('select * from emashort',new GenericListener())
 	
-	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
+//	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
 	trdExp = 'select * from TradeSignal'
 	//'.std:unique(price_timestamp) group by symbol'
@@ -193,16 +213,18 @@ def TradeHandler() {
 	//u.registerEventListener(trdExp, new ShortPosition())
 	trdExp='select * from TradeSignal'
 	u.registerEventListener(trdExp, new TradeListener())
-	trdExp='select * from StopLoss'
+	//trdExp='select * from StopLoss'
 	u.registerEventListener(trdExp, new TradeListener());
-
 	
+	def lastSig = 'select * from LastEOD'
+	u.registerEventListener(lastSig, new StopSystem());
+		
 	//u.addModuleListener("crossover_b", new GenericListener())
 	//u.addModuleListener("crossover_s", new GenericListener())
 	
 	
 	u.registerEventListener("select * from EODQuote",new EODHandler());
-	u.registerEventListener("select * from EODQuote",new ExitGenerator());
+	//u.registerEventListener("select * from EODQuote",new ExitGenerator());
  
 //Utility.addEPLFunction("EMA","vadi.test.sarb.esper.util.EsperEMA")
 //u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
@@ -254,7 +276,7 @@ def debug() {
 	//' group by symbol '
 	//str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
 	//'EODQuote.win:length(390) group by symbol'
-	str='select * from volatility'
+	str='select * from highlowavg'
 	
 	u.registerEventListener(str,new GenericListener());
 	}
@@ -291,7 +313,7 @@ new File("C:\\temp\\test.csv").delete();
  
 
 loadModules()
-///TradeHandler()
-debug()
+TradeHandler()
+//debug()
 main()
 

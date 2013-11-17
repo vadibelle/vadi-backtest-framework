@@ -1,21 +1,26 @@
 
-
 insert into highlowavg
-//select EMA(cast(q.high,double)) as ahp ,EMA(cast(q.low,double)) as alp,
-select max(cast(q.high,double)) as ahp ,max(cast(q.low,double)) as alp,
-//EMA(cast(q.close,double)) as acl ,q.symbol as symbol, q.timestamp as timestamp 
-max(cast(q.close,double)) as acl ,q.symbol as symbol, q.timestamp as timestamp
-from EODQuote.win:length(lt+2) q group by symbol;
+select EMA(cast(q.high,double)) as mxH ,EMA(cast(q.low,double)) as mxL,
+//select max(cast(q.high,double)) as mxH ,max(cast(q.low,double)) as mxL,
+EMA(cast(q.close,double)) as mxC ,q.symbol as symbol, q.timestamp as timestamp ,
+//max(cast(q.close,double)) as mxC ,q.symbol as symbol, q.timestamp as timestamp,
+EMA(cast(q.high,double)) as mnH , EMA(cast(q.low,double)) as mnL,
+//min(cast(q.high,double)) as mnH , min(cast(q.low,double)) as mnL,
+EMA(cast(q.close,double)) as mnC 
+//min(cast(q.close,double)) as mnC 
+from EODQuote.win:length(st) q group by symbol;
 
 insert into highlow
 select q.symbol as symbol,q.open as open,q.high as high,q.low as low,q.close as close,"BUY" as signal,
 "HIGH_LOW" as indicator,q.timestamp as timestamp
- from EODQuote.win:length(lt+5) q , highlowavg.win:length(5) hl
+ from EODQuote.win:length(5) q , highlowavg.win:length(5) hl
   where
-cast(q.high,double)>  1.1*hl.ahp and
-cast(prev(1,q.high),double) <1.1* hl.ahp and 
-cast(q.low,double) > hl.alp and
-//cast(prev(1,q.low),double) < hl.alp and
+//cast(q.high,double)>  hl.mxH and
+//cast(prev(1,q.high),double) <1.05* hl.mxH and
+cast(q.close,double) >  1.05*hl.mxH and
+cast(prev(1,q.close),double) <=  1.05*hl.mxH and
+//cast(q.low,double) > hl.mxL and
+//cast(prev(1,q.low),double) < hl.mxL and
 //prev(1,q.close) = prev(1,q.high) and
 q.timestamp=hl.timestamp and
 q.symbol=hl.symbol ;
@@ -25,12 +30,14 @@ q.symbol=hl.symbol ;
 insert into highlow
 select q.symbol as symbol,q.open as open,q.high as high,q.low as low,q.close as close,"SELL" as signal,
 "HIGH_LOW" as indicator,q.timestamp as timestamp
- from EODQuote.win:length(lt+5) q , highlowavg.win:length(5) hl 
+ from EODQuote.win:length(5) q , highlowavg.win:length(5) hl 
  where
-cast(q.high,double)<  hl.ahp and
-//cast(prev(1,q.high),double)  > hl.ahp and 
-cast(q.low,double) < 0.9* hl.alp and
-cast(prev(1,q.low),double) > 0.90 *hl.alp and
+cast(q.high,double)<  hl.mxH and
+//cast(prev(1,q.high),double)  > hl.mxH and 
+//cast(q.low,double) < 0.95* hl.mxL and
+//cast(prev(1,q.low),double) > 0.90 *hl.mnL and
+cast(q.close,double) < 0.95*hl.mnL and
+cast(prev(1,q.close),double) >= 0.95*hl.mnL and
 //prev(1,q.close) = prev(1,q.high) and
 q.timestamp=hl.timestamp and
 q.symbol=hl.symbol ;//and
@@ -44,7 +51,7 @@ StopLoss;
 
 insert into TradeSignal(symbol,open,high,low,close,type,indicator,price_timestamp)
 select q.symbol,q.open,q.high,q.low,q.close,signal,indicator,cast(q.timestamp,string)
- from EODQuote.win:length(5) q , highlow.win:length(1) hl where
+ from EODQuote.win:length(5) q , highlow.win:length(5) hl where
  hl.symbol=q.symbol and
  prev(1,q.timestamp) = hl.timestamp;
  

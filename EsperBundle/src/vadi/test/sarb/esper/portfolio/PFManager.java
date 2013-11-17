@@ -526,8 +526,8 @@ public class PFManager {
 		}
 				
 		//String sql = "select sum(price*qty)/sum(qty) as cb,lors,symbol from position "+
-		String sql = "select sum(price*qty) as cb,lors,symbol,sum(qty) as tot from position "+
-		//String sql="select max(price) as cb,lors,symbol,sum(qty) from position "+
+		//String sql = "select sum(price*qty) as cb,lors,symbol,sum(qty) as tot from position "+
+		String sql="select max(price) as cb,lors,symbol,sum(qty) from position "+
 				" where symbol='"+symbol+"' group by lors";
 		ArrayList<ArrayList> res = dbutil.execute(sql);
 		
@@ -563,7 +563,7 @@ public class PFManager {
 						highPrice.put(symbol, close);
 						return;
 					}
-					if ( close < chp*0.90){
+					if ( close < chp*0.95){
 						log.info("Buy: close<.9*high");
 						eSig=true;
 					}
@@ -594,7 +594,7 @@ public class PFManager {
 						lowPrice.put(symbol, close);
 						return;
 					}
-					if ( close > chp*1.1){
+					if ( close > chp*1.05){
 						eSig=true;
 						log.info("sell: close>.1.1*low");
 					}

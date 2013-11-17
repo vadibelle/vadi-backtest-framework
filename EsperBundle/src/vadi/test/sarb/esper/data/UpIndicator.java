@@ -12,8 +12,8 @@ import com.espertech.esper.epl.agg.service.AggregationValidationContext;
 
 
 // @userless indicator
-	@Deprecated
-public class BupCalculator implements AggregationFunctionFactory,com.espertech.esper.epl.agg.aggregator.AggregationMethod  {
+	
+public class UpIndicator implements AggregationFunctionFactory,com.espertech.esper.epl.agg.aggregator.AggregationMethod  {
 	
 	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
 	private  Level level = Level.OFF;
@@ -23,7 +23,7 @@ public class BupCalculator implements AggregationFunctionFactory,com.espertech.e
 	private LinkedList qo;
 	private boolean start ;
 	
-	public BupCalculator(){
+	public UpIndicator(){
 		name = "";
 		bup = 0.0;
 		qc = new LinkedList();
@@ -112,7 +112,7 @@ public class BupCalculator implements AggregationFunctionFactory,com.espertech.e
 	@Override
 	public AggregationMethod newAggregator() {
 		// TODO Auto-generated method stub
-		return new BupCalculator();
+		return new UpIndicator();
 	}
 
 	@Override
