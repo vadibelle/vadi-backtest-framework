@@ -184,7 +184,7 @@ def loadModules() {
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
 	
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("volatility.epl"))
-	//u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
+	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
 	
 	u.registerEventListener(sb, new StartEOD());
 	}
@@ -276,7 +276,7 @@ def debug() {
 	//' group by symbol '
 	//str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
 	//'EODQuote.win:length(390) group by symbol'
-	str='select * from highlowavg'
+	str='select * from symgrp'
 	
 	u.registerEventListener(str,new GenericListener());
 	}
@@ -313,7 +313,7 @@ new File("C:\\temp\\test.csv").delete();
  
 
 loadModules()
-TradeHandler()
-//debug()
+//TradeHandler()
+debug()
 main()
 

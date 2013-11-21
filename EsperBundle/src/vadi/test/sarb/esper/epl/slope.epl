@@ -1,0 +1,12 @@
+@Name('slope')
+insert into slopestr
+select SLOPE(cast(close,double)) as slope, symbol,
+timestamp,close 
+from EODQuote.win:length(si*numSym)
+group by symbol;
+//output every 10 events;
+
+insert into emaslope
+select EMA(slope) as ema,symbol,timestamp,close 
+from slopestr.win:length(li*numSym)
+group by symbol;

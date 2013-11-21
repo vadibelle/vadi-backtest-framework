@@ -1,0 +1,11 @@
+insert into cprice
+select cast(close,double)/cast(prev(li,close),double) as cp,symbol,
+timestamp,close,prev(1,close)
+from EODQuote.win:length(li+1) //change li in 2 places
+group by symbol;
+
+//EMA of momemntum or slope
+@Name('cprice')
+insert into ecprice 
+select EMA(cp)   as ema,symbol,timestamp,close from cprice.win:length(li+2) 
+group by symbol;

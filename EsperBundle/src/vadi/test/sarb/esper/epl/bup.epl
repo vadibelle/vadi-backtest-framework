@@ -1,0 +1,4 @@
+insert into bupnumber
+select BUP(close,open) as bup,symbol,close ,timestamp 
+from EODQuote.win:length(si+1) 
+group by symbol;

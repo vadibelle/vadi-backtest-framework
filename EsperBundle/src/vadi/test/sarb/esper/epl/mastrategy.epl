@@ -1,3 +1,4 @@
+
 insert into emashort
 select EMA(cast(close,double)) as ema, 
 max(cast(high,double)) as mxhsi, min(cast(high,double)) as mnhsi,
