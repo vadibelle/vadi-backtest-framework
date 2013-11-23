@@ -27,43 +27,54 @@ symbol, timestamp ,close
 insert into crossover
 select 'BUY' as signal, es.ema,es.timestamp as timestamp,
 es.close as close,es.symbol as symbol, es.mxhsi as high,es.mxlsi as low,
-el.ema,sl.vol,
+el.ema,bup,
 Datetime.str(es.timestamp) as date
 from 
 emalong.win:length(si*numSym) el, 
 emashort.win:length(si*numSym) es,
-volatility.win:length(si*numSym) sl
-where 
+bupnumber.win:length(si*numSym) bnum,
+EODQuote.win:length(si*numSym) q
+where
 el.symbol = es.symbol and
-es.symbol = sl.symbol and
+es.symbol = bnum.symbol and
+bnum.symbol = q.symbol and
+cast(q.close,double) > es.ema and
 es.ema > el.ema and
 el.ema > 0 and
 es.ema > 0 and
-sl.vol > vlimit and
 el.timestamp = es.timestamp and
-es.timestamp = sl.timestamp and
-prev(numSym,es.ema) <= prev(numSym,el.ema)
+es.timestamp = bnum.timestamp and
+bnum.timestamp = q.timestamp and
+bnum.bup > 70 and
+prev(numSym,bnum.bup) < 70 and
+cast(prev(numSym,q.close),double) <= prev(numSym,es.ema)
 group by es.symbol ;
 
+//Crossover slope is not used don't know
 insert into crossover
 select 'SELL' as signal, es.ema,es.timestamp as timestamp,
 es.close as close,es.symbol as symbol, es.mxhsi as high,es.mxlsi as low,
-el.ema,sl.vol,
+el.ema,bup,
 Datetime.str(es.timestamp) as date
 from 
 emalong.win:length(si*numSym) el, 
-emashort_st.win:length(st*numSym) es,
-volatility.win:length(si*numSym) sl
-where 
+emashort_st.win:length(si*numSym) es,
+bupnumber.win:length(si*numSym) bnum,
+EODQuote.win:length(si*numSym) q
+where
 el.symbol = es.symbol and
-es.symbol = sl.symbol and
-es.ema < el.ema and
+es.symbol = bnum.symbol and
+bnum.symbol = q.symbol and
+cast(q.close,double) < es.ema and
+es.ema > el.ema and
 el.ema > 0 and
 es.ema > 0 and
-sl.vol > vlimit and
 el.timestamp = es.timestamp and
-es.timestamp = sl.timestamp and
-prev(numSym,es.ema) > prev(numSym,el.ema)
+es.timestamp = bnum.timestamp and
+bnum.timestamp = q.timestamp and
+bnum.bup < 50 and
+prev(numSym,bnum.bup) > 50  and
+cast(prev(numSym,q.close),double) >= prev(numSym,es.ema)
 group by es.symbol ;
 
 // Generate tradesignal.. only simulation.

@@ -179,9 +179,10 @@ def loadModules() {
 	
 	
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("init.epl"))
-
+	u.deployModule(vadi.test.sarb.esper.Messages.getString("bup.epl"))
 //	u.deployModule(vadi.test.sarb.esper.Messages.getString("qstick.epl"))
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
+	
 	
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("volatility.epl"))
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
@@ -276,7 +277,7 @@ def debug() {
 	//' group by symbol '
 	//str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
 	//'EODQuote.win:length(390) group by symbol'
-	str='select * from symgrp'
+	str='select * from TradeSignal'
 	
 	u.registerEventListener(str,new GenericListener());
 	}
@@ -313,7 +314,7 @@ new File("C:\\temp\\test.csv").delete();
  
 
 loadModules()
-//TradeHandler()
-debug()
+TradeHandler()
+//debug()
 main()
 
