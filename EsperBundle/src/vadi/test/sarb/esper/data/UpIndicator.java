@@ -85,7 +85,7 @@ public class UpIndicator implements AggregationFunctionFactory,com.espertech.esp
 			else bu++;
 				
 		}
-		log.log(level, " getvalue "+(bu/(bu+bd)));
+	//log.log(level, " getvalue "+(bu/(bu+bd)));
 				
 		return (bu/(bu+bd));
 
@@ -96,7 +96,7 @@ public class UpIndicator implements AggregationFunctionFactory,com.espertech.esp
 		// TODO Auto-generated method stub
 		start = true;
 		//System.out.println("Leaving");
-		log.log(level,"Leaving");
+	//	log.log(level,"Leaving");
 		if ( arg0 == null )
 			return;
 		

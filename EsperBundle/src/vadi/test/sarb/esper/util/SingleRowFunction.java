@@ -4,7 +4,12 @@ public class SingleRowFunction {
 	
 	public static double toDouble(String str){
 		try {
-		return Double.parseDouble(str);
+			if (str == null)
+				return -1;
+			Double d = Double.parseDouble(str);
+			if (d.isNaN())
+				return -1;
+			return d;
 		
 	}
 		catch(Throwable e){
@@ -36,5 +41,6 @@ public class SingleRowFunction {
 		return -1L;
 		
 	}
+	
 	
 }

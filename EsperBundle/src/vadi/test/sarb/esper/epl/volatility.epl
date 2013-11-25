@@ -1,3 +1,13 @@
 insert into volatility
 select stddev(pnl(close,prev(numSym,close))) as vol, symbol, timestamp,close
 from EODQuote.win:length(si*numSym+1)
+group by symbol;
+
+insert into eodvol
+//select stddev(toDouble(close) - toDouble(prev(numSym,close))) as vol,symbol,timestamp,close
+select stddev(cast(close,double) - cast(prev(numSym,close),double))*100 as vol,symbol,timestamp,close
+from EODQuote.win:length(50 );
+
+insert into idayvol
+select stddev(cast(high,double) - cast(low,double))*100 as vol,symbol,timestamp,close
+from EODQuote.win:length(50 );

@@ -61,6 +61,7 @@ public class Regression  implements AggregationFunctionFactory,com.espertech.esp
 			//System.out.println(" items "+obj);
 		}
 		//System.out.println("Total "+j);
+		
 		return reg.getSlope();
 		}
 

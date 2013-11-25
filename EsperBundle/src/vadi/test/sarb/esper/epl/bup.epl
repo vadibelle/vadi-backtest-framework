@@ -1,3 +1,6 @@
+
+// probability of the up and downs
+// suggested > 70 is up and < 50 down
 insert into bupnumber
 select BUP(close,open) as bup,symbol,close ,timestamp 
 from EODQuote.win:length(si+1) 

@@ -1,0 +1,54 @@
+// user ema + 2*stdev for prices
+// 15 MA + 30 stdev of the price
+insert into varstream 
+select avg(cast(q15.close,double)) as ema, stddev(cast(q30.close,double)) as R,
+q15.high as high,q15.open as open,q15.low as low ,q15.close as close ,
+q15.volume as volume ,q15.timestamp as timestamp, q15.symbol as symbol
+ from 
+EODQuote.win:length(numSym*si) q15,
+EODQuote.win:length(numSym*si*2) q30
+where 
+q15.symbol = q30.symbol and
+q15.timestamp = q30.timestamp 
+group by q15.symbol;
+
+
+insert into varcrossover
+select 'BUY' as signal,q.close as close,q.high as high ,q.low as low ,
+q.open as open ,q.timestamp as timestamp, R,ema, q.symbol as symbol
+from varstream.win:length(numSym+1)  cross,
+eodvol.win:length(numSym+1) bup,
+EODQuote.win:length(numSym*5) q
+where 
+cross.timestamp = q.timestamp and
+cross.symbol = q.symbol and
+cast(q.close,double) > cross.ema+2*cross.R and
+cast(prev(numSym,q.close),double) < cross.ema+2*cross.R and
+bup.timestamp = q.timestamp and
+bup.symbol = q.symbol and
+bup.vol > 50
+;
+
+insert into varcrossover
+select 'SELL' as signal,q.close as close,q.high as high ,q.low as low ,
+q.open as open ,q.timestamp as timestamp, R,ema, q.symbol as symbol
+from varstream.win:length(numSym+1)  cross,
+eodvol.win:length(numSym+1) bup,
+EODQuote.win:length(numSym*5) q
+where 
+cross.timestamp = q.timestamp and
+cross.symbol = q.symbol and
+cast(q.close,double) < cross.ema+2*cross.R and
+cast(prev(numSym,q.close),double) > cross.ema+2*cross.R and
+bup.timestamp = q.timestamp and
+bup.symbol = q.symbol and
+bup.vol > 50
+;
+
+insert into TradeSignal(symbol,open,high,low,close,type,indicator,price_timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,signal,'MASTDEV',cast(q.timestamp,string)
+from 
+EODQuote.win:length(numSym+5) q , varcrossover.win:length(numSym+1) cross
+where
+cross.timestamp=prev(numSym,q.timestamp) and
+cross.symbol=q.symbol ;
