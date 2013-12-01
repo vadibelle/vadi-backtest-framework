@@ -15,31 +15,30 @@ group by q15.symbol;
 
 insert into varcrossover
 select 'BUY' as signal,q.close as close,q.high as high ,q.low as low ,
-q.open as open ,q.timestamp as timestamp, R,ema, q.symbol as symbol
-from varstream.win:length(numSym*50)  cross,
-//corrlstream.win:length(numSym+1) bup,
-eodvol.win:length(numSym*50) evol,
-EODQuote.win:length(numSym*50) q
+q.open as open ,q.timestamp as timestamp, R,corr.ema, q.symbol as symbol
+from varstream.win:length(numSym+1)  cross,
+eodvol.win:length(numSym+1) bup,
+emaslope.win:length(numSym+1) corr,
+EODQuote.win:length(numSym*5) q
 where 
 cross.timestamp = q.timestamp and
 cross.symbol = q.symbol and
 cast(q.close,double) > cross.ema+2*cross.R and
 cast(prev(numSym,q.close),double) < cross.ema+2*cross.R and
-//bup.timestamp = q.timestamp and
-//bup.symbol = q.symbol and
-//bup.cor > 0 and
-evol.symbol = q.symbol and
-evol.timestamp = q.timestamp and
-evol.vol > 50
-
+bup.timestamp = q.timestamp and
+bup.symbol = q.symbol and
+bup.vol > 50 and
+corr.timestamp = q.timestamp and
+corr.symbol = q.symbol and
+corr.ema > 0
 ;
 
 insert into varcrossover
 select 'SELL' as signal,q.close as close,q.high as high ,q.low as low ,
-q.open as open ,q.timestamp as timestamp, R,ema, q.symbol as symbol
+q.open as open ,q.timestamp as timestamp, R,corr.ema, q.symbol as symbol
 from varstream.win:length(numSym+1)  cross,
-corrlstream.win:length(numSym+1) bup,
-eodvol.win:length(numSym+1) evol,
+eodvol.win:length(numSym+1) bup,
+emaslope.win:length(numSym+1) corr,
 EODQuote.win:length(numSym*5) q
 where 
 cross.timestamp = q.timestamp and
@@ -48,11 +47,11 @@ cast(q.close,double) < cross.ema+2*cross.R and
 cast(prev(numSym,q.close),double) > cross.ema+2*cross.R and
 bup.timestamp = q.timestamp and
 bup.symbol = q.symbol and
-//
-bup.cor < 0 and
-evol.symbol = q.symbol and
-evol.timestamp = q.timestamp and
-evol.vol > 50
+bup.vol > 50 and
+corr.timestamp = q.timestamp and
+corr.symbol = q.symbol and
+corr.ema < 0
+
 ;
 
 insert into TradeSignal(symbol,open,high,low,close,type,indicator,price_timestamp)

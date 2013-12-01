@@ -190,7 +190,9 @@ def loadModules() {
 	
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("volatility.epl"))
 	//u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
+	u.deployModule(vadi.test.sarb.esper.Messages.getString("slope.epl"))
 	u.deployModule(vadi.test.sarb.esper.Messages.getString("MAStdev.epl"))
+	
 	
 	u.registerEventListener(sb, new StartEOD());
 	}
