@@ -77,14 +77,16 @@ class GenericListener implements UpdateListener {
 
 class CpListener  implements UpdateListener {
 
-	def GenericChart close= Utility.addChart("slope");
-	def GenericChart cp = Utility.addChart("ema")
+	def GenericChart close= Utility.addChart("close");
+	//def GenericChart cp = Utility.addChart("correl")
 	
 	public CpListener() {
 		//chart.setOrientation("H");
 		println "initialized CPlisterner";
 		close.addSeries("close");
-		cp.addSeries("slope")
+		close.addSeries("correl");
+		close.addSeries('vol')
+		//cp.addSeries("correl")
 		//cp.addSeries("");
 	
 	}
@@ -93,8 +95,9 @@ class CpListener  implements UpdateListener {
 		// TODO Auto-generated method stub
 		try{
 		//println "Recevied ema quote"
-	close.addData("close", java.lang.Double.parseDouble(arg0[0].get("cl")));
-		cp.addData("slope", arg0[0].get("slope"));
+	close.addData("close", java.lang.Double.parseDouble(arg0[0].get("close")));
+		close.addData("correl", arg0[0].get("cor")*100);
+		close.addData("vol", arg0[0].get("vol"));
 		}
 		catch(e) {
 			e.printStackTrace();
@@ -168,6 +171,7 @@ def loadModules() {
 	u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 	u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
 	u.addEPLFactory("BUP", "vadi.test.sarb.esper.data.UpIndicator")
+	u.addEPLFactory("CORREL", "vadi.test.sarb.esper.util.Correlation")
 	
 	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("toDouble",
 		"vadi.test.sarb.esper.util.SingleRowFunction", "toDouble");
@@ -278,9 +282,10 @@ def debug() {
 	//' group by symbol '
 	//str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
 	//'EODQuote.win:length(390) group by symbol'
-	str='select * from idayvol'
+	str='select * from varstream'
 	
 	u.registerEventListener(str,new GenericListener());
+	//u.registerEventListener(str,new CpListener());
 	}
 	catch(Throwable e){
 		e.printStackTrace();
@@ -315,7 +320,7 @@ new File("C:\\temp\\test.csv").delete();
  
 
 loadModules()
-//TradeHandler()
-debug()
+TradeHandler()
+//debug()
 main()
 

@@ -6,8 +6,24 @@ group by symbol;
 insert into eodvol
 //select stddev(toDouble(close) - toDouble(prev(numSym,close))) as vol,symbol,timestamp,close
 select stddev(cast(close,double) - cast(prev(numSym,close),double))*100 as vol,symbol,timestamp,close
-from EODQuote.win:length(50 );
+from EODQuote.win:length(50 )
+group by symbol
+;
 
 insert into idayvol
 select stddev(cast(high,double) - cast(low,double))*100 as vol,symbol,timestamp,close
-from EODQuote.win:length(50 );
+from EODQuote.win:length(50 )
+group by symbol
+
+;
+
+insert into corrlstream
+select CORREL(cast(q.close,double),vol) as cor,q.symbol as symbol,
+q.timestamp as timestamp ,q.close as close ,vol
+from eodvol.win:length(50) e,EODQuote.win:length(numSym*50) q
+where 
+q.symbol = e.symbol and
+q.timestamp = e.timestamp
+group by q.symbol
+
+;
