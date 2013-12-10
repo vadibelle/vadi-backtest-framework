@@ -17,6 +17,7 @@ import com.espertech.esper.epl.agg.service.AggregationValidationContext;
 import vadi.test.sarb.esper.util.GenericChart
 import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.EODQuote
+import vadi.test.sarb.event.LastEOD
 import vadi.test.sarb.event.LoadPortfolio
 import vadi.test.sarb.event.StartEODQuote
 import vadi.test.sarb.event.StatArb;
@@ -151,10 +152,14 @@ class StopSystem implements UpdateListener {
 			try{
 			// TODO Auto-generated method stub
 			//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
-			println "Signal "+arg0[0].getUnderlying();
-			println "Shutting down"
-			System.exit(0);
-			
+			//println "Shutting down"
+			LastEOD evt = arg0[0].getUnderlying();
+			Utility.getInstance().removeFromSymbolList(evt.getSymbol())
+			println "Last event received "+evt.getSymbol();
+			if( Utility.getInstance().isSymbolListEmpty()){
+				println "Shutting down"
+				System.exit(0);
+			}
 			}
 		catch(e){
 				e.printStackTrace();
@@ -168,6 +173,7 @@ class StopSystem implements UpdateListener {
 def loadModules() {
 	try {
 	Utility u = Utility.getInstance();
+	epl_dir = vadi.test.sarb.esper.Messages.getString("epl.dir")
 	u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 	u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
 	u.addEPLFactory("BUP", "vadi.test.sarb.esper.data.UpIndicator")
@@ -182,18 +188,19 @@ def loadModules() {
 	sb = "select * from StartEODQuote";
 	
 	
-	u.deployModule(vadi.test.sarb.esper.Messages.getString("init.epl"))
-	//u.deployModule(vadi.test.sarb.esper.Messages.getString("bup.epl"))
-//	u.deployModule(vadi.test.sarb.esper.Messages.getString("qstick.epl"))
-//	u.deployModule(vadi.test.sarb.esper.Messages.getString("highlow.epl"))
+	u.deployModule(epl_dir+"init.epl")
+	u.deployModule(epl_dir+"context.epl")
+	//u.deployModule(epl_dir+"bup.epl")
+//	u.deployModule(epl_dir+"qstick.epl")
+	u.deployModule(epl_dir+"highlow.epl")
 	
 	
-	u.deployModule(vadi.test.sarb.esper.Messages.getString("volatility.epl"))
-	//u.deployModule(vadi.test.sarb.esper.Messages.getString("ma.epl"))
-	u.deployModule(vadi.test.sarb.esper.Messages.getString("slope.epl"))
-	u.deployModule(vadi.test.sarb.esper.Messages.getString("MAStdev.epl"))
+	u.deployModule(epl_dir+"volatility.epl")
+	//u.deployModule(epl_dir+"ma.epl")
+	u.deployModule(epl_dir+"slope.epl")
+	u.deployModule(epl_dir+"MAStdev.epl")
 	
-	
+		
 	u.registerEventListener(sb, new StartEOD());
 	}
 	catch(Throwable e){
@@ -222,7 +229,7 @@ def TradeHandler() {
 	trdExp='select * from TradeSignal'
 	u.registerEventListener(trdExp, new TradeListener())
 	//trdExp='select * from StopLoss'
-	u.registerEventListener(trdExp, new TradeListener());
+	//u.registerEventListener(trdExp, new TradeListener());
 	
 	def lastSig = 'select * from LastEOD'
 	u.registerEventListener(lastSig, new StopSystem());
@@ -284,7 +291,7 @@ def debug() {
 	//' group by symbol '
 	//str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
 	//'EODQuote.win:length(390) group by symbol'
-	str='select * from varstream'
+	str='select * from varcrossover'
 	
 	u.registerEventListener(str,new GenericListener());
 	//u.registerEventListener(str,new CpListener());

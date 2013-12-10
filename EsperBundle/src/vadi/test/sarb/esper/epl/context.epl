@@ -1,0 +1,9 @@
+create context SymbolContext
+partition by symbol from EODQuote;
+
+context SymbolContext
+insert into symbolStream
+select context.name, context.id, context.key1,*,
+ prev(1,close),prev(1,symbol)
+ from EODQuote.win:length(100);
+ 

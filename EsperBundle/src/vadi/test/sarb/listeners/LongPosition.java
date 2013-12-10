@@ -41,7 +41,8 @@ public class LongPosition implements UpdateListener,Serializable  {
 			pfm.addLongPosition(sig);
 		
 			
-		if ( sig.getType().equalsIgnoreCase("SELL"))
+		if ( sig.getType().equalsIgnoreCase("SELL") || 
+				sig.getType().equalsIgnoreCase("CLOSE_LONG"))
 			pfm.closeLongPosition(sig);
 		
 		pfm.positionValue();

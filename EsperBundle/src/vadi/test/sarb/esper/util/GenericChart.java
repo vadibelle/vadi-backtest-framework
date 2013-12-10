@@ -104,6 +104,8 @@ public class GenericChart {
 	}
 	public synchronized void addData(String xy,Double key,Double val )
 	{
+		if ( !seriesCount.containsKey(xy))
+			this.addSeries(xy);
 	
 		int num = seriesCount.get(xy);
 		num++;
@@ -114,7 +116,9 @@ public class GenericChart {
 	}
 	public synchronized void addData(String xy,Double val )
 	{
-	
+		if ( !seriesCount.containsKey(xy))
+			this.addSeries(xy);
+			
 		int num = seriesCount.get(xy);
 		num++;
 		seriesCount.put(xy,num);

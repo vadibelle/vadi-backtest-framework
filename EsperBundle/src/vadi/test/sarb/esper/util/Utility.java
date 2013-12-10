@@ -3,6 +3,7 @@ package vadi.test.sarb.esper.util;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -37,6 +38,7 @@ public class Utility {
 	static final JFrame container ;
 	private static boolean simulationMode = false;
 	private long currentTime = 0;
+	private ArrayList<String> symbolList;
 
 	static {
 		System.out.println("Initializing esper engine");
@@ -86,14 +88,19 @@ public class Utility {
 	
 	private Utility(){
 		String mode = vadi.test.sarb.esper.Messages.getString("sim.mode");
+		symbolList = new ArrayList<String>();
 		//String logLevel = vadi.test.sarb.esper.Messages.getString("log.level");
 		Configuration config = new Configuration();
+		config.getEngineDefaults().getThreading().setThreadPoolInbound(true);
+		config.getEngineDefaults().getThreading().setThreadPoolInboundNumThreads(5);
+		config.getEngineDefaults().getThreading().setThreadPoolOutbound(true);
+		config.getEngineDefaults().getThreading().setThreadPoolOutboundNumThreads(5);
+	
 		if ( mode != null && mode.equals("true"))
 		{
 			simulationMode = true;
 			config.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
-			
-		}
+			}
 		
 		//config.getEngineDefaults().getLogging().setEnableExecutionDebug(true);
         config.addEventTypeAutoName("vadi.test.sarb.event");
@@ -102,6 +109,29 @@ public class Utility {
       //  init();
 
               
+	}
+	
+	public boolean isSymbolListEmpty() {
+		return symbolList.isEmpty();
+	}
+	
+	public ArrayList<String> getSymbolList() {
+		return symbolList;
+	}
+
+
+	public void setSymbolList(ArrayList<String> symbolList) {
+		this.symbolList = symbolList;
+	}
+
+	public void addToSymboList(String smbl)
+	{
+		symbolList.add(smbl);
+	}
+
+	public void removeFromSymbolList(String smbl)
+	{
+		symbolList.remove(smbl);
 	}
 	
 	public static boolean isSimMode()

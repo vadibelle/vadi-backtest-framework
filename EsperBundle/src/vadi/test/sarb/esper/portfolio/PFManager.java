@@ -15,15 +15,17 @@ public class PFManager {
 	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
 
 	double portfolio = 0;
-	volatile double ammount = 10000;
+	volatile double ammount = 50000;
 	volatile double cash = ammount;
 	 volatile double shortCash = 0;
-	double tradeSize = 0.2; // 20% each time
+	 
+	double tradeSize = 0.1; // 20% each time
 	ConcurrentHashMap<String, Long> positions, short_positions;
 	ConcurrentHashMap<String, Double> lastPrice;
 	ConcurrentHashMap<String, Double> highPrice;
 	ConcurrentHashMap<String, Double> lowPrice;
 	ConcurrentHashMap<String, Boolean> hasExit;
+	ConcurrentHashMap<String, Double> drawDown;
 	
 	
 	double slippage = 100;
@@ -43,6 +45,7 @@ public class PFManager {
 		// pfMgr = new PFManager();
 		dbutil = new DbUtil();
 		hasExit = new ConcurrentHashMap<String, Boolean>();
+		drawDown = new ConcurrentHashMap<String, Double>();
 
 	}
 
@@ -151,6 +154,7 @@ public class PFManager {
 				long n = bd.longValue();
 				// long n =(long) Math.floor(cash
 				// /(Double.parseDouble(b.getPrice())));
+				double prevCash = cash;
 				if (cash > n * price)
 					cash = cash - n * (price)-slippage;
 				else
@@ -161,7 +165,12 @@ public class PFManager {
 				if (positions.containsKey(symbol)) {
 					stock = positions.get(symbol);
 					stock += n;
-				
+					/*if ( stock*price/ammount > 0.2)
+					{
+						log.info("More than 20% ");
+						cash = prevCash;
+						return;
+					}*/
 					positions.put(symbol, stock);
 					//portfolio += stock*price;
 					} else {
@@ -563,7 +572,7 @@ public class PFManager {
 						highPrice.put(symbol, close);
 						return;
 					}
-					if ( close < chp*0.95){
+					if ( close < chp*0.90){
 						log.info("Buy: close<.9*high");
 						eSig=true;
 					}
@@ -594,7 +603,7 @@ public class PFManager {
 						lowPrice.put(symbol, close);
 						return;
 					}
-					if ( close > chp*1.05){
+					if ( close > chp*1.1){
 						eSig=true;
 						log.info("sell: close>.1.1*low");
 					}
