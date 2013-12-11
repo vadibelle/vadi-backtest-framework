@@ -26,6 +26,7 @@ public class PFManager {
 	ConcurrentHashMap<String, Double> lowPrice;
 	ConcurrentHashMap<String, Boolean> hasExit;
 	ConcurrentHashMap<String, Double> drawDown;
+	ConcurrentHashMap<String, Integer> noOfTrades;
 	
 	
 	double slippage = 100;
@@ -46,6 +47,7 @@ public class PFManager {
 		dbutil = new DbUtil();
 		hasExit = new ConcurrentHashMap<String, Boolean>();
 		drawDown = new ConcurrentHashMap<String, Double>();
+		noOfTrades = new ConcurrentHashMap<String, Integer>();
 
 	}
 
@@ -173,10 +175,14 @@ public class PFManager {
 					}*/
 					positions.put(symbol, stock);
 					//portfolio += stock*price;
+					int noft = noOfTrades.get(symbol);
+					noOfTrades.put(symbol, noft++);
 					} else {
 					positions.put(symbol, n);
+					noOfTrades.put(symbol,1);
 				//	portfolio += n*price;
 					}
+					
 					double cb = price*n+slippage;
 					Date dt = new Date(Long.parseLong(sig.price_timestamp));
 					insertDb(symbol,n,"BUY",
@@ -308,6 +314,14 @@ public class PFManager {
 			stock += n;
 			short_positions.put(sig.getSymbol(), stock);
 			//portfolio -= stock*price;
+			if ( noOfTrades.containsKey(symbol))
+			{
+				int i = noOfTrades.get(symbol);
+				i++; noOfTrades.put(symbol,i);
+			}
+			else
+				noOfTrades.put(symbol,1);
+			
 			shortCash +=  n * price - slippage;
 			double cb = n*price - slippage;
 			Date dt = new Date(Long.parseLong(sig.price_timestamp));
@@ -322,6 +336,7 @@ public class PFManager {
 				
 					if (close < chp)
 						lowPrice.put(symbol, close);
+					
 				}
 				else
 					lowPrice.put(symbol, close);
@@ -382,11 +397,37 @@ public class PFManager {
 	public  void updateLastPrice(EODQuote eq) {
 		
 		String symbol = eq.getSymbol();
-		String price = eq.getClose();
-		synchronized (lastPrice) {
-			lastPrice.put(symbol, Double.parseDouble(price));
-							
+		double price = Double.parseDouble(eq.getClose());
+		lastPrice.put(symbol,price);
+		if ( highPrice.containsKey(symbol))
+		{
+			double pr = highPrice.get(symbol);
+			if ( price > pr)
+				highPrice.put(symbol, price);
 		}
+		else
+			highPrice.put(symbol, price);
+		
+		if ( lowPrice.containsKey(symbol))
+		{
+			double pr = lowPrice.get(symbol);
+			if ( price < pr)
+				lowPrice.put(symbol, price);
+		}
+		else
+			lowPrice.put(symbol, price);
+	
+		if ( drawDown.containsKey(symbol))
+		{
+			double pr = drawDown.get(symbol);
+			//not symbol safe. need to get a method per symbol
+			double p = positionValue();
+			if (p < pr)
+				drawDown.put(symbol, p);
+		}
+		else
+			drawDown.put(symbol, ammount);
+		
 		
 	}
 	private void insertDb(String symbol,long quantity,
@@ -634,6 +675,27 @@ public class PFManager {
 			e.printStackTrace();
 		}
 		
+	}
 	
+	public String getDetails(String symbol){
+		
+		StringBuilder str = new StringBuilder();
+		if ( positions.containsKey(symbol))
+			str.append(" Long \t"+positions.get(symbol));
+		if ( short_positions.containsKey(symbol))
+		str.append("\t short \t"+short_positions.get(symbol));
+		if ( noOfTrades.containsKey(symbol))
+			str.append("\t noOfTrades \t"+noOfTrades.get(symbol));
+		if (lastPrice.containsKey(symbol))
+			str.append("\t lastPrice \t"+lastPrice.get(symbol));
+		if ( highPrice.containsKey(symbol))
+			str.append("\t highPrice \t"+highPrice.get(symbol));
+		if ( lowPrice.containsKey(symbol))
+			str.append("\tlowPrice \t"+lowPrice.get(symbol));
+		if ( drawDown.containsKey(symbol))
+			str.append("\tdrawDown \t"+drawDown.get(symbol));
+			
+		
+		return str.toString();
 	}
 }
