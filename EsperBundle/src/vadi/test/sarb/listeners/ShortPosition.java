@@ -28,14 +28,15 @@ public class ShortPosition implements UpdateListener  {
 		try {
 		TradeSignal sig = (TradeSignal)(arg0[0].getUnderlying());
 		log.info(sig.toString());
-		if ( sig.getType().equalsIgnoreCase("BUY"))
+		if ( sig.getType().equalsIgnoreCase("BUY")|| 
+				sig.getType().equalsIgnoreCase("CLOSE_SHORT"))
 			pfm.closeShortPosition(sig);
 		
 			
 		if ( sig.getType().equalsIgnoreCase("SELL") && !sig.getIndicator().equals("STOPLOSS"))
 			pfm.openShortPosition(sig);
 		
-		pfm.positionValue();
+	//	pfm.positionValue(true);
 		
 		}
 		catch(Throwable e) {

@@ -15,7 +15,7 @@ public class PFManager {
 	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
 
 	double portfolio = 0;
-	volatile double ammount = 50000;
+	volatile double ammount = 10000;
 	volatile double cash = ammount;
 	 volatile double shortCash = 0;
 	 
@@ -176,7 +176,7 @@ public class PFManager {
 					positions.put(symbol, stock);
 					//portfolio += stock*price;
 					int noft = noOfTrades.get(symbol);
-					noOfTrades.put(symbol, noft++);
+					noOfTrades.put(symbol, ++noft);
 					} else {
 					positions.put(symbol, n);
 					noOfTrades.put(symbol,1);
@@ -251,7 +251,8 @@ public class PFManager {
 		
 	}
 
-	public synchronized double positionValue() {
+	public synchronized double positionValue(boolean print)
+	{
 		double ret = 0;
 		//loadPositions();
 		StringBuilder text = new StringBuilder();
@@ -281,10 +282,16 @@ public class PFManager {
 		ret += shortCash;
 		text.append(" value=" + ret+"\n");
 		//text.append(" portfolio="+portfolio+"\n");
-		log.info(text.toString());
+		if ( print )
+			log.info(text.toString());
 
 		// status.setText(text.toString());
 		return ret;
+	}
+	
+	public synchronized double positionValue() {
+		
+		return positionValue(false);
 	}
 
 	public synchronized void openShortPosition(TradeSignal sig) {
@@ -680,20 +687,23 @@ public class PFManager {
 	public String getDetails(String symbol){
 		
 		StringBuilder str = new StringBuilder();
+		str.append("Symbol:"+symbol);
+		str.append("\t total:"+positionValue());
 		if ( positions.containsKey(symbol))
-			str.append(" Long \t"+positions.get(symbol));
+			str.append("\tLong :"+positions.get(symbol));
 		if ( short_positions.containsKey(symbol))
-		str.append("\t short \t"+short_positions.get(symbol));
+		str.append("\tshort :"+short_positions.get(symbol));
 		if ( noOfTrades.containsKey(symbol))
-			str.append("\t noOfTrades \t"+noOfTrades.get(symbol));
+			str.append("\tnoOfTrades :"+noOfTrades.get(symbol));
 		if (lastPrice.containsKey(symbol))
-			str.append("\t lastPrice \t"+lastPrice.get(symbol));
+			str.append("\tlastPrice :"+lastPrice.get(symbol));
 		if ( highPrice.containsKey(symbol))
-			str.append("\t highPrice \t"+highPrice.get(symbol));
+			str.append("\t highPrice :"+highPrice.get(symbol));
 		if ( lowPrice.containsKey(symbol))
-			str.append("\tlowPrice \t"+lowPrice.get(symbol));
+			str.append("\tlowPrice :"+lowPrice.get(symbol));
 		if ( drawDown.containsKey(symbol))
-			str.append("\tdrawDown \t"+drawDown.get(symbol));
+			str.append("\tdrawDown :"+drawDown.get(symbol));
+		
 			
 		
 		return str.toString();

@@ -67,7 +67,7 @@ def loadModules() {
 	u.deployModule(epl_dir+"context.epl")
 	//u.deployModule(epl_dir+"bup.epl")
 //	u.deployModule(epl_dir+"qstick.epl")
-	u.deployModule(epl_dir+"highlow.epl")
+	//u.deployModule(epl_dir+"highlow.epl")
 	
 	
 	u.deployModule(epl_dir+"volatility.epl")
