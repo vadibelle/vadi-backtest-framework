@@ -19,7 +19,7 @@ public class PFManager {
 	volatile double cash = ammount;
 	 volatile double shortCash = 0;
 	 
-	double tradeSize = 0.1; // 20% each time
+	double tradeSize = 0.2; // 20% each time
 	ConcurrentHashMap<String, Long> positions, short_positions;
 	ConcurrentHashMap<String, Double> lastPrice;
 	ConcurrentHashMap<String, Double> highPrice;
