@@ -44,11 +44,17 @@ public class DownloadTask implements Callable<String> {
 	            // Create a response handler
 	            ResponseHandler<String> responseHandler = new BasicResponseHandler();
 	            String responseBody = httpclient.execute(httpget, responseHandler);
+	           
 	            	  //log.info(responseBody);
 	            	   return responseBody;
 	           
 
-	        } finally {
+	        }
+		 catch(Throwable e){
+			 e.printStackTrace();
+			 return "";
+		 }
+		 finally {
 	            // When HttpClient instance is no longer needed,
 	            // shut down the connection manager to ensure
 	            // immediate deallocation of all system resources

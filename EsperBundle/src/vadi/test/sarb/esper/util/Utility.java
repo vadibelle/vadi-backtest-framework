@@ -29,7 +29,7 @@ import vadi.test.sarb.listeners.DummyListener;
 public class Utility {
 
 	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
-	static final int NUM_THREADS = 40;
+	static final int NUM_THREADS = 50;
 	private static volatile Utility instance = null;
 	private ExecutorService executor = null;
 	private  DbUtil dbUtil = null;
@@ -39,6 +39,7 @@ public class Utility {
 	private static boolean simulationMode = false;
 	private long currentTime = 0;
 	private ArrayList<String> symbolList;
+	private boolean print = false;
 
 	static {
 		System.out.println("Initializing esper engine");
@@ -69,9 +70,12 @@ public class Utility {
 	}
 
 	
+	
 	public void info(String message)
 	{
-		log.info(message);
+		//String print = vadi.test.sarb.esper.Messages.getString("do.print");
+		if ( print)
+			log.info(message);
 	}
 			 
 	public  synchronized ExecutorService getExecutor() {
@@ -91,10 +95,10 @@ public class Utility {
 		symbolList = new ArrayList<String>();
 		//String logLevel = vadi.test.sarb.esper.Messages.getString("log.level");
 		Configuration config = new Configuration();
-		config.getEngineDefaults().getThreading().setThreadPoolInbound(true);
+		/*config.getEngineDefaults().getThreading().setThreadPoolInbound(true);
 		config.getEngineDefaults().getThreading().setThreadPoolInboundNumThreads(5);
 		config.getEngineDefaults().getThreading().setThreadPoolOutbound(true);
-		config.getEngineDefaults().getThreading().setThreadPoolOutboundNumThreads(5);
+		config.getEngineDefaults().getThreading().setThreadPoolOutboundNumThreads(5);*/
 	
 		if ( mode != null && mode.equals("true"))
 		{
@@ -102,6 +106,9 @@ public class Utility {
 			config.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
 			}
 		
+		String pr = vadi.test.sarb.esper.Messages.getString("do.print");
+		if ( pr.equals("true"))
+			print = true;
 		//config.getEngineDefaults().getLogging().setEnableExecutionDebug(true);
         config.addEventTypeAutoName("vadi.test.sarb.event");
         epService = EPServiceProviderManager.getDefaultProvider(config);
@@ -109,6 +116,9 @@ public class Utility {
       //  init();
 
               
+	}
+	public boolean doPrint(){
+		return print;
 	}
 	
 	public boolean isSymbolListEmpty() {

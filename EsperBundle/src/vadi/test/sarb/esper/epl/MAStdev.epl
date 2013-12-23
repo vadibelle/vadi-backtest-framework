@@ -101,7 +101,14 @@ corr.ema < 0
 
 ;
 */
-insert into TradeSignal(symbol,open,high,low,close,type,indicator,price_timestamp)
+insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
+select symbol,open,high,low,close,signal,
+'MASTDEV' as indicator, cast(timestamp,string)
+from
+varcrossover.win:length(1)
+;
+
+insert into TradeSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
 select q.symbol,q.open,q.high,q.low,q.close,signal,'MASTDEV',cast(q.timestamp,string)
 from 
 EODQuote.win:length(numSym+5) q , varcrossover.win:length(numSym+1) cross

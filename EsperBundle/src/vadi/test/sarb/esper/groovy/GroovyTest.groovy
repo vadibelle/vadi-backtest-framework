@@ -36,6 +36,7 @@ import vadi.test.sarb.listeners.StatArbHandler
 import vadi.test.sarb.listeners.OldSimulator;
 
 import vadi.test.sarb.event.HighLow;
+import vadi.test.sarb.esper.data.UpIndicator;
 import vadi.test.sarb.esper.groovy.*
 
 //evaluate(new File((vadi.test.sarb.esper.Messages.getString("StatnUtil")))
@@ -60,14 +61,14 @@ def loadModules() {
 		"vadi.test.sarb.esper.util.SingleRowFunction", "diff");
 	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("pnl",
 		"vadi.test.sarb.esper.util.SingleRowFunction", "pnl");
-	sb = "select * from StartEODQuote";
+	
 	
 	
 	u.deployModule(epl_dir+"init.epl")
 	u.deployModule(epl_dir+"context.epl")
 	//u.deployModule(epl_dir+"bup.epl")
 //	u.deployModule(epl_dir+"qstick.epl")
-	//u.deployModule(epl_dir+"highlow.epl")
+	u.deployModule(epl_dir+"highlow.epl")
 	
 	
 	u.deployModule(epl_dir+"volatility.epl")
@@ -75,7 +76,7 @@ def loadModules() {
 	u.deployModule(epl_dir+"slope.epl")
 	u.deployModule(epl_dir+"MAStdev.epl")
 	
-		
+	sb = "select * from StartEODQuote";
 	u.registerEventListener(sb, new StartEOD());
 	}
 	catch(Throwable e){
@@ -97,11 +98,11 @@ def TradeHandler() {
 	
 //	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
-	trdExp = 'select * from TradeSignal'
+	trdExp = 'select * from TradeSignal.std:unique(price_timestamp)'
 	//'.std:unique(price_timestamp) group by symbol'
 	u.registerEventListener(trdExp, new LongPosition())
 	//u.registerEventListener(trdExp, new ShortPosition())
-	trdExp='select * from TradeSignal'
+	trdExp='select * from StockSignal'
 	u.registerEventListener(trdExp, new TradeListener())
 	//trdExp='select * from StopLoss'
 	//u.registerEventListener(trdExp, new TradeListener());
@@ -114,7 +115,7 @@ def TradeHandler() {
 	
 	
 	u.registerEventListener("select * from EODQuote",new EODHandler());
-	//u.registerEventListener("select * from EODQuote",new ExitGenerator());
+	u.registerEventListener("select * from EODQuote",new ExitGenerator());
  
 //Utility.addEPLFunction("EMA","vadi.test.sarb.esper.util.EsperEMA")
 //u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
@@ -190,13 +191,16 @@ lp.enqueue()
 
 sb = new StatArb('SSO','QQQ')
 //sb.enqueue();
+def u = Utility.getInstance();
 for( st in vadi.test.sarb.esper.Messages.getString("EOD.quote.list").split(",")){
 	print st+"\n"
-	evt = new StartEODQuote(st);
-	evt.enqueue();
+	u.addToSymboList(st)
+	//evt = new StartEODQuote(st);
+	//evt.enqueue();
 }
 
-
+def smbl = u.getSymbolList().get(0)
+new StartEODQuote(smbl).enqueue()
 //st = new StatArb('GLD','XLE')
 //st.enqueue();
 new File("C:\\temp\\test.csv").delete();

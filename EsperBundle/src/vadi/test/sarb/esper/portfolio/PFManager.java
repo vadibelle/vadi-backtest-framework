@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import vadi.test.sarb.esper.db.DbUtil;
@@ -27,10 +28,12 @@ public class PFManager {
 	ConcurrentHashMap<String, Boolean> hasExit;
 	ConcurrentHashMap<String, Double> drawDown;
 	ConcurrentHashMap<String, Integer> noOfTrades;
-	
+	ConcurrentHashMap<String, String> lastTrade;
+		
 	
 	double slippage = 100;
-	long stocks = 0;
+	boolean print = false;
+	
 	boolean stopOpen = false;
 	private static PFManager pfMgr = null;// new PFManager();
 	DbUtil dbutil ;
@@ -48,7 +51,8 @@ public class PFManager {
 		hasExit = new ConcurrentHashMap<String, Boolean>();
 		drawDown = new ConcurrentHashMap<String, Double>();
 		noOfTrades = new ConcurrentHashMap<String, Integer>();
-
+		lastTrade = new ConcurrentHashMap<String, String>();
+		
 	}
 
 	public synchronized static PFManager getInstance() {
@@ -116,14 +120,7 @@ public class PFManager {
 		this.lastPrice = lastPrice;
 	}
 
-	public synchronized long getStocks() {
-		return stocks;
-	}
-
-	public synchronized void setStocks(long stocks) {
-		this.stocks = stocks;
-	}
-
+	
 	public synchronized double getFunds() {
 		return (tradeSize * ammount > cash ? cash : (tradeSize * ammount));
 	}
@@ -132,12 +129,14 @@ public class PFManager {
 		try {
 			if ( stopOpen )
 			{
+				//if ( print)
 				log.info("Cannot open, short cover reached");
 				return;
 			}
 			if ( Utility.isSimMode() && Long.parseLong(sig.getPrice_timestamp()) <
 					Utility.getInstance().getCurrentTime())
 			{
+				//if (print)
 				log.info("add long old event "+sig.getPrice_timestamp());
 				return;
 			}
@@ -161,6 +160,7 @@ public class PFManager {
 					cash = cash - n * (price)-slippage;
 				else
 					n = 0;
+				
 				log.info("@@Buying " + n + " stocks ");
 				if ( n <= 0 )
 					return;
@@ -189,7 +189,7 @@ public class PFManager {
 							price,cb,dt);
 					
 					updateCash();
-					if ( positions.containsKey(symbol))
+					/*if ( positions.containsKey(symbol))
 						if ( highPrice.containsKey(symbol))
 						{
 							double chp = highPrice.get(symbol); 
@@ -198,10 +198,10 @@ public class PFManager {
 								highPrice.put(symbol, close);
 						}
 						else
-							highPrice.put(symbol, close);
+							highPrice.put(symbol, close);*/
 				
 			}
-			m2m(sig.getSymbol(), Double.parseDouble(sig.getClose()));
+			//m2m(sig.getSymbol(), Double.parseDouble(sig.getClose()));
 		} catch (Throwable e) {
 			log.info("ERROR adding position " + sig.toString());
 			e.printStackTrace();
@@ -214,12 +214,12 @@ public class PFManager {
 		//	double price = Double.parseDouble(sig.getLow());
 			double price = Double.parseDouble(sig.getOpen());
 			String symbol = sig.getSymbol();
-			if ( Utility.isSimMode() && Long.parseLong(sig.getPrice_timestamp()) <
-					Utility.getInstance().getCurrentTime())
-			{
-				log.info("close long old event "+sig.getPrice_timestamp());
-				return;
-			}
+//			if ( Utility.isSimMode() && Long.parseLong(sig.getPrice_timestamp()) <
+//					Utility.getInstance().getCurrentTime())
+//			{
+//				log.info("close long old event "+sig.getPrice_timestamp());
+//				return;
+//			}
 			if (positions.containsKey(sig.getSymbol())) {
 				// log.info("@@Selling "+positions.get(evt.getSymbol())+" stocks");
 				log.info("@@Selling signal received " + cash + " " + price
@@ -405,30 +405,32 @@ public class PFManager {
 		
 		String symbol = eq.getSymbol();
 		double price = Double.parseDouble(eq.getClose());
+		double high = Double.parseDouble(eq.getHigh());
+		double low = Double.parseDouble(eq.getLow());
 		lastPrice.put(symbol,price);
 		if ( highPrice.containsKey(symbol))
 		{
 			double pr = highPrice.get(symbol);
-			if ( price > pr)
-				highPrice.put(symbol, price);
+			if ( high > pr)
+				highPrice.put(symbol, high);
 		}
 		else
-			highPrice.put(symbol, price);
+			highPrice.put(symbol, high);
 		
 		if ( lowPrice.containsKey(symbol))
 		{
 			double pr = lowPrice.get(symbol);
-			if ( price < pr)
-				lowPrice.put(symbol, price);
+			if ( low < pr)
+				lowPrice.put(symbol, low);
 		}
 		else
-			lowPrice.put(symbol, price);
+			lowPrice.put(symbol, low);
 	
 		if ( drawDown.containsKey(symbol))
 		{
 			double pr = drawDown.get(symbol);
 			//not symbol safe. need to get a method per symbol
-			double p = positionValue();
+			double p = positionValue(symbol);
 			if (p < pr)
 				drawDown.put(symbol, p);
 		}
@@ -529,6 +531,9 @@ public class PFManager {
 					if (arr.get(2).toString().equalsIgnoreCase("BUY")){
 						positions.put(arr.get(0).toString(),
 								Long.parseLong(arr.get(1).toString()));
+						
+						//@Todo needs update with actual price 
+						//not no of stocks
 						highPrice.put(arr.get(0).toString(),
 								Double.parseDouble(arr.get(1).toString()));
 						
@@ -620,11 +625,11 @@ public class PFManager {
 						highPrice.put(symbol, close);
 						return;
 					}
-					if ( close < chp*0.90){
+					if ( close < chp*0.85){
 						log.info("Buy: close<.9*high");
 						eSig=true;
 					}
-					if ((cb - close*qty) > 1200 ){
+					if ((cb - close*qty) > 1500 ){
 						eSig=true;
 						log.info("cb-close*qty >1200");
 					}
@@ -651,11 +656,11 @@ public class PFManager {
 						lowPrice.put(symbol, close);
 						return;
 					}
-					if ( close > chp*1.1){
+					if ( close > chp*1.15){
 						eSig=true;
 						log.info("sell: close>.1.1*low");
 					}
-					if ((cb -close*qty) < -1200 ){
+					if ((cb -close*qty) < -1500 ){
 						eSig=true;
 						log.info("cb-close*qty >-1200");
 					}
@@ -684,28 +689,60 @@ public class PFManager {
 		
 	}
 	
-	public String getDetails(String symbol){
+	public HashMap<String,String> getDetails(String symbol){
 		
-		StringBuilder str = new StringBuilder();
-		str.append("Symbol:"+symbol);
-		str.append("\t total:"+positionValue());
+		
+		HashMap<String,String> map = new HashMap<String,String>();
+		
+		map.put("symbol",symbol);
+				
+		double d = positionValue(symbol);
+		map.put("total",Double.toString(d));
+		map.put("returns",Double.toString(d/ammount));
 		if ( positions.containsKey(symbol))
-			str.append("\tLong :"+positions.get(symbol));
+			map.put("long",Long.toString(positions.get(symbol)));
+		
 		if ( short_positions.containsKey(symbol))
-		str.append("\tshort :"+short_positions.get(symbol));
+			map.put("short",Long.toString(short_positions.get(symbol)));
+		
 		if ( noOfTrades.containsKey(symbol))
-			str.append("\tnoOfTrades :"+noOfTrades.get(symbol));
+			map.put("no of trades",Long.toString(noOfTrades.get(symbol)));
 		if (lastPrice.containsKey(symbol))
-			str.append("\tlastPrice :"+lastPrice.get(symbol));
+			map.put("last price",Double.toString(lastPrice.get(symbol)));
 		if ( highPrice.containsKey(symbol))
-			str.append("\t highPrice :"+highPrice.get(symbol));
+			map.put("high price",Double.toString(highPrice.get(symbol)));
 		if ( lowPrice.containsKey(symbol))
-			str.append("\tlowPrice :"+lowPrice.get(symbol));
+			map.put("low price",Double.toString(lowPrice.get(symbol)));
 		if ( drawDown.containsKey(symbol))
-			str.append("\tdrawDown :"+drawDown.get(symbol));
+			map.put("drawDown",Double.toString(drawDown.get(symbol)/ammount));
+		if ( lastTrade.containsKey(symbol));
+			map.put("last Trade",lastTrade.get(symbol));
+						
 		
-			
+		return map;
+	}
+	
+	public double positionValue(String symbol)
+	{
+		double d = cash;
+		double e = 0;
+		if ( lastPrice.containsKey(symbol))
+			e = lastPrice.get(symbol);
+		if ( positions.containsKey(symbol))
+			d += e * positions.get(symbol);
+		if ( short_positions.containsKey(symbol))
+			d += e*short_positions.get(symbol);
 		
-		return str.toString();
+		return d;
+	}
+	
+	
+	public void addLastTrade(String symbol,String signal)
+	{
+		lastTrade.put(symbol,signal);
+	}
+	public void clear()
+	{
+		
 	}
 }

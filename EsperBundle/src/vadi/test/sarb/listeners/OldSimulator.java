@@ -15,6 +15,7 @@ import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.EODQuote;
 import vadi.test.sarb.event.TradeSignal;
 
+@Deprecated
 public class OldSimulator implements UpdateListener {
 
 	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");

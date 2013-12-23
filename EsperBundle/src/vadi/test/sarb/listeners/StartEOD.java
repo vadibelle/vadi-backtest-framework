@@ -45,16 +45,17 @@ public class StartEOD implements UpdateListener,Serializable {
 		 {
 			 log.info("No Event returned during a match");
 		 }
-		 System.out.println("start quote received");
+	//	 System.out.println("start quote received ");
 		//log.info("StartEOD "+arg0.toString());
 	//	Event evt = arg0.getMatchingEvent("op"); //$NON-NLS-1$
 		StartEODQuote evt = (StartEODQuote)newEvents[0].getUnderlying();
 					
 		//	StartEODQuote op = (StartEODQuote)evt;
+		 System.out.println("start quote received "+evt.getSymbol());
 			EODQuoteThread eod = new EODQuoteThread();
 			eod.setSymbol(evt.getSymbol());
 			Utility.getInstance().getExecutor().execute(eod);
-			Utility.getInstance().addToSymboList(evt.getSymbol());
+			//Utility.getInstance().addToSymboList(evt.getSymbol());
 		}
 				
 	
@@ -99,6 +100,7 @@ public class StartEOD implements UpdateListener,Serializable {
 			catch(Throwable e)
 			{
 				e.printStackTrace();
+				return;
 			}
 		}
 	}
@@ -122,6 +124,7 @@ public class StartEOD implements UpdateListener,Serializable {
 			// TODO Auto-generated method stub
 		//	Future<String> ft;
 			SimpleDateFormat df = new SimpleDateFormat(Messages.getString("StartEOD.date.format"));
+			boolean error = false;
 			try {
 			//	ft = queue.take();
 				//String str = ft.get();
@@ -154,14 +157,28 @@ public class StartEOD implements UpdateListener,Serializable {
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				log.info("Error downloading");
+				error = true;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				log.info("Error downloading");
+				error = true;
 			} catch (ExecutionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				log.info("Error downloading");
+				error = true;
 			}
-			
+			catch (Throwable e)
+			{
+				log.info("Error downloading");
+				error = true;
+			}
+			if ( error) {
+			LastEOD last = new LastEOD(tick);
+			last.enqueue();
+			}
 			
 		}
 		

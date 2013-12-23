@@ -8,12 +8,14 @@ import java.util.concurrent.Executors;
 
 import javax.swing.JFrame;
 
+import com.espertech.esper.client.annotation.Description;
+
 import vadi.test.sarb.esper.db.DbUtil;
 import vadi.test.sarb.esper.util.GenericChart;
 
 //mport org.eclipse.tptp.trace.arm.internal.model.ArmWrapper;
 
-
+@Deprecated
 public class GoogleDownload implements Serializable {
 	private static final long serialVersionUID = -5810851685267610906L;
 	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");

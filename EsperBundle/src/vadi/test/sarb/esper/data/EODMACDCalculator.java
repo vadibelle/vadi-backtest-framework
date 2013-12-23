@@ -6,7 +6,7 @@ import java.util.concurrent.Callable;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 import com.tictactec.ta.lib.RetCode;
-
+@Deprecated
 public class EODMACDCalculator implements Callable<HashMap> {
 
 	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");

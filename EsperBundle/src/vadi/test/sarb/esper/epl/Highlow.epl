@@ -48,8 +48,14 @@ insert into highlow
 select symbol,close as open,close as high,close as low ,close,signal,"STOPLOSS" as indicator,timestamp from
 StopLoss;
 
+insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
+select symbol,open,high,low,close,signal,
+'HIGH_LOW' as indicator, cast(timestamp,string)
+from
+highlow.win:length(1)
+;
 
-insert into TradeSignal(symbol,open,high,low,close,type,indicator,price_timestamp)
+insert into TradeSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
 select q.symbol,q.open,q.high,q.low,q.close,signal,indicator,cast(q.timestamp,string)
  from EODQuote.win:length(5) q , highlow.win:length(5) hl where
  hl.symbol=q.symbol and

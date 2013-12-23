@@ -11,7 +11,8 @@ public class DummyListener implements UpdateListener {
 	private GenericChart c = null;
 	public DummyListener()
 	{ 	try {
-		System.out.println("Dummy listener created");
+		if ( Utility.getInstance().doPrint())
+			System.out.println("Dummy listener created");
 		c = Utility.addChart("crossover");
 		
 	}
@@ -23,7 +24,7 @@ public class DummyListener implements UpdateListener {
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		// TODO Auto-generated method stub
 		try {
-		
+		if (Utility.getInstance().doPrint())
 		System.out.println(" dummy Event recived "+arg0[0].getUnderlying());
 		String sym = arg0[0].get("symbol").toString();
 		String sr = sym + ".close";

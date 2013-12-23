@@ -3,6 +3,9 @@ package vadi.test.sarb.esper.groovy
 import vadi.test.sarb.esper.portfolio.PFManager;
 import vadi.test.sarb.esper.util.GenericChart;
 import vadi.test.sarb.event.LastEOD
+import vadi.test.sarb.event.LoadPortfolio
+import vadi.test.sarb.event.StartEODQuote
+import vadi.test.sarb.event.StockSignal
 
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
@@ -80,13 +83,19 @@ class GenericListener implements UpdateListener {
 		
 			public void update(EventBean[] arg0, EventBean[] arg1) {
 				try{
-				// TODO Auto-generated method stub
+				Object obj = arg0[0].getUnderlying();
+				if ( obj instanceof StockSignal)
+				{
+					StockSignal sig = (StockSignal)obj;
+					PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
+				}
 				//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
-				println "TradeReceived "+arg0[0].getUnderlying();
+				println "TradeReceived "+obj;
 				//TradeSignal sig = arg0[0].getUnderlying();
 				Utility.getInstance().dbUtil.execute("insert into signals ("+
-					" signal) values ('"+arg0[0].getUnderlying().toString()+"')");
+					" signal) values ('"+obj.toString()+"')");
 				//sig.enqueue();
+				
 				}
 			catch(e){
 					e.printStackTrace();
@@ -116,22 +125,33 @@ class GenericListener implements UpdateListener {
 	
 	
 	class StopSystem implements UpdateListener {
-		
-			public void update(EventBean[] arg0, EventBean[] arg1) {
+			def output = "";
+				public void update(EventBean[] arg0, EventBean[] arg1) {
 				try{
 				// TODO Auto-generated method stub
 				//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
 				//println "Shutting down"
 				LastEOD evt = arg0[0].getUnderlying();
-				Utility.getInstance().removeFromSymbolList(evt.getSymbol())
+				def u = Utility.getInstance();
+				u.removeFromSymbolList(evt.getSymbol())
 				PFManager pfm = PFManager.getInstance();
 				println "Last event received "+evt.getSymbol();
-				println " Details for "+evt.getSymbol()
-				println pfm.getDetails(evt.getSymbol())
-				if( Utility.getInstance().isSymbolListEmpty()){
+				//println " Details for "+evt.getSymbol()
+				output +=  pfm.getDetails(evt.getSymbol())
+				output += "\n"
+				if( u.isSymbolListEmpty()){
 					println "Shutting down"
+					print output;
 					System.exit(0);
 				}
+				else {
+					PFManager.getInstance().setCash(10000)
+					def s = u.getSymbolList().get(0)
+					def sq = new StartEODQuote(s)
+					sq.enqueue()
+					
+				}
+					
 				}
 			catch(e){
 					e.printStackTrace();

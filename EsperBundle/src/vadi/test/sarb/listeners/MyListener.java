@@ -11,10 +11,7 @@ import vadi.test.sarb.esper.portfolio.PFManager;
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
 
-/**
- *
- * @author tomp
- */
+
 public class MyListener implements UpdateListener {
 	 volatile int count =0;
 	 PFManager pfm = PFManager.getInstance();

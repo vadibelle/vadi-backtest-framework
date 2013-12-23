@@ -13,7 +13,7 @@ import vadi.test.sarb.esper.util.GenericChart;
 import vadi.test.sarb.event.EODQuote;
 import vadi.test.sarb.event.TradeSignal;
 
-
+@Deprecated
 public class MacdListerner implements UpdateListener {
 
 //	LineChart chart ;//= new LineChart();
