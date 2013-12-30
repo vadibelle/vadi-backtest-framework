@@ -40,14 +40,32 @@ import vadi.test.sarb.esper.data.UpIndicator;
 import vadi.test.sarb.esper.groovy.*
 
 //evaluate(new File((vadi.test.sarb.esper.Messages.getString("StatnUtil")))
+ configFile = ""
+ def processArgs()
+ {
+	def map = [:]
 
+args.each {param ->
+    def nameAndValue = param.split("=")
+    map.put(nameAndValue[0], nameAndValue[1])
+}
+	
+	 map.each {
+		 if ( it.key == '-c')
+		 configFile=it.value
+	 }
+	 println "$configFile is set"
+	 if ( configFile != '')
+	vadi.test.sarb.esper.Messages.loadProperties(configFile)
+	 
+ }
 def loadModules() {
 	try {
 		
 		//def gdir="C:/Users/Meku-laptop//git/VadiAlgoProject/EsperBundle/src/vadi/test/sarb/esper/groovy/"
 		//evaluate(new File(gdir+"DbScripts.groovy"))
-		
-		
+	
+	println "$configFile is set"	
 	Utility u = Utility.getInstance();
 	epl_dir = vadi.test.sarb.esper.Messages.getString("epl.dir")
 	u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
@@ -182,6 +200,7 @@ def debug() {
 //main lo
  def main()  {
 	
+ println args	
 	 
 print "Loading all the Quotes"
 lp = new LoadPortfolio();
@@ -207,9 +226,10 @@ new File("C:\\temp\\test.csv").delete();
 }
 
  
-
+processArgs()
 loadModules()
 TradeHandler()
 //debug()
+ //println "load main"
 main()
 
