@@ -142,6 +142,14 @@ class GenericListener implements UpdateListener {
 				if( u.isSymbolListEmpty()){
 					println "Shutting down"
 					print output;
+					output.split('\n').each { 
+						println it.split(",").each {k ->
+							if ( k.contains("last Trade"))
+							println k
+					}
+						
+						
+					}
 					System.exit(0);
 				}
 				else {

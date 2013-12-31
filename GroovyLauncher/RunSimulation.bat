@@ -1,7 +1,9 @@
-rem @echo off
+@echo off
 rem set CLASSPATH=C:\Users\Meku-laptop\RnD\commons-math3-3.0\commons-math3-3.0.jar;C:\Users\Meku-laptop\RnD\esper-4.6.0\esper-4.6.0.jar;C:\Users\Meku-laptop\RnD\esper-4.6.0\esper\lib\antlr-runtime-3.2.jar;C:\Users\Meku-laptop\RnD\esper-4.6.0\esper\lib\cglib-nodep-2.2.jar;C:\Users\Meku-laptop\RnD\esper-4.6.0\esper\lib\commons-logging-1.1.1.jar;C:\Users\Meku-laptop\RnD\esper-4.6.0\esper\lib\log4j-1.2.16.jar;C:\Users\Meku-laptop\RnD\httpcomponents-client-4.2.2\lib\commons-codec-1.6.jar;C:\Users\Meku-laptop\RnD\httpcomponents-client-4.2.2\lib\commons-logging-1.1.1.jar;C:\Users\Meku-laptop\RnD\httpcomponents-client-4.2.2\lib\fluent-hc-4.2.2.jar;C:\Users\Meku-laptop\RnD\httpcomponents-client-4.2.2\lib\httpclient-4.2.2.jar;C:\Users\Meku-laptop\RnD\httpcomponents-client-4.2.2\lib\httpclient-cache-4.2.2.jar;C:\Users\Meku-laptop\RnD\httpcomponents-client-4.2.2\lib\httpcore-4.2.2.jar;C:\Users\Meku-laptop\RnD\httpcomponents-client-4.2.2\lib\httpmime-4.2.2.jar;C:\Users\Meku-laptop\RnD\jfreechart-1.0.14\lib\gnujaxp.jar;C:\Users\Meku-laptop\RnD\jfreechart-1.0.14\lib\iText-2.1.5.jar;C:\Users\Meku-laptop\RnD\jfreechart-1.0.14\lib\jcommon-1.0.17.jar;C:\Users\Meku-laptop\RnD\jfreechart-1.0.14\lib\jfreechart-1.0.14-experimental.jar;C:\Users\Meku-laptop\RnD\jfreechart-1.0.14\lib\jfreechart-1.0.14-swt.jar;C:\Users\Meku-laptop\RnD\jfreechart-1.0.14\lib\jfreechart-1.0.14.jar;C:\Users\Meku-laptop\RnD\jfreechart-1.0.14\lib\junit.jar;C:\Users\Meku-laptop\RnD\jfreechart-1.0.14\lib\servlet.jar;C:\Users\Meku-laptop\RnD\jfreechart-1.0.14\lib\swtgraphics2d.jar;C:\Users\Meku-laptop\RnD\esper-4.9.0\esper-4.9.0.jar;C:\Users\Meku-laptop\git\VadiAlgoProject\EsperBundle\bin
-set CLASSPATH=C:\Users\Meku-laptop\RnD\Proect_jars\EsperDemo.zip
+rem set CLASSPATH=C:\Users\Meku-laptop\RnD\Proect_jars\EsperDemo
 set JAVA_HOME=C:\Programs\Java\jdk1.7.0_07
 rem %JAVA_HOME%\bin\java 
-c:\Programs\Groovy\Groovy-2.1.1\bin\groovy.exe -cp %CLASSPATH%  C:\Users\Meku-laptop\git\VadiAlgoProject\EsperBundle\src\vadi\test\sarb\esper\groovy\GroovyTest.groovy
+rem c:\Programs\Groovy\Groovy-2.1.1\bin\groovy.exe -cp %CLASSPATH%  C:\Users\Meku-laptop\git\VadiAlgoProject\EsperBundle\src\vadi\test\sarb\esper\groovy\GroovyTest.groovy -c=c:\temp\temp.properties
 rem c:\Programs\Groovy\Groovy-2.1.1\bin\groovy.exe -cp %CLASSPATH% vadi\test\sarb\esper\groovy\GroovyTest.class
+
+%JAVA_HOME%/bin/java -jar C:\Users\Meku-laptop\git\VadiAlgoProject\Proect_jars\EsperDemo.jar -c=C:\Users\Meku-laptop\git\VadiAlgoProject\GroovyLauncher\temp.properties
