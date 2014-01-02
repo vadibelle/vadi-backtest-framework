@@ -35,12 +35,13 @@ import vadi.test.sarb.listeners.StartEOD
 import vadi.test.sarb.listeners.StatArbHandler
 import vadi.test.sarb.listeners.OldSimulator;
 
-import vadi.test.sarb.event.HighLow;
+
 import vadi.test.sarb.esper.data.UpIndicator;
 import vadi.test.sarb.esper.groovy.*
 
 //evaluate(new File((vadi.test.sarb.esper.Messages.getString("StatnUtil")))
  configFile = ""
+ symbolList = ""
  def processArgs()
  {
 	def map = [:]
@@ -53,6 +54,8 @@ args.each {param ->
 	 map.each {
 		 if ( it.key == '-c')
 		 configFile=it.value
+		 if ( it.key == '-s')
+		 symbolList = it.value
 	 }
 	 println "$configFile is set"
 	 if ( configFile != '')
@@ -86,7 +89,7 @@ def loadModules() {
 	u.deployModule(epl_dir+"context.epl")
 	//u.deployModule(epl_dir+"bup.epl")
 //	u.deployModule(epl_dir+"qstick.epl")
-	u.deployModule(epl_dir+"highlow.epl")
+	u.deployModule(epl_dir+"Highlow.epl")
 	
 	
 	u.deployModule(epl_dir+"volatility.epl")
@@ -200,7 +203,7 @@ def debug() {
 //main lo
  def main()  {
 	
- println args	
+ //println args	
 	 
 print "Loading all the Quotes"
 lp = new LoadPortfolio();
@@ -211,6 +214,17 @@ lp.enqueue()
 sb = new StatArb('SSO','QQQ')
 //sb.enqueue();
 def u = Utility.getInstance();
+qList = vadi.test.sarb.esper.Messages.getString("EOD.quote.file")
+println "quotes file $qList"
+
+new File(qList).eachLine { line ->
+	for ( st in line.split(',')) {
+		print st+" "
+		u.addToSymboList(st)
+	}
+	println ""
+  }
+
 for( st in vadi.test.sarb.esper.Messages.getString("EOD.quote.list").split(",")){
 	print st+"\n"
 	u.addToSymboList(st)

@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import vadi.test.sarb.esper.util.Utility;
+
 public class DbUtil {
 	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
 	  Connection conn = null;
@@ -16,9 +18,9 @@ public class DbUtil {
 	  
 	 public DbUtil()  {
 		super();
-		
+		url = vadi.test.sarb.esper.Messages.getString("db.url");
 		  //url = "jdbc:mysql://localhost:3306/";
-		  url="jdbc:h2:/c://Users/Meku-laptop/RnD/ATS";
+		//  url="jdbc:h2:/c://Users/Meku-laptop/RnD/ATS";
 		  String dbName = "options";
 		//  String driver = "com.mysql.jdbc.Driver";
 		 String driver = "org.h2.Driver";

@@ -1,5 +1,7 @@
 package vadi.test.sarb.esper.groovy
 
+import java.awt.image.Kernel;
+
 import vadi.test.sarb.esper.portfolio.PFManager;
 import vadi.test.sarb.esper.util.GenericChart;
 import vadi.test.sarb.event.LastEOD
@@ -90,7 +92,7 @@ class GenericListener implements UpdateListener {
 					PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
 				}
 				//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
-				println "TradeReceived "+obj;
+				//println "TradeReceived "+obj;
 				//TradeSignal sig = arg0[0].getUnderlying();
 				Utility.getInstance().dbUtil.execute("insert into signals ("+
 					" signal) values ('"+obj.toString()+"')");
@@ -125,7 +127,8 @@ class GenericListener implements UpdateListener {
 	
 	
 	class StopSystem implements UpdateListener {
-			def output = "";
+			def output = [];
+			def map = [:]
 				public void update(EventBean[] arg0, EventBean[] arg1) {
 				try{
 				// TODO Auto-generated method stub
@@ -137,18 +140,27 @@ class GenericListener implements UpdateListener {
 				PFManager pfm = PFManager.getInstance();
 				println "Last event received "+evt.getSymbol();
 				//println " Details for "+evt.getSymbol()
-				output +=  pfm.getDetails(evt.getSymbol())
-				output += "\n"
+				map =  pfm.getDetails(evt.getSymbol())
+				//println "map is $map"
+				//println "output is $output"
+				output.add(map)
+				//output += "\n"
 				if( u.isSymbolListEmpty()){
 					println "Shutting down"
-					print output;
-					output.split('\n').each { 
-						println it.split(",").each {k ->
-							if ( k.contains("last Trade"))
-							println k
+					output = output.sort { it.get("returns")}
+					output.each {
+						println it
+						//println ""
 					}
-						
-						
+					output.each { 
+						it.each {k ->
+							if (  k.getKey() =~ "last Trade" && k.getValue() != null  ) 
+								println " $k "
+								//println ""
+								//println k.class
+	       							
+					}
+										
 					}
 					System.exit(0);
 				}

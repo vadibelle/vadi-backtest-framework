@@ -136,6 +136,7 @@ public class Utility {
 
 	public void addToSymboList(String smbl)
 	{
+		if ( !symbolList.contains(smbl))
 		symbolList.add(smbl);
 	}
 

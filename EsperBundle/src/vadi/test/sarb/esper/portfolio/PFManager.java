@@ -14,6 +14,7 @@ import vadi.test.sarb.event.*;
 
 public class PFManager {
 	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
+	
 
 	double portfolio = 0;
 	volatile double ammount = 10000;
@@ -52,6 +53,7 @@ public class PFManager {
 		drawDown = new ConcurrentHashMap<String, Double>();
 		noOfTrades = new ConcurrentHashMap<String, Integer>();
 		lastTrade = new ConcurrentHashMap<String, String>();
+		print = Utility.getInstance().doPrint();
 		
 	}
 
