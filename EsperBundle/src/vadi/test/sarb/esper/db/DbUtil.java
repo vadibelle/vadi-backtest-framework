@@ -14,11 +14,14 @@ public class DbUtil {
 	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
 	  Connection conn = null;
 	  String url,dbName,driver,userName,password;
+	  boolean print = false;
 	    
 	  
 	 public DbUtil()  {
 		super();
 		url = vadi.test.sarb.esper.Messages.getString("db.url");
+		if (vadi.test.sarb.esper.Messages.getString("do.print").equals("true"))
+			print = true;
 		  //url = "jdbc:mysql://localhost:3306/";
 		//  url="jdbc:h2:/c://Users/Meku-laptop/RnD/ATS";
 		  String dbName = "options";
@@ -42,7 +45,7 @@ public class DbUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		  
+		  if ( print) 
 		  log.info("Connected to the database");
 		  
 		

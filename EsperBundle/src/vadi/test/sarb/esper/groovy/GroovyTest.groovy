@@ -40,28 +40,9 @@ import vadi.test.sarb.esper.data.UpIndicator;
 import vadi.test.sarb.esper.groovy.*
 
 //evaluate(new File((vadi.test.sarb.esper.Messages.getString("StatnUtil")))
- configFile = ""
- symbolList = ""
- def processArgs()
- {
-	def map = [:]
-
-args.each {param ->
-    def nameAndValue = param.split("=")
-    map.put(nameAndValue[0], nameAndValue[1])
-}
-	
-	 map.each {
-		 if ( it.key == '-c')
-		 configFile=it.value
-		 if ( it.key == '-s')
-		 symbolList = it.value
-	 }
-	 println "$configFile is set"
-	 if ( configFile != '')
-	vadi.test.sarb.esper.Messages.loadProperties(configFile)
-	 
- }
+ configFile = ''
+ symbolList = ''
+ 
 def loadModules() {
 	try {
 		
@@ -202,9 +183,13 @@ def debug() {
 
 //main lo
  def main()  {
+
+if ( vadi.test.sarb.esper.Messages.getString("clean.db") == "true" ) {
+def db = new DbScripts()
+db.cleanDB()
 	
- //println args	
-	 
+}
+
 print "Loading all the Quotes"
 lp = new LoadPortfolio();
 lp.setCash(10000);
@@ -214,9 +199,21 @@ lp.enqueue()
 sb = new StatArb('SSO','QQQ')
 //sb.enqueue();
 def u = Utility.getInstance();
+
+
+if ( symbolList != '')
+new File(symbolList).eachLine { line ->
+	line.split(',').each { st->
+		print st +" "
+		u.addToSymboList(st)
+	}
+	println ""
+
+}
 qList = vadi.test.sarb.esper.Messages.getString("EOD.quote.file")
 println "quotes file $qList"
 
+if ( qList != '')
 new File(qList).eachLine { line ->
 	for ( st in line.split(',')) {
 		print st+" "
@@ -240,7 +237,9 @@ new File("C:\\temp\\test.csv").delete();
 }
 
  
-processArgs()
+ ProcessArgs pArgs = new ProcessArgs(args)
+ configFile = pArgs.configFile
+ symbolList = pArgs.symbolList
 loadModules()
 TradeHandler()
 //debug()

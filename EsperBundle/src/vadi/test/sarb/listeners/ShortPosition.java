@@ -17,6 +17,7 @@ public class ShortPosition implements UpdateListener  {
 	
 	public ShortPosition() {
 		super();
+		if( vadi.test.sarb.esper.Messages.getString("do.print").equals("true"))
 		log.info("short listener");
 		pfm = PFManager.getInstance();
 		
@@ -27,6 +28,7 @@ public class ShortPosition implements UpdateListener  {
 		// TODO Auto-generated method stub
 		try {
 		TradeSignal sig = (TradeSignal)(arg0[0].getUnderlying());
+		if( vadi.test.sarb.esper.Messages.getString("do.print").equals("true"))
 		log.info(sig.toString());
 		if ( sig.getType().equalsIgnoreCase("BUY")|| 
 				sig.getType().equalsIgnoreCase("CLOSE_SHORT"))

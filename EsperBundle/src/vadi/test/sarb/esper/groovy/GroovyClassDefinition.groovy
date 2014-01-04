@@ -107,7 +107,14 @@ class GenericListener implements UpdateListener {
 		}
 	
 	class StopSignal implements UpdateListener {
+		def outfile = "C:\\temp\\output.csv"
 		
+		def StopSignal() {
+			def f = new File(outfile)
+			if ( f.exists())
+				f.delete()
+				
+		}
 			public void update(EventBean[] arg0, EventBean[] arg1) {
 				try{
 				// TODO Auto-generated method stub
@@ -127,6 +134,14 @@ class GenericListener implements UpdateListener {
 	
 	
 	class StopSystem implements UpdateListener {
+		def outfile = "C:\\temp\\output.csv"
+		
+		def StopSystem() {
+			def f = new File(outfile)
+			if ( f.exists())
+				f.delete()
+				
+		}
 			def output = [];
 			def map = [:]
 				public void update(EventBean[] arg0, EventBean[] arg1) {
@@ -134,6 +149,7 @@ class GenericListener implements UpdateListener {
 				// TODO Auto-generated method stub
 				//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
 				//println "Shutting down"
+				def f = new File(outfile)
 				LastEOD evt = arg0[0].getUnderlying();
 				def u = Utility.getInstance();
 				u.removeFromSymbolList(evt.getSymbol())
@@ -147,18 +163,26 @@ class GenericListener implements UpdateListener {
 				//output += "\n"
 				if( u.isSymbolListEmpty()){
 					println "Shutting down"
+					f = new File(outfile)
+					f.withWriter { fw ->
 					output = output.sort { it.get("returns")}
 					output.each {
 						println it
 						//println ""
-					}
+						fw.writeLine(it.toString())
+						}
+					
 					output.each { 
 						it.each {k ->
-							if (  k.getKey() =~ "last Trade" && k.getValue() != null  ) 
-								println " $k "
+							if (  k.getKey() =~ "last Trade" && k.getValue() != null  ) {
+								println k
 								//println ""
 								//println k.class
-	       							
+								
+								fw.writeLine(k.toString())
+							}
+						}	
+									
 					}
 										
 					}
@@ -180,3 +204,29 @@ class GenericListener implements UpdateListener {
 			}
 		}
 	
+	
+	class ProcessArgs {
+		def configFile = ''
+		def symbolList = ''
+		def ProcessArgs(args)
+		{
+		   def map = [:]
+	   
+	   args.each {param ->
+		   def nameAndValue = param.split("=")
+		   map.put(nameAndValue[0], nameAndValue[1])
+	   }
+		   
+			map.each {
+				if ( it.key == '-c')
+				configFile=it.value
+				if ( it.key == '-s')
+				symbolList = it.value
+			}
+			println "$configFile is set"
+			if ( configFile != '')
+		   vadi.test.sarb.esper.Messages.loadProperties(configFile)
+			
+		}
+		
+	}

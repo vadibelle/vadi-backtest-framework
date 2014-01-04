@@ -19,6 +19,7 @@ public class LongPosition implements UpdateListener,Serializable  {
 	
 	public LongPosition() {
 		super();
+		if ( vadi.test.sarb.esper.Messages.getString("do.print").equals("true"))
 		log.info("Long listener");
 		pfm = PFManager.getInstance();
 		
@@ -31,6 +32,7 @@ public class LongPosition implements UpdateListener,Serializable  {
 		try {
 						
 		TradeSignal sig = (TradeSignal)(arg0[0].getUnderlying());
+		if ( vadi.test.sarb.esper.Messages.getString("do.print").equals("true"))
 		log.info(sig.toString());
 		/*if ( Long.parseLong(sig.price_timestamp) < Utility.getInstance().getCurrentTime() )
 		{

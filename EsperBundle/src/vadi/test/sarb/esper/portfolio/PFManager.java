@@ -162,7 +162,7 @@ public class PFManager {
 					cash = cash - n * (price)-slippage;
 				else
 					n = 0;
-				
+				if (print)
 				log.info("@@Buying " + n + " stocks ");
 				if ( n <= 0 )
 					return;
@@ -224,6 +224,7 @@ public class PFManager {
 //			}
 			if (positions.containsKey(sig.getSymbol())) {
 				// log.info("@@Selling "+positions.get(evt.getSymbol())+" stocks");
+				if (print)
 				log.info("@@Selling signal received " + cash + " " + price
 						+ " " + sig.getSymbol());
 				long stock = positions.get(sig.getSymbol());
@@ -243,6 +244,7 @@ public class PFManager {
 			
 			m2m(sig.getSymbol(), Double.parseDouble(sig.getClose()));
 		} catch (Throwable e) {
+			if ( print)
 			log.info("ERROR closeLongPostion " + sig);
 		}
 
@@ -253,10 +255,11 @@ public class PFManager {
 		
 	}
 
-	public synchronized double positionValue(boolean print)
+	public synchronized double positionValue(boolean pr)
 	{
 		double ret = 0;
 		//loadPositions();
+		
 		StringBuilder text = new StringBuilder();
 		text.replace(0, text.length(), "");
 		text.append("cash="+cash+"\n");
@@ -284,7 +287,7 @@ public class PFManager {
 		ret += shortCash;
 		text.append(" value=" + ret+"\n");
 		//text.append(" portfolio="+portfolio+"\n");
-		if ( print )
+		if ( pr && print )
 			log.info(text.toString());
 
 		// status.setText(text.toString());
@@ -292,7 +295,6 @@ public class PFManager {
 	}
 	
 	public synchronized double positionValue() {
-		
 		return positionValue(false);
 	}
 
@@ -316,6 +318,7 @@ public class PFManager {
 			long n = bd.longValue();
 			if (  n <= 0 )
 				return;
+			if( print)
 			log.info("@@@ Sell short " + n + " " + sig.getSymbol());
 			if (short_positions.containsKey(sig.getSymbol()))
 				stock = short_positions.get(sig.getSymbol());
@@ -372,6 +375,7 @@ public class PFManager {
 			if (short_positions.containsKey(sig.getSymbol())) {
 
 				long lp = short_positions.get(sig.getSymbol());
+				if ( print)
 				log.info("@@@ Short cover " + lp + " " + sig.getSymbol());
 				if ((cash+shortCash)*0.9 >= lp * price) {
 					double tmpc = cash+shortCash-slippage;
@@ -524,6 +528,7 @@ public class PFManager {
 			ArrayList<ArrayList> res = dbutil.execute(sql);
 			
 			int i = res.size();
+			if (print)
 			log.info(res.toString() +" no of rows "+i);
 			int j=1;
 			if (i > 1 ) 
@@ -565,7 +570,7 @@ public class PFManager {
 			}
 		String str = "Positions long "+positions+" short "+short_positions+
 				" cash "+cash+" shortCash "+shortCash;
-		
+		if ( print)
 		log.info(str);
 		
 		} catch (Exception e) {
@@ -628,11 +633,13 @@ public class PFManager {
 						return;
 					}
 					if ( close < chp*0.85){
+						if ( print)
 						log.info("Buy: close<.9*high");
 						eSig=true;
 					}
 					if ((cb - close*qty) > 1500 ){
 						eSig=true;
+						if (print)
 						log.info("cb-close*qty >1200");
 					}
 					
@@ -660,10 +667,12 @@ public class PFManager {
 					}
 					if ( close > chp*1.15){
 						eSig=true;
+						if (print)
 						log.info("sell: close>.1.1*low");
 					}
 					if ((cb -close*qty) < -1500 ){
 						eSig=true;
+						if (print)
 						log.info("cb-close*qty >-1200");
 					}
 					
@@ -674,6 +683,7 @@ public class PFManager {
 					act = "BUY";
 				}
 				if ( eSig) {
+					if (print)
 					log.info("Genering stop loss for symbol "+symbol+" price "+close+" "+
 							 new Timestamp(eq.getTimestamp()).toString());
 					hasExit.put(symbol, true);

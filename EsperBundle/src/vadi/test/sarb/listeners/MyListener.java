@@ -34,7 +34,7 @@ public class MyListener implements UpdateListener {
       // log.info("ts="+mb.get("ts"));
       // log.info("eq="+mb.get("average"));
        System.out.println("mylistener "+newEvents[0].getUnderlying().toString());
-       System.out.println(pfm.positionValue());
+     //  System.out.println(pfm.positionValue());
        }
     	}
        catch(Throwable e){
