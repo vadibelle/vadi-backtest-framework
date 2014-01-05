@@ -203,6 +203,7 @@ def u = Utility.getInstance();
 
 if ( symbolList != '')
 new File(symbolList).eachLine { line ->
+	if (!line.startsWith('#'))
 	line.split(',').each { st->
 		print st +" "
 		u.addToSymboList(st)
@@ -230,9 +231,13 @@ for( st in vadi.test.sarb.esper.Messages.getString("EOD.quote.list").split(","))
 }
 
 def smbl = u.getSymbolList().get(0)
+//u.getSymbolList().each {
+//	new StartEODQuote(it).enqueue()
+//}
+
 new StartEODQuote(smbl).enqueue()
-//st = new StatArb('GLD','XLE')
-//st.enqueue();
+st = new StatArb('GLD','XLE')
+st.enqueue();
 new File("C:\\temp\\test.csv").delete();
 }
 
