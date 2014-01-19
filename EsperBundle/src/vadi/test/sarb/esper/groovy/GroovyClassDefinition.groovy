@@ -177,6 +177,8 @@ class GenericListener implements UpdateListener {
 					}
 					f = new File(outfile)
 					f.withWriter { fw ->
+					
+					output = output.sort { it.get("returns")}
 					output = output.sort { it.get("price_timestamp")}
 					output.each {
 						println it
