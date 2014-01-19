@@ -13,7 +13,7 @@ public class LongPosition implements UpdateListener,Serializable  {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
 
 	PFManager pfm ;
 	

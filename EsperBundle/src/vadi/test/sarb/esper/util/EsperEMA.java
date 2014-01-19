@@ -4,7 +4,7 @@ import java.util.logging.Level;
 
 import com.espertech.esper.epl.agg.aggregator.AggregationMethod;
 public class EsperEMA implements AggregationMethod {
-	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
 	
 	volatile private int counter = 0;
 	private double ema = 0;

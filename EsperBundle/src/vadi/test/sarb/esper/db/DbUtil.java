@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import vadi.test.sarb.esper.util.Utility;
 
 public class DbUtil {
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
 	  Connection conn = null;
 	  String url,dbName,driver,userName,password;
 	  boolean print = false;

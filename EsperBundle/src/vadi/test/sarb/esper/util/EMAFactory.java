@@ -7,7 +7,7 @@ import com.espertech.esper.epl.agg.aggregator.AggregationMethod;
 import com.espertech.esper.epl.agg.service.AggregationValidationContext;
 
 public class EMAFactory implements AggregationFunctionFactory{
-	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
 	private  Level level = Level.FINEST;
 	private  String fName = "";
 	

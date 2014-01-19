@@ -29,13 +29,13 @@ import vadi.test.sarb.listeners.DummyListener;
 public class Utility {
 
 	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
-	static final int NUM_THREADS = 5;
+	static final int NUM_THREADS = 10;
 	private static volatile Utility instance = null;
 	private ExecutorService executor = null;
 	private  DbUtil dbUtil = null;
 	private   EPServiceProvider epService ;
 	private ConcurrentHashMap<Object,HashMap> map = null;
-	static final JFrame container ;
+	//static final JFrame container ;
 	private static boolean simulationMode = false;
 	private long currentTime = 0;
 	private ArrayList<String> symbolList;
@@ -44,9 +44,11 @@ public class Utility {
 	static {
 		System.out.println("Initializing esper engine");
 		getInstance();
+		/*
 		container = new JFrame("Dashboard");
 		container.setLayout(new FlowLayout());
 		container.setSize(700, 700);
+		*/
 		//container.getContentPane().setLayout(new GridLayout());
 		//container.getContentPane().setLayout(new BorderLayout());
 	//container.getContentPane().setLayout(new GridLayout());
@@ -54,6 +56,7 @@ public class Utility {
 		//container.getContentPane().setLayout(new GridBagLayout());
 		//container.getContentPane().setLayout(new SpringLayout());
 
+		/*
 		container.pack();
 		container.setVisible(true);
 		container.addWindowListener(new java.awt.event.WindowAdapter(){		
@@ -61,6 +64,7 @@ public class Utility {
 		public void windowClosing(java.awt.event.WindowEvent e){
              System.exit(0);
      }});
+     */
 	}
 	
 	public synchronized ConcurrentHashMap getMap() {
@@ -111,15 +115,28 @@ public class Utility {
 			print = true;
 		//config.getEngineDefaults().getLogging().setEnableExecutionDebug(true);
         config.addEventTypeAutoName("vadi.test.sarb.event");
+       // config.getEngineDefaults().getThreading().setListenerDispatchPreserveOrder(false);
+       // config.getEngineDefaults().getThreading().setInsertIntoDispatchPreserveOrder(false);
+       // config.getEngineDefaults().getThreading().setEngineFairlock(false);
+       
         epService = EPServiceProviderManager.getDefaultProvider(config);
-       // epService.getEPAdministrator().getConfiguration().addPlugInAggregationFunction(arg0, arg1)
-      //  init();
 
+        // epService.getEPAdministrator().getConfiguration().addPlugInAggregationFunction(arg0, arg1)
+      //  init();
+        
               
 	}
+	public void createIntVar(String name, int val){
+		
+		epService.getEPAdministrator().getConfiguration().
+		addVariable(name, Integer.class, val);
+		
+	}
+	
 	public boolean doPrint(){
 		return print;
 	}
+	
 	
 	public boolean isSymbolListEmpty() {
 		return symbolList.isEmpty();
@@ -136,13 +153,13 @@ public class Utility {
 
 	public void addToSymboList(String smbl)
 	{
-		if ( !symbolList.contains(smbl))
-		symbolList.add(smbl);
+		if ( !symbolList.contains(smbl.toUpperCase()))
+		symbolList.add(smbl.toUpperCase());
 	}
 
 	public void removeFromSymbolList(String smbl)
 	{
-		symbolList.remove(smbl);
+		symbolList.remove(smbl.toUpperCase());
 	}
 	
 	public static boolean isSimMode()
@@ -270,7 +287,8 @@ public static void createStmt(String eventExpr){
 			
 	
 	public static JFrame getContainer() {
-		return container;
+		//return container;
+		return null;
 	}
 
 	public static GenericChart addChart(String name)

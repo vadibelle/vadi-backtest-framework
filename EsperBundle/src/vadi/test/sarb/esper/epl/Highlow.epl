@@ -1,4 +1,4 @@
-
+context SymbolContext
 insert into highlowavg
 select EMA(cast(q.high,double)) as mxH ,EMA(cast(q.low,double)) as mxL,
 //select max(cast(q.high,double)) as mxH ,max(cast(q.low,double)) as mxL,
@@ -8,7 +8,8 @@ EMA(cast(q.high,double)) as mnH , EMA(cast(q.low,double)) as mnL,
 //min(cast(q.high,double)) as mnH , min(cast(q.low,double)) as mnL,
 EMA(cast(q.close,double)) as mnC 
 //min(cast(q.close,double)) as mnC 
-from EODQuote.win:length(st) q group by symbol;
+from EODQuote.win:length(st) q ;
+//group by symbol;
 
 insert into highlow
 select q.symbol as symbol,q.open as open,q.high as high,q.low as low,q.close as close,"BUY" as signal,

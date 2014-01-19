@@ -8,6 +8,7 @@ import vadi.test.sarb.event.LastEOD
 import vadi.test.sarb.event.LoadPortfolio
 import vadi.test.sarb.event.StartEODQuote
 import vadi.test.sarb.event.StockSignal
+import vadi.test.sarb.event.StopLoss
 
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
@@ -86,7 +87,8 @@ class GenericListener implements UpdateListener {
 			public void update(EventBean[] arg0, EventBean[] arg1) {
 				try{
 				Object obj = arg0[0].getUnderlying();
-				if ( obj instanceof StockSignal)
+				if ( obj instanceof StockSignal ||
+					obj instanceof StopLoss)
 				{
 					StockSignal sig = (StockSignal)obj;
 					PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
@@ -135,15 +137,20 @@ class GenericListener implements UpdateListener {
 	
 	class StopSystem implements UpdateListener {
 		def outfile = "C:\\temp\\output.csv"
-		
+		def output
+		def map
+		def symList
 		def StopSystem() {
 			def f = new File(outfile)
 			if ( f.exists())
 				f.delete()
+				 output = []
+				 map = [:]
+				 symList = []
+				 
 				
 		}
-			def output = [];
-			def map = [:]
+			
 				public void update(EventBean[] arg0, EventBean[] arg1) {
 				try{
 				// TODO Auto-generated method stub
@@ -152,27 +159,33 @@ class GenericListener implements UpdateListener {
 				def f = new File(outfile)
 				LastEOD evt = arg0[0].getUnderlying();
 				def u = Utility.getInstance();
+				symList.add(evt.getSymbol())
 				u.removeFromSymbolList(evt.getSymbol())
 				PFManager pfm = PFManager.getInstance();
 				println "Last event received "+evt.getSymbol();
 				//println " Details for "+evt.getSymbol()
-				map =  pfm.getDetails(evt.getSymbol())
+				//map =  pfm.getDetails(evt.getSymbol())
 				//println "map is $map"
 				//println "output is $output"
-				output.add(map)
+				//output.add(map)
 				//output += "\n"
 				if( u.isSymbolListEmpty()){
 					println "Shutting down"
+					symList.each { sym -> 
+						map = pfm.getDetails(sym)
+						output.add(map)
+					}
 					f = new File(outfile)
 					f.withWriter { fw ->
-					output = output.sort { it.get("returns")}
+					output = output.sort { it.get("price_timestamp")}
 					output.each {
 						println it
 						//println ""
 						fw.writeLine(it.toString())
 						}
-					
-					output.each { 
+					SendMail sm = new SendMail()
+					sm.send(output.toString())
+					/*output.each { 
 						it.each {k ->
 							if (  k.getKey() =~ "last Trade" && k.getValue() != null  ) {
 								println k
@@ -183,13 +196,13 @@ class GenericListener implements UpdateListener {
 							}
 						}	
 									
-					}
+					}*/
 										
 					}
 					System.exit(0);
 				}
 				else {
-					PFManager.getInstance().setCash(10000)
+				//	PFManager.getInstance().setCash(10000)
 					def s = u.getSymbolList().get(0)
 					def sq = new StartEODQuote(s)
 					sq.enqueue()
@@ -228,5 +241,8 @@ class GenericListener implements UpdateListener {
 		   vadi.test.sarb.esper.Messages.loadProperties(configFile)
 			
 		}
+	
 		
+		
+			
 	}

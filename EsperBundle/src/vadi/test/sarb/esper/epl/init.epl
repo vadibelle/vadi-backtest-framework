@@ -6,10 +6,10 @@ import java.sql.Date;
 import vadi.test.sarb.esper.groovy.*;
 import vadi.test.sarb.esper.util.*;
 
+/*
 create variable integer si=15;
 create variable integer li=65;
 create variable integer lt=65;
-create variable integer st=10; 
+create variable integer st=10; */
 create variable integer numSym=1;
 create variable double vlimit=1.1
-

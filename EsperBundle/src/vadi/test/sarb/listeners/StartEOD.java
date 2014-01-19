@@ -148,14 +148,14 @@ public class StartEOD implements UpdateListener,Serializable {
 					Date dt = df.parse(rec[0]);
 					q.setTimestamp(dt.getTime());
 					q.enqueue();
-					Thread.sleep(20);
+					Thread.sleep(10);
 				}
 				LastEOD last = new LastEOD(getTick());
-				Thread.sleep(100);
+				Thread.sleep(1000);
 				last.enqueue();
 				
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
+				// TODO Auto-generated catch blok
 				e.printStackTrace();
 				log.info("Error downloading");
 				error = true;
