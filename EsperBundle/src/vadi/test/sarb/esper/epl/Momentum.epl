@@ -1,0 +1,40 @@
+insert into mstream
+select *, avg(pnld(atr(high,low,close), atr(prev(si,high),prev(si,low),prev(si,close)))) as pnl,
+stddev(pnl(close, prev(si,close))) as dev
+from EODQuote.win:length(si+1);
+
+insert into mstreamcross
+select 'BUY' as signal,*
+from mstream.win:length(3) ms
+where
+pnl > 0 and
+pnl > 2*dev and
+prev(1,pnl) < 2*dev 
+//prev(1,pnl) < 0
+;
+
+insert into mstreamcross
+select 'CLOSE_LONG' as signal,*
+from mstream.win:length(3) ms
+where
+pnl > 0 and
+pnl < 2*dev and
+prev(1,pnl) > 2*dev
+//prev(1,pnl) < 0
+;
+
+
+insert into StockSignal(symbol,open,high,low,close,signal,indicator,timestamp)
+select symbol,open,high,low,close,signal,
+'MTUM' as indicator, cast(timestamp,string)
+from
+mstreamcross.win:length(1);
+
+
+insert into TradeSignal(symbol,open,high,low,close,signal,indicator,timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,signal,'MTUM',cast(q.timestamp,string)
+from 
+EODQuote.win:length(numSym+5) q , mstreamcross.win:length(numSym+1) cross
+where
+cross.timestamp=prev(numSym,q.timestamp) and
+cross.symbol=q.symbol ;

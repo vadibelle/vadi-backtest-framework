@@ -87,10 +87,14 @@ class GenericListener implements UpdateListener {
 			public void update(EventBean[] arg0, EventBean[] arg1) {
 				try{
 				Object obj = arg0[0].getUnderlying();
-				if ( obj instanceof StockSignal ||
-					obj instanceof StopLoss)
+				if ( obj instanceof StockSignal )
 				{
 					StockSignal sig = (StockSignal)obj;
+					PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
+				}
+				if ( obj instanceof StopLoss )
+				{
+					StopLoss sig = (StopLoss)obj;
 					PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
 				}
 				//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
@@ -177,9 +181,8 @@ class GenericListener implements UpdateListener {
 					}
 					f = new File(outfile)
 					f.withWriter { fw ->
-					
-					output = output.sort { it.get("returns")}
 					output = output.sort { it.get("price_timestamp")}
+					output = output.sort { it.get("returns")}
 					output.each {
 						println it
 						//println ""

@@ -42,5 +42,23 @@ public class SingleRowFunction {
 		
 	}
 	
+	public static double pnld(double c, double p) {
+		try {
+			return 100*((c-p)/p);
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1L;
+		
+	}
+	
+	public static double atr(String h,String l,String c) {
+		double high = Double.parseDouble(h);
+		double low = Double.parseDouble(l);
+		double close = Double.parseDouble(c);
+		return (( high+low+close/3))
+		;
+	}
 	
 }

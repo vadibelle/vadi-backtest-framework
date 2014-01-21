@@ -17,7 +17,8 @@ public class SendMail {
 		final String user = vadi.test.sarb.esper.Messages.getString("email.from");
 		
 		 final String password = vadi.test.sarb.esper.Messages.getString("email.password");
-		log.info("user "+user+" "+password+" "+password);
+		 if ( vadi.test.sarb.esper.Messages.getString("do.print").equals("true"))
+		 	log.info("user "+user+" "+password+" "+password);
 		String emailTo = vadi.test.sarb.esper.Messages.getString("email.to");
 		Properties props = new Properties();
 		props.put("mail.smtp.auth", "true");

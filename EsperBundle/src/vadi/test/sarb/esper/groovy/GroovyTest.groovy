@@ -70,7 +70,10 @@ def loadModules() {
 		"vadi.test.sarb.esper.util.SingleRowFunction", "diff");
 	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("pnl",
 		"vadi.test.sarb.esper.util.SingleRowFunction", "pnl");
-	
+	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("pnld",
+		"vadi.test.sarb.esper.util.SingleRowFunction", "pnld");
+	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("atr",
+		"vadi.test.sarb.esper.util.SingleRowFunction", "atr");
 	
 	
 	u.deployModule(epl_dir+"init.epl")
@@ -84,6 +87,7 @@ def loadModules() {
 	//u.deployModule(epl_dir+"ma.epl")
 	u.deployModule(epl_dir+"slope.epl")
 	u.deployModule(epl_dir+"MAStdev.epl")
+//	u.deployModule(epl_dir+"Momentum.epl")
 	
 	sb = "select * from StartEODQuote";
 	u.registerEventListener(sb, new StartEOD());
