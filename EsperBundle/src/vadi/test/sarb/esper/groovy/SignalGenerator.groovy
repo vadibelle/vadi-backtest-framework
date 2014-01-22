@@ -39,11 +39,18 @@ import vadi.test.sarb.esper.Messages;
 import vadi.test.sarb.esper.data.UpIndicator;
 import vadi.test.sarb.esper.groovy.*
 
+class SignalGenerator {
 //evaluate(new File((vadi.test.sarb.esper.Messages.getString("StatnUtil")))
- configFile = ''
- symbolList = ''
+def configFile = ''
+def symbolList = ''
+def init=false
  
 def loadModules() {
+	if ( !init )
+	{
+		println "not initialized"
+		return
+	}
 	try {
 		
 		//def gdir="C:/Users/Meku-laptop//git/VadiAlgoProject/EsperBundle/src/vadi/test/sarb/esper/groovy/"
@@ -52,7 +59,7 @@ def loadModules() {
 	println "$configFile is set"	
 	Utility u = Utility.getInstance();
 	
-	epl_dir = Messages.getString("epl.dir")
+	def epl_dir = Messages.getString("epl.dir")
 	u.createIntVar('si', Integer.parseInt(Messages.getString("var.si")))
 	u.createIntVar('li', Integer.parseInt(Messages.getString("var.li")))
 	u.createIntVar('st', Integer.parseInt(Messages.getString("var.si")))
@@ -89,7 +96,7 @@ def loadModules() {
 	u.deployModule(epl_dir+"MAStdev.epl")
 //	u.deployModule(epl_dir+"Momentum.epl")
 	
-	sb = "select * from StartEODQuote";
+	def sb = "select * from StartEODQuote";
 	u.registerEventListener(sb, new StartEOD());
 	}
 	catch(Throwable e){
@@ -100,6 +107,11 @@ def loadModules() {
 }
 
 def TradeHandler() {
+	if ( !init )
+	{
+		println "not initialized"
+		return
+	}
 	println "Registering handlers"
 	Utility u = Utility.getInstance();
 	
@@ -111,7 +123,7 @@ def TradeHandler() {
 	
 //	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
-	trdExp = 'select * from TradeSignal.std:unique(price_timestamp)'
+	def trdExp = 'select * from TradeSignal.std:unique(price_timestamp)'
 	//'.std:unique(price_timestamp) group by symbol'
 	u.registerEventListener(trdExp, new LongPosition())
 	if (vadi.test.sarb.esper.Messages.getString('long.short') == 'true')
@@ -193,74 +205,87 @@ def debug() {
 	
 }
 
-
-//main lo
- def main()  {
-
-if ( vadi.test.sarb.esper.Messages.getString("clean.db") == "true" ) {
-def db = new DbScripts()
-db.cleanDB()
+def sendSignals()
+{
+	if ( !init  )
+	{
+		println "not initialized"
+		return
+	}
+	def u = Utility.getInstance()
+	if ( symbolList != '')
+	new File(symbolList).eachLine { line ->
+		if (!line.startsWith('#'))
+		line.split(',').each { st->
+			print st +" "
+			u.addToSymboList(st)
+		}
+		println ""
+	
+	}
+	def qList = vadi.test.sarb.esper.Messages.getString("EOD.quote.file")
+	println "quotes file $qList"
+	
+	if ( qList != '')
+	new File(qList).eachLine { line ->
+		for ( st in line.split(',')) {
+			print st+" "
+			u.addToSymboList(st)
+		}
+		println ""
+	  }
+	
+	println "Loading all the Quotes"
+	def lp = new LoadPortfolio();
+	lp.setCash(10000);
+	lp.enqueue()
+	
+	for( st in vadi.test.sarb.esper.Messages.getString("EOD.quote.list").split(",")){
+		print st+"\n"
+		u.addToSymboList(st)
+		//evt = new StartEODQuote(st);
+		//evt.enqueue();
+	}
+	
+	def smbl = u.getSymbolList().get(0)
+	//u.getSymbolList().each {
+		//new StartEODQuote(it).enqueue()
+	//}
+	
+	new StartEODQuote(smbl).enqueue()
+	
 	
 }
 
-print "Loading all the Quotes"
-lp = new LoadPortfolio();
-lp.setCash(10000);
-lp.enqueue()
 
+def init(args) {
 
-sb = new StatArb('SSO','QQQ')
+ProcessArgs pArgs = new ProcessArgs(args)
+configFile = pArgs.configFile
+symbolList = pArgs.symbolList
+def sb = new StatArb('SSO','QQQ')
 //sb.enqueue();
 def u = Utility.getInstance();
 
 
-if ( symbolList != '')
-new File(symbolList).eachLine { line ->
-	if (!line.startsWith('#'))
-	line.split(',').each { st->
-		print st +" "
-		u.addToSymboList(st)
-	}
-	println ""
+if ( vadi.test.sarb.esper.Messages.getString("clean.db") == "true" ) {
+	def db = new DbScripts()
+	db.cleanDB()
+}	
 
-}
-qList = vadi.test.sarb.esper.Messages.getString("EOD.quote.file")
-println "quotes file $qList"
+new File("C:\\temp\\test.csv").delete();
+init = true
 
-if ( qList != '')
-new File(qList).eachLine { line ->
-	for ( st in line.split(',')) {
-		print st+" "
-		u.addToSymboList(st)
-	}
-	println ""
   }
 
-for( st in vadi.test.sarb.esper.Messages.getString("EOD.quote.list").split(",")){
-	print st+"\n"
-	u.addToSymboList(st)
-	//evt = new StartEODQuote(st);
-	//evt.enqueue();
+//main lo
+ static  main(String[] args)  {
+	def  gv = new SignalGenerator()
+	gv.init(args)
+	gv.loadModules()
+	gv.TradeHandler()
+ 	gv.sendSignals()
+
+ }
+
 }
-
-def smbl = u.getSymbolList().get(0)
-//u.getSymbolList().each {
-	//new StartEODQuote(it).enqueue()
-//}
-
-new StartEODQuote(smbl).enqueue()
-st = new StatArb('GLD','XLE')
-st.enqueue();
-new File("C:\\temp\\test.csv").delete();
-}
-
- 
- ProcessArgs pArgs = new ProcessArgs(args)
- configFile = pArgs.configFile
- symbolList = pArgs.symbolList
-loadModules()
-TradeHandler()
-//debug()
- //println "load main"
-main()
-
