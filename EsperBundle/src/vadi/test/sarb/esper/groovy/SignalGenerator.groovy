@@ -87,14 +87,14 @@ def loadModules() {
 	u.deployModule(epl_dir+"context.epl")
 	//u.deployModule(epl_dir+"bup.epl")
 //	u.deployModule(epl_dir+"qstick.epl")
-	u.deployModule(epl_dir+"Highlow.epl")
+	//u.deployModule(epl_dir+"Highlow.epl")
 	
 	
 	u.deployModule(epl_dir+"volatility.epl")
 	//u.deployModule(epl_dir+"ma.epl")
 	u.deployModule(epl_dir+"slope.epl")
-	u.deployModule(epl_dir+"MAStdev.epl")
-//	u.deployModule(epl_dir+"Momentum.epl")
+	//u.deployModule(epl_dir+"MAStdev.epl")
+	u.deployModule(epl_dir+"Momentum.epl")
 	
 	def sb = "select * from StartEODQuote";
 	u.registerEventListener(sb, new StartEOD());
@@ -194,9 +194,11 @@ def debug() {
 	//' group by symbol '
 	//str="select stddev(cast(close,double)) as sd ,symbol,timestamp from "+
 	//'EODQuote.win:length(390) group by symbol'
-	str='select * from varcrossover'
+	//def str='select * from StockSignal'
+	def l = new GenericListener()
+	u.registerEventListener('select * from StockSignal',l)
+	u.registerEventListener('select * from mstream',l)
 	
-	u.registerEventListener(str,new GenericListener());
 	//u.registerEventListener(str,new CpListener());
 	}
 	catch(Throwable e){
@@ -283,6 +285,7 @@ init = true
 	def  gv = new SignalGenerator()
 	gv.init(args)
 	gv.loadModules()
+	gv.debug()
 	gv.TradeHandler()
  	gv.sendSignals()
 

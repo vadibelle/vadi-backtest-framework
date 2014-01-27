@@ -1,7 +1,10 @@
 package vadi.test.sarb.esper.util;
 
+import org.jfree.util.Log;
+
 public class SingleRowFunction {
-	
+	final static java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+
 	public static double toDouble(String str){
 		try {
 			if (str == null)
@@ -33,7 +36,9 @@ public class SingleRowFunction {
 		try {
 			double cl = Double.parseDouble(c);
 			double pr = Double.parseDouble(p);
-			return 100*((cl-pr)/pr);
+			double pnl = 100*((cl-pr)/pr);
+			//log.info("close="+cl+" prv="+pr+" pnl="+pnl);
+			return pnl;
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -62,7 +62,11 @@ public class Portfolio {
 				log.info("Cannot open, short cover reached");
 				return;
 			}
-			
+			if ( hasExit ){
+				if (print)
+				log.info("has pending close long");
+				return;
+			}
 			//double price = Double.parseDouble(sig.getHigh());
 			//buy on open +100 slippage
 			double price = Double.parseDouble(sig.getOpen());
@@ -112,6 +116,7 @@ public class Portfolio {
 		//	double price = Double.parseDouble(sig.getLow());
 			double price = Double.parseDouble(sig.getOpen());
 			String symbol = sig.getSymbol();
+			
 
 			if (positions > 0) {
 				// log.info("@@Selling "+positions.get(evt.getSymbol())+" stocks");
@@ -190,6 +195,11 @@ public class Portfolio {
 			double close = Double.parseDouble(sig.getClose());
 			double funds = tradeSize * ammount> cash ? cash
 					: (tradeSize * ammount);
+			if ( hasExit ){
+				if (print)
+				log.info("has pending close long");
+				return;
+			}
 			
 			BigDecimal bd = new BigDecimal(funds / price);
 			long stock = 0;
@@ -276,6 +286,8 @@ public class Portfolio {
 			lowPrice = low;
 		
 		double d = positionValue(true);
+		if ( print)
+			log.fine("d = "+d+"dd = "+drawDown);
 		if ( d < drawDown )
 			 drawDown = d;
 		
@@ -386,7 +398,7 @@ public class Portfolio {
 					hasExit =  true;
 					StopLoss exitSig = new StopLoss(symbol,act,eq.getClose(),
 						eq.getTimestamp());
-					exitSig.route();
+					exitSig.enqueue();
 				}
 					
 		}

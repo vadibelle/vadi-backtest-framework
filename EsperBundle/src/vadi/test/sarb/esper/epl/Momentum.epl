@@ -1,5 +1,7 @@
+context SymbolContext
 insert into mstream
-select *, avg(pnld(atr(high,low,close), atr(prev(si,high),prev(si,low),prev(si,close)))) as pnl,
+//select *, pnld(atr(high,low,close), atr(prev(si,high),prev(si,low),prev(si,close))) as pnl,
+select *, pnl(close, prev(si,close)) as pnl,
 stddev(pnl(close, prev(si,close))) as dev
 from EODQuote.win:length(si+1);
 
@@ -7,22 +9,42 @@ insert into mstreamcross
 select 'BUY' as signal,*
 from mstream.win:length(3) ms
 where
-pnl > 0 and
-pnl > 2*dev and
-prev(1,pnl) < 2*dev 
-//prev(1,pnl) < 0
+pnl > 0
+and pnl > dev
+//and prev(1,pnl) < 2*dev 
+//and prev(1,pnl) < 2
+;
+
+insert into mstreamcross
+select 'SELL' as signal,*
+from mstream.win:length(3) ms
+where
+pnl < 0
+and pnl > dev
+//prev(1,pnl) < 2*dev 
+//prev(1,pnl) > -2
+;
+/*
+insert into mstreamcross
+select 'CLOSE_SHORT' as signal,*
+from mstream.win:length(3) ms
+where
+pnl < -1 and
+//pnl < 2*dev and
+//prev(1,pnl) > 2*dev
+prev(1,pnl) > -1
 ;
 
 insert into mstreamcross
 select 'CLOSE_LONG' as signal,*
 from mstream.win:length(3) ms
 where
-pnl > 0 and
-pnl < 2*dev and
-prev(1,pnl) > 2*dev
-//prev(1,pnl) < 0
+pnl < 1 and
+//pnl < 2*dev and
+//prev(1,pnl) > 2*dev
+prev(1,pnl) > 1
 ;
-
+*/
 
 insert into StockSignal(symbol,open,high,low,close,signal,indicator,timestamp)
 select symbol,open,high,low,close,signal,
