@@ -1,29 +1,47 @@
 context SymbolContext
 insert into mstream
 //select *, pnld(atr(high,low,close), atr(prev(si,high),prev(si,low),prev(si,close))) as pnl,
-select *, pnl(close, prev(si,close)) as pnl,
+select *,avg(pnl(close, prev(si,close))) as pnl,
 stddev(pnl(close, prev(si,close))) as dev
-from EODQuote.win:length(si+1);
+from EODQuote.win:length(si+1)
+;
 
-insert into mstreamcross
-select 'BUY' as signal,*
-from mstream.win:length(3) ms
-where
-pnl > 0
-and pnl > dev
-//and prev(1,pnl) < 2*dev 
-//and prev(1,pnl) < 2
+insert into mstreamslow
+select *,avg(pnl(close, prev(li,close))) as pnll,
+stddev(pnl(close, prev(li,close))) as dev
+from EODQuote.win:length(li+1)
 ;
 
 insert into mstreamcross
-select 'SELL' as signal,*
-from mstream.win:length(3) ms
+select 'BUY' as signal,ms.high as high,ms.low as low, 
+ms.open as open, ms.close as close, ms.timestamp as timestamp,
+ms.symbol as symbol, ms.volume as volume
+from mstream.win:length(3) ms,
+mstreamslow.win:length(3) ml
 where
-pnl < 0
-and pnl > dev
-//prev(1,pnl) < 2*dev 
-//prev(1,pnl) > -2
+ms.pnl > 0
+and ml.pnll > 0
+and ms.pnl <  ml.pnll 
+and ms.timestamp = ml.timestamp
+and ms.symbol = ml.symbol
+//and prev(1,ml.pnll) > prev(1,ms.pnl)
 ;
+
+insert into mstreamcross
+select 'SELL' as signal,ms.high as high,ms.low as low, 
+ms.open as open, ms.close as close, ms.timestamp as timestamp,
+ms.symbol as symbol, ms.volume as volume
+from mstream.win:length(3) ms,
+mstreamslow.win:length(3) ml
+where
+//ms.pnl > 0
+//and ml.pnll > 0
+ ms.pnl > ml.pnll 
+and ms.timestamp = ml.timestamp
+and ms.symbol = ml.symbol
+//and prev(1,ml.pnll) < prev(1,ms.pnl)
+;
+
 /*
 insert into mstreamcross
 select 'CLOSE_SHORT' as signal,*

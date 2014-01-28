@@ -38,7 +38,7 @@ public class EMAFactory implements AggregationFunctionFactory{
 		log.log(level,"validated");
 		if ((arg0.getParameterTypes().length != 1) ||
 			    (arg0.getParameterTypes()[0] != Double.class)) {
-			    throw new IllegalArgumentException("Concat aggregation requires a single parameter of type String");
+			    throw new IllegalArgumentException("Concat aggregation requires a single parameter of type double");
 			  
 		}
 		
