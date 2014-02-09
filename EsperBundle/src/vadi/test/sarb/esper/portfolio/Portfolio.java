@@ -287,7 +287,7 @@ public class Portfolio {
 			lowPrice = low;
 		
 		double d = positionValue(true);
-		System.out.println("inside drawdown "+print);
+		//System.out.println("inside drawdown "+print);
 		if ( print)
 			log.fine("d = "+d+"dd = "+drawDown);
 		if ( d < drawDown )
@@ -486,7 +486,7 @@ public class Portfolio {
 						highPrice =	Double.parseDouble(arr.get(1).toString());
 						double d = Double.parseDouble(arr.get(3).toString());
 						if ((ammount - d) > 0 )
-							cash = d;
+							cash = (ammount-d);
 						else
 							cash = 0;
 						
