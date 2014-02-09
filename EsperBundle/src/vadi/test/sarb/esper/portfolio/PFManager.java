@@ -623,6 +623,7 @@ public class PFManager {
 		p.stopLossAmmount = stopLossAmmount;
 		p.stopLoss = stopLoss;
 		p.tradeSize = tradeSize;
+		p.print = print;
 		p.loadPositions();
 		pfList.put(symbol, p);
 	
