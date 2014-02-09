@@ -15,6 +15,7 @@ public class StartEODQuote extends Event implements Serializable, EventHandler{
         this("");
     }
     public String symbol;
+    public String stDate, endDate; 
 
 	public String getSymbol() {
 		return symbol;
@@ -27,6 +28,9 @@ public class StartEODQuote extends Event implements Serializable, EventHandler{
 	public StartEODQuote(String symbol) {
 		super();
 		this.symbol = symbol;
+		this.stDate = "";
+		this.endDate = "";
+	
 	}
 
 

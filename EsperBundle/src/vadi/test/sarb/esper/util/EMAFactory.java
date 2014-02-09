@@ -36,11 +36,11 @@ public class EMAFactory implements AggregationFunctionFactory{
 	public void validate(AggregationValidationContext arg0) {
 		// TODO Auto-generated method stub
 		log.log(level,"validated");
-		if ((arg0.getParameterTypes().length != 1) ||
-			    (arg0.getParameterTypes()[0] != Double.class)) {
-			    throw new IllegalArgumentException("Concat aggregation requires a single parameter of type double");
+	//	if ((arg0.getParameterTypes().length != 1) ||
+			//    (arg0.getParameterTypes()[0] != Double.class)) {
+			 //   throw new IllegalArgumentException(" EMA requires a single parameter of type double "+arg0.getParameterTypes()[0]);
 			  
-		}
+	//	}
 		
 	}
 

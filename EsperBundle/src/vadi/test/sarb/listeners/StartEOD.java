@@ -54,6 +54,8 @@ public class StartEOD implements UpdateListener,Serializable {
 		 System.out.println("start quote received "+evt.getSymbol());
 			EODQuoteThread eod = new EODQuoteThread();
 			eod.setSymbol(evt.getSymbol());
+			eod.stDate = evt.stDate;
+			eod.endDate = evt.endDate;
 			Utility.getInstance().getExecutor().execute(eod);
 			//Utility.getInstance().addToSymboList(evt.getSymbol());
 		}
@@ -66,7 +68,8 @@ public class StartEOD implements UpdateListener,Serializable {
 	
 	class EODQuoteThread implements Runnable {
 		
-		String tick;  ;
+		String tick;  
+		String stDate , endDate;
 		
 		
 		public String getSymbol() {
@@ -85,7 +88,16 @@ public class StartEOD implements UpdateListener,Serializable {
 			try {
 			
 			DownloadTask dt = new DownloadTask();
-			dt.setUrl(Messages.getString("StartEOD.historic.data.url")+getSymbol());
+			if ( stDate.equals(""))
+				stDate = Messages.getString("start.date");
+			if ( endDate.equals(""))
+				endDate = Messages.getString("end.date");
+			String url = Messages.getString("StartEOD.historic.data.url")+getSymbol();
+			url = url.replace("stDate", stDate);
+			url = url.replace("endDate",endDate);
+				
+			dt.setUrl(url);
+			
 			Future<String> ft = Utility.getInstance().getExecutor().submit(dt);
 			//queue.add(ft);
 			SendEODThread sd = new SendEODThread();

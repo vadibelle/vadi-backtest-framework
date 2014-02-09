@@ -154,7 +154,7 @@ public class PFManager {
 				p.stopLoss = stopLoss;
 				p.tradeSize = tradeSize;
 				 
-				  tradeSize = 0.2; // 20% each time
+			//	  tradeSize = 0.2; // 20% each time
 				pfList.put(sig.symbol, p);
 				p.addLongPosition(sig);
 				return;
@@ -291,7 +291,7 @@ public class PFManager {
 			*/
 		} catch (Throwable e) {
 			if ( print)
-			log.info("ERROR closeLongPostion " + sig);
+			log.info("ERROR:Exception closeLongPostion, problem with signal " + sig);
 		}
 
 	}
@@ -601,62 +601,34 @@ public class PFManager {
 	
 	public void loadPositions()
 	{
-		
-		try {
-			String sql = "select symbol,sum(qty),lors from position group by symbol";
-			ArrayList<ArrayList> res = dbutil.execute(sql);
-			
-			int i = res.size();
-			if (print)
-			log.info(res.toString() +" no of rows "+i);
-			int j=1;
-			if (i > 1 ) 
-			{
-				while ( j < i ){
-					ArrayList arr = res.get(j++);
-					if (arr.get(2).toString().equalsIgnoreCase("BUY")){
-						positions.put(arr.get(0).toString(),
-								Long.parseLong(arr.get(1).toString()));
-						
-						//@Todo needs update with actual price 
-						//not no of stocks
-						highPrice.put(arr.get(0).toString(),
-								Double.parseDouble(arr.get(1).toString()));
-						
-					}
-					else {
-						short_positions.put(arr.get(0).toString(),
-								Long.parseLong(arr.get(1).toString()));
-						lowPrice.put(arr.get(0).toString(),
-								Double.parseDouble(arr.get(1).toString()));
-						
-					}
-					
-				}
-			sql = "select cash,shortcash from liquid_cash";
-			 res = dbutil.execute(sql);
-			
-			 i = res.size();
-			 if ( i > 1){
-				
-				 ArrayList arr = res.get(1);
-				 //i=0 meta data, i=1 cash has only one row
-				 cash = Double.parseDouble(arr.get(0).toString());
-				 shortCash =  Double.parseDouble(arr.get(1).toString());
-				 
-				 
-			 }
+		ArrayList<ArrayList> res = dbutil.execute("selct distinct symbol from position");
+		int i = res.size();
+		int j=1;
+		if (i > 1 ) 
+		{
+			while ( j < i ){
+				ArrayList arr = res.get(j++);
+				loadPosition(arr.get(0).toString());
+							
 			}
-		String str = "Positions long "+positions+" short "+short_positions+
-				" cash "+cash+" shortCash "+shortCash;
-		if ( print)
-		log.info(str);
-		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		
 	}
+	
+	public void loadPosition ( String symbol) {
+		Portfolio p = new Portfolio(symbol);
+		p.ammount = ammount;
+		p.cash = cash;
+		p.print = print;
+		p.stopLossAmmount = stopLossAmmount;
+		p.stopLoss = stopLoss;
+		p.tradeSize = tradeSize;
+		p.loadPositions();
+		pfList.put(symbol, p);
+	
+		
+	}
+	
 	
 	public synchronized void  generateExits(EODQuote eq){
 		try {

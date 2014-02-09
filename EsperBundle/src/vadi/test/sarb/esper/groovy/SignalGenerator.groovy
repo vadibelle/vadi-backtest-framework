@@ -14,6 +14,8 @@ import com.espertech.esper.epl.agg.aggregator.AggregationMethod;
 import com.espertech.esper.epl.agg.service.AggregationSupport
 import com.espertech.esper.epl.agg.service.AggregationValidationContext;
 
+import vadi.test.sarb.esper.portfolio.PFManager;
+import vadi.test.sarb.esper.portfolio.Portfolio
 import vadi.test.sarb.esper.util.GenericChart
 import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.EODQuote
@@ -21,6 +23,7 @@ import vadi.test.sarb.event.LastEOD
 import vadi.test.sarb.event.LoadPortfolio
 import vadi.test.sarb.event.StartEODQuote
 import vadi.test.sarb.event.StatArb;
+import vadi.test.sarb.event.StockQuote
 import vadi.test.sarb.event.TradeSignal
 import vadi.test.sarb.listeners.DummyListener
 import vadi.test.sarb.listeners.EODHandler
@@ -37,6 +40,7 @@ import vadi.test.sarb.listeners.OldSimulator;
 
 import vadi.test.sarb.esper.Messages;
 import vadi.test.sarb.esper.data.UpIndicator;
+import vadi.test.sarb.esper.db.DbUtil;
 import vadi.test.sarb.esper.groovy.*
 
 class SignalGenerator {
@@ -58,7 +62,7 @@ def loadModules() {
 	
 	println "$configFile is set"	
 	Utility u = Utility.getInstance();
-	
+		
 	def epl_dir = Messages.getString("epl.dir")
 	u.createIntVar('si', Integer.parseInt(Messages.getString("var.si")))
 	u.createIntVar('li', Integer.parseInt(Messages.getString("var.li")))
@@ -82,19 +86,22 @@ def loadModules() {
 	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("atr",
 		"vadi.test.sarb.esper.util.SingleRowFunction", "atr");
 	
-	
-	u.deployModule(epl_dir+"init.epl")
-	u.deployModule(epl_dir+"context.epl")
-	//u.deployModule(epl_dir+"bup.epl")
+	def mods = Messages.getString("load.modules")
+	mods.split(",").each { 
+		u.deployModule(epl_dir+it+".epl")
+	}
+//	u.deployModule(epl_dir+"init.epl")
+//	u.deployModule(epl_dir+"context.epl")
+//	u.deployModule(epl_dir+"bup.epl")
 //	u.deployModule(epl_dir+"qstick.epl")
 	//u.deployModule(epl_dir+"Highlow.epl")
 	
 	
-	u.deployModule(epl_dir+"volatility.epl")
+//	u.deployModule(epl_dir+"volatility.epl")
 	//u.deployModule(epl_dir+"ma.epl")
-	u.deployModule(epl_dir+"slope.epl")
+	//u.deployModule(epl_dir+"slope.epl")
 	//u.deployModule(epl_dir+"MAStdev.epl")
-	u.deployModule(epl_dir+"Momentum.epl")
+	//u.deployModule(epl_dir+"Momentum.epl")
 	
 	def sb = "select * from StartEODQuote";
 	u.registerEventListener(sb, new StartEOD());
@@ -196,8 +203,9 @@ def debug() {
 	//'EODQuote.win:length(390) group by symbol'
 	//def str='select * from StockSignal'
 	def l = new GenericListener()
-	u.registerEventListener('select * from mstreamslow',l)
-	u.registerEventListener('select * from mstream',l)
+	//u.registerEventListener('select * from mstreamslow',l)
+//	u.registerEventListener('select * from bupnumber',l)
+	//u.registerEventListener('select * from nullstr',l)
 	
 	//u.registerEventListener(str,new CpListener());
 	}
@@ -280,14 +288,81 @@ init = true
 
   }
 
+def loadPosition()
+{
+	try{
+	def db = new DbUtil()
+	def u = Utility.getInstance()
+	def sql = ''
+	def posFile = Messages.getString('position.list')
+	db.execute('truncate table position')
+	sql = 'insert into position select * from CSVREAD(\''+posFile+'\')'
+	db.execute(sql)
+	sql = 'select distinct symbol from position'
+	def res = db.execute(sql)
+	//sql = 'select top 1 date from position order by date desc'
+	//def dt = db.execute(sql)
+	def today = new Date().format('yyyy-mm-dd')
+	res.each{
+		if (it.get(0) != 'SYMBOL'){
+		println "row "+it.get(0)
+		sql = "select top 1 date from position  where symbol='"+it.get(0)+"'"
+		' order by date desc'
+		def dt = db.execute(sql)
+		def d = dt.get(1).get(0)
+		println 'date '+d.split(' ')[0]
+		def q = new StartEODQuote()
+		q.symbol = it.get(0)
+		q.stDate = d.split(' ')[0]
+		q.endDate = today
+		u.addToPortfolio(q)
+		//q.enqueue()
+		/*def p = new Portfolio()
+		p.symbol = it.get(1)
+		
+		p.ammount = Messages.getString("original.ammount") as double
+		p.stopLossAmmount = Messages.getString('stop.loss.ammount') as double
+		p.stopLoss = Messages.getString('stop.loss.exit.ratio') as double
+		p.tradeSize = Messages.getString('trade.size') as double
+		def d1 = it.get(2) as double
+		p.cash =  ( p.ammount - d1 ) > 0  ? ( p.ammount - d1) : 0
+		//println p.cash
+		if (it.get(3) == 'BUY')
+			p.positions = it.get(0) as long
+		else
+			p.short_positions = it.get(0) as long*/
+		
+		 	
+		 PFManager.getInstance().loadPosition(it.get(0))
+		 println PFManager.getInstance().positionValue(true)
+				
+		}
+		
+	}
+	
+	}
+	catch (e) {
+		e.printStackTrace()
+	}
+	
+}
+
 //main lo
  static  main(String[] args)  {
 	def  gv = new SignalGenerator()
 	gv.init(args)
 	gv.loadModules()
-	gv.debug()
 	gv.TradeHandler()
- 	gv.sendSignals()
+	gv.debug()
+	def fwdTest = Messages.getString('forward.test')
+	if ( fwdTest != 'true' ) {
+	gv.sendSignals()
+	}
+	else
+	{
+		gv.loadPosition()
+		Utility.getInstance().getPortfolioList()[0].enqueue()
+	}
 
  }
 

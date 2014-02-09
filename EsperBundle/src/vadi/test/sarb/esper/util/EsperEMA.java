@@ -4,13 +4,13 @@ import java.util.logging.Level;
 
 import com.espertech.esper.epl.agg.aggregator.AggregationMethod;
 public class EsperEMA implements AggregationMethod {
-	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
+	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
 	
 	volatile private int counter = 0;
 	private double ema = 0;
 	private int max = 0;
 	private boolean start = false;
-	private  Level level = Level.OFF;
+	private  Level level = Level.INFO;
 	@Override
 	public void clear() {
 		log.log(level,"Clear called");
@@ -27,7 +27,7 @@ public class EsperEMA implements AggregationMethod {
 		log.setLevel(level);
 	}
 	@Override
-	public synchronized void enter(Object arg0) {
+	public  void enter(Object arg0) {
 		// TODO Auto-generated method stub
 		//log.log(level,"entering "+arg0.toString());
 		
@@ -64,6 +64,8 @@ public class EsperEMA implements AggregationMethod {
 		// TODO Auto-generated method stub
 		if ( !start )
 			return 0;
+		
+		log.log(level,"EMA="+ema);
 		return ema;
 		
 	}

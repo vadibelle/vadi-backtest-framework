@@ -421,7 +421,7 @@ public class Portfolio {
 		map.put("total",Double.toString(d));
 		map.put("returns",Double.toString(d/ammount));
 		//if ( positions >0)
-			map.put("long",Long.toString(positions));
+		map.put("long",Long.toString(positions));
 		
 		//if ( short_positions >0)
 			map.put("short",Long.toString(short_positions));
@@ -459,6 +459,72 @@ public class Portfolio {
 	{
 		lastTrade = signal;
 	}
+	
+	public void loadPositions()
+	{
+		
+		try {
+			String sql = "select symbol,sum(qty),lors,sum(cost) from position where symbol='"+
+				symbol+"'";
+			ArrayList<ArrayList> res = dbutil.execute(sql);
+			
+			int i = res.size();
+			if (print)
+			log.info(res.toString() +" no of rows "+i);
+			int j=1;
+			if (i > 1 ) 
+			{
+				while ( j < i ){
+					ArrayList arr = res.get(j++);
+					if (arr.get(2).toString().equalsIgnoreCase("BUY")){
+						positions = Long.parseLong(arr.get(1).toString());
+						
+						//@Todo needs update with actual price 
+						//not no of stocks
+						highPrice =	Double.parseDouble(arr.get(1).toString());
+						double d = Double.parseDouble(arr.get(3).toString());
+						if ((ammount - d) > 0 )
+							cash = 0;
+						else
+							cash = 0;
+						
+					}
+					else {
+						short_positions=
+								Long.parseLong(arr.get(1).toString());
+						lowPrice = 
+								Double.parseDouble(arr.get(1).toString());
+						double d = Double.parseDouble(arr.get(3).toString());
+						shortCash = d;
+								
+					}
+					
+				}
+			/*sql = "select cash,shortcash from liquid_cash";
+			 res = dbutil.execute(sql);
+			
+			 i = res.size();
+			 if ( i > 1){
+				
+				 ArrayList arr = res.get(1);
+				 //i=0 meta data, i=1 cash has only one row
+				 cash = Double.parseDouble(arr.get(0).toString());
+				 shortCash =  Double.parseDouble(arr.get(1).toString());
+				 
+				 
+			 }*/
+			}
+		String str = "Positions long "+positions+" short "+short_positions+
+				" cash "+cash+" shortCash "+shortCash;
+		if ( print)
+		log.info(str);
+		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 }
 

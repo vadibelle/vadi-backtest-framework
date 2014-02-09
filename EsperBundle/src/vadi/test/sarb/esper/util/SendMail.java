@@ -11,10 +11,12 @@ import javax.mail.internet.MimeMessage;
 
 public class SendMail {
 	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	public String subject = "Today's data";
 
 	public void send(String msg)
 	{
 		final String user = vadi.test.sarb.esper.Messages.getString("email.from");
+		
 		
 		 final String password = vadi.test.sarb.esper.Messages.getString("email.password");
 		 if ( vadi.test.sarb.esper.Messages.getString("do.print").equals("true"))
@@ -39,7 +41,7 @@ public class SendMail {
 			message.setFrom(new InternetAddress(user));
 			message.setRecipients(Message.RecipientType.TO,
 				InternetAddress.parse(emailTo));
-			message.setSubject("Todays data");
+			message.setSubject(subject);
 
 			message.setText(msg);
 			Transport.send(message);

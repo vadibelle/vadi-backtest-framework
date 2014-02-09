@@ -6,41 +6,35 @@ stddev(pnl(close, prev(si,close))) as dev
 from EODQuote.win:length(si+1)
 ;
 
-insert into mstreamslow
-select *,avg(pnl(close, prev(li,close))) as pnll,
-stddev(pnl(close, prev(li,close))) as dev
-from EODQuote.win:length(li+1)
-;
-
 insert into mstreamcross
 select 'BUY' as signal,ms.high as high,ms.low as low, 
 ms.open as open, ms.close as close, ms.timestamp as timestamp,
 ms.symbol as symbol, ms.volume as volume
-from mstream.win:length(3) ms,
-mstreamslow.win:length(3) ml
+from mstream.win:length(5) ms , bupnumber.win:length(5) b
 where
-ms.pnl > 0
-and ml.pnll > 0
-and ms.pnl <  ml.pnll 
-and ms.timestamp = ml.timestamp
-and ms.symbol = ml.symbol
-//and prev(1,ml.pnll) > prev(1,ms.pnl)
+ms.pnl > 2.5 and
+b.bup > 0.0 and 
+b.timestamp = ms.timestamp and
+b.symbol = ms.symbol
 ;
 
 insert into mstreamcross
 select 'SELL' as signal,ms.high as high,ms.low as low, 
 ms.open as open, ms.close as close, ms.timestamp as timestamp,
 ms.symbol as symbol, ms.volume as volume
-from mstream.win:length(3) ms,
-mstreamslow.win:length(3) ml
+from mstream.win:length(3) ms, bupnumber.win:length(5) b
 where
-//ms.pnl > 0
-//and ml.pnll > 0
- ms.pnl > ml.pnll 
-and ms.timestamp = ml.timestamp
-and ms.symbol = ml.symbol
-//and prev(1,ml.pnll) < prev(1,ms.pnl)
+(ms.pnl < 0  or b.bup < 0) and
+ms.timestamp = b.timestamp and
+ms.symbol = b.symbol
+//and prev(1,ml.pnll) > prev(1,ms.pnl)
 ;
+
+insert into nullstr
+select signal, q.timestamp as timestamp,q.symbol as symbol
+ from mstreamcross.win:length(numSym+5)  ms
+full outer join EODQuote.win:length(numSym+5) q on
+q.timestamp = ms.timestamp;
 
 /*
 insert into mstreamcross
@@ -72,9 +66,13 @@ mstreamcross.win:length(1);
 
 
 insert into TradeSignal(symbol,open,high,low,close,signal,indicator,timestamp)
-select q.symbol,q.open,q.high,q.low,q.close,signal,'MTUM',cast(q.timestamp,string)
+select q.symbol,q.open,q.high,q.low,q.close,cross.signal,'MTUM',cast(q.timestamp,string) 
 from 
-EODQuote.win:length(numSym+5) q , mstreamcross.win:length(numSym+1) cross
+EODQuote.win:length(numSym+5) q , mstreamcross.win:length(numSym+5) cross,
+nullstr.win:length(numSym+5) ns
 where
-cross.timestamp=prev(numSym,q.timestamp) and
-cross.symbol=q.symbol ;
+cross.timestamp=prev(numSym,q.timestamp) 
+//and ns.timestamp = cross.timestamp
+// and prev(1,cross.signal) != ns.signal
+
+;

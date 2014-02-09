@@ -24,6 +24,7 @@ import com.espertech.esper.client.deploy.EPDeploymentAdmin;
 import com.espertech.esper.client.deploy.Module;
 import com.espertech.esper.client.deploy.ParseException;
 import vadi.test.sarb.esper.db.DbUtil;
+import vadi.test.sarb.event.StartEODQuote;
 import vadi.test.sarb.listeners.DummyListener;
 
 public class Utility {
@@ -40,6 +41,7 @@ public class Utility {
 	private long currentTime = 0;
 	private ArrayList<String> symbolList;
 	private boolean print = false;
+	private ArrayList<StartEODQuote> quoteList;
 
 	static {
 		System.out.println("Initializing esper engine");
@@ -97,6 +99,7 @@ public class Utility {
 	private Utility(){
 		String mode = vadi.test.sarb.esper.Messages.getString("sim.mode");
 		symbolList = new ArrayList<String>();
+		quoteList = new ArrayList<StartEODQuote>();
 		//String logLevel = vadi.test.sarb.esper.Messages.getString("log.level");
 		Configuration config = new Configuration();
 		/*config.getEngineDefaults().getThreading().setThreadPoolInbound(true);
@@ -311,5 +314,22 @@ public static void createStmt(String eventExpr){
 		this.currentTime = currentTime;
 	}
 	
+	public void addToPortfolio(StartEODQuote q) {
+		quoteList.add( q);
+	}
 	
+	public boolean isPortfolioEmpty()
+	{
+		return quoteList.isEmpty();
+	}
+	public void removeFromPortfolio(StartEODQuote q)
+	{
+		quoteList.remove(q);
+		
+	}
+	public ArrayList<StartEODQuote> getPortfolioList()
+	{
+		return quoteList;
+	}
+
 }
