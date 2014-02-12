@@ -203,7 +203,7 @@ def debug() {
 	//'EODQuote.win:length(390) group by symbol'
 	//def str='select * from StockSignal'
 	def l = new GenericListener()
-	//u.registerEventListener('select * from mstreamslow',l)
+//	u.registerEventListener('select * from TradeSignal',l)
 //	u.registerEventListener('select * from bupnumber',l)
 	//u.registerEventListener('select * from nullstr',l)
 	

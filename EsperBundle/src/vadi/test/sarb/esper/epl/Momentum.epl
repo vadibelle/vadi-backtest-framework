@@ -1,33 +1,44 @@
 context SymbolContext
 insert into mstream
 //select *, pnld(atr(high,low,close), atr(prev(si,high),prev(si,low),prev(si,close))) as pnl,
-select *,avg(pnl(close, prev(si,close))) as pnl,
+select *,(pnl(close, prev(si,close))) as pnl,
 stddev(pnl(close, prev(si,close))) as dev
 from EODQuote.win:length(si+1)
 ;
+/*
+insert into mstream
+select *, EMA(pnl) as pnl 
+from mstreamtmp.win:length(si+1);
+*/
 
 insert into mstreamcross
 select 'BUY' as signal,ms.high as high,ms.low as low, 
 ms.open as open, ms.close as close, ms.timestamp as timestamp,
 ms.symbol as symbol, ms.volume as volume
-from mstream.win:length(5) ms , bupnumber.win:length(5) b
+from mstream.win:length(5) ms , bupnumber.win:length(5) b,
+ecprice.win:length(5) cp
 where
 ms.pnl > 2.5 and
 b.bup > 0.0 and 
 b.timestamp = ms.timestamp and
-b.symbol = ms.symbol
+b.symbol = ms.symbol and
+cp.timestamp = ms.timestamp and
+cp.ema > 1
 ;
 
 insert into mstreamcross
 select 'SELL' as signal,ms.high as high,ms.low as low, 
 ms.open as open, ms.close as close, ms.timestamp as timestamp,
 ms.symbol as symbol, ms.volume as volume
-from mstream.win:length(3) ms, bupnumber.win:length(5) b
+from mstream.win:length(3) ms, bupnumber.win:length(5) b,
+ecprice.win:length(5) cp
 where
 (ms.pnl < 0  or b.bup < 0) and
 ms.timestamp = b.timestamp and
-ms.symbol = b.symbol
+ms.symbol = b.symbol and
 //and prev(1,ml.pnll) > prev(1,ms.pnl)
+cp.timestamp = ms.timestamp and
+cp.ema < 1
 ;
 
 insert into nullstr

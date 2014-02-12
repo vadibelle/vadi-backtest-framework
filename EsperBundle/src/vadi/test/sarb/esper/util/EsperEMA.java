@@ -10,7 +10,7 @@ public class EsperEMA implements AggregationMethod {
 	private double ema = 0;
 	private int max = 0;
 	private boolean start = false;
-	private  Level level = Level.INFO;
+	private  Level level = Level.OFF;
 	@Override
 	public void clear() {
 		log.log(level,"Clear called");

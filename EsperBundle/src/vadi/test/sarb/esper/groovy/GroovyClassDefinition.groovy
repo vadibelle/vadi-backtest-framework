@@ -183,7 +183,9 @@ class StopSystem implements UpdateListener {
 					symList.each { sym ->
 						map = pfm.getDetails(sym)
 						output.add(map)
+						
 					}
+					SendOutput(f)
 				}
 				else {
 					//	PFManager.getInstance().setCash(10000)
@@ -194,7 +196,7 @@ class StopSystem implements UpdateListener {
 				}
 			}
 			// begin forward test
-			else if ( !u.isPortfolioEmpty())
+			else if (fwd == 'true' && !u.isPortfolioEmpty())
 			{
 				def q = u.getPortfolioList()[0]
 				u.removeFromPortfolio(q)
@@ -206,45 +208,40 @@ class StopSystem implements UpdateListener {
 					map = pfm.getDetails(sym)
 					output.add(map)
 				}
-
+				SendOutput(f);
 			}
-			f = new File(outfile)
-			f.withWriter { fw ->
-				output = output.sort { it.get("price_timestamp")}
-				output = output.sort { it.get("returns")}
-				def mailStr = ""
-				output.each {
-					println it
-					//println ""
-					fw.writeLine(it.toString())
-					mailStr += it.toString()+"\n"
-				}
-				def sm = new SendMail()
-				if ( Messages.getString('forward.test').equalsIgnoreCase('true'))
-					sm.subject = 'ForwardTest'
-				//	sm.send(output.toString())
-				sm.send(mailStr)
-				/*output.each { 
-				 it.each {k ->
-				 if (  k.getKey() =~ "last Trade" && k.getValue() != null  ) {
-				 println k
-				 //println ""
-				 //println k.class
-				 fw.writeLine(k.toString())
-				 }
-				 }	
-				 }*/
-
-			}
-			System.exit(0);
+			//SendOutput(f);
 		}
 
 		catch(e){
 			println "Error consolidating "+e
 			e.printStackTrace();
-			exit(-1);
+			System.exit(0)
+			
 		}
+		
 
+	}
+
+	private SendOutput(File f) {
+		f = new File(outfile)
+		f.withWriter { fw ->
+			output = output.sort { it.get("price_timestamp")}
+			output = output.sort { it.get("returns")}
+			def mailStr = ""
+			output.each {
+				println it
+				//println ""
+				fw.writeLine(it.toString())
+				mailStr += it.toString()+"\n"
+			}
+			def sm = new SendMail()
+			if ( Messages.getString('forward.test').equalsIgnoreCase('true'))
+				sm.subject = 'ForwardTest'
+			//	sm.send(output.toString())
+			sm.send(mailStr)
+		}
+		System.exit(0)
 	}
 }
 

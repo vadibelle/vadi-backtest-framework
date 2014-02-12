@@ -69,6 +69,8 @@ public class Portfolio {
 			}
 			//double price = Double.parseDouble(sig.getHigh());
 			//buy on open +100 slippage
+			if ( print)
+				log.info(sig.toString());
 			double price = Double.parseDouble(sig.getOpen());
 			double close = Double.parseDouble(sig.getClose());
 			String symbol = sig.getSymbol();
@@ -526,8 +528,20 @@ public class Portfolio {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Portfolio [cash=" + cash + ", shortCash=" + shortCash
+				+ ", symbol=" + symbol + ", positions=" + positions
+				+ ", short_positions=" + short_positions + ", noOfTrades="
+				+ noOfTrades + ", lastPrice=" + lastPrice + ", highPrice="
+				+ highPrice + ", lowPrice=" + lowPrice + ", drawDown="
+				+ drawDown + ", hasExit=" + hasExit + ", lastTrade="
+				+ lastTrade + ", lastPosition=" + lastPosition + ", tradeSize="
+				+ tradeSize + ", dbutil=" + dbutil + "]";
+	}
+
 	
 	
 }
 
- 

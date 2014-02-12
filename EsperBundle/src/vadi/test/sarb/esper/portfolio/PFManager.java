@@ -140,8 +140,11 @@ public class PFManager {
 
 	public  void addLongPosition(TradeSignal sig) {
 		try {
+			
 			if ( pfList.containsKey(sig.symbol)){
+				//System.out.println(" has symbol "+sig.symbol);
 				pfList.get(sig.symbol).addLongPosition(sig);
+				//System.out.println(pfList.get(sig.symbol).toString());
 				return;
 			}
 			else
@@ -154,7 +157,7 @@ public class PFManager {
 				p.stopLoss = stopLoss;
 				p.tradeSize = tradeSize;
 				 
-			//	  tradeSize = 0.2; // 20% each time
+			//	tradeSize = 0.2; // 20% each time
 				pfList.put(sig.symbol, p);
 				p.addLongPosition(sig);
 				return;
