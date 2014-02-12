@@ -21,7 +21,7 @@ public class MacdListerner implements UpdateListener {
 	ConcurrentHashMap<String, Object> state;
 	//ConcurrentHashMap<String,HashMap> map;
 	//ConcurrentHashMap<String, OHLCAverage> quoteArr;
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.listeners");
 	//HashMap<String,Integer> macdCount ;
 	int n;
 	//HashMap<String,Boolean> macdFound;

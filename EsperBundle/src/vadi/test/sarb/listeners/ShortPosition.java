@@ -11,7 +11,7 @@ public class ShortPosition implements UpdateListener  {
 	 * 
 	 */
 	
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.listeners");
 
 	PFManager pfm ;
 	

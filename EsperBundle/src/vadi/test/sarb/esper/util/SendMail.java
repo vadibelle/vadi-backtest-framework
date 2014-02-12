@@ -10,7 +10,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public class SendMail {
-	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.util");
 	public String subject = "Today's data";
 
 	public void send(String msg)

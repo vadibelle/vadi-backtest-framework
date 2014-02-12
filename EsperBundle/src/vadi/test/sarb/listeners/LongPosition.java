@@ -13,14 +13,17 @@ public class LongPosition implements UpdateListener,Serializable  {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.listeners");
 
 	PFManager pfm ;
+	boolean print = false;
 	
 	public LongPosition() {
 		super();
 		if ( vadi.test.sarb.esper.Messages.getString("do.print").equals("true"))
-		log.info("Long listener");
+			print  = true;
+		if ( print)
+			log.info("Long listener");
 		pfm = PFManager.getInstance();
 		
 	}
@@ -32,7 +35,8 @@ public class LongPosition implements UpdateListener,Serializable  {
 		try {
 						
 		TradeSignal sig = (TradeSignal)(arg0[0].getUnderlying());
-		if ( vadi.test.sarb.esper.Messages.getString("do.print").equals("true"))
+		//System.out.println("print "+print+" Sig "+sig);
+		if (print)
 		log.info(sig.toString());
 		/*if ( Long.parseLong(sig.price_timestamp) < Utility.getInstance().getCurrentTime() )
 		{

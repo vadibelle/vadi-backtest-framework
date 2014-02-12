@@ -3,7 +3,7 @@ package vadi.test.sarb.esper.util;
 import org.jfree.util.Log;
 
 public class SingleRowFunction {
-	final static java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	final static java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.util");
 
 	public static double toDouble(String str){
 		try {

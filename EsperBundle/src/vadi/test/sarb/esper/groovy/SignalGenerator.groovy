@@ -136,9 +136,10 @@ def TradeHandler() {
 	if (vadi.test.sarb.esper.Messages.getString('long.short') == 'true')
 		u.registerEventListener(trdExp, new ShortPosition())
 	trdExp='select * from StockSignal'
-	u.registerEventListener(trdExp, new TradeListener())
+	def l = new TradeListener()
+	u.registerEventListener(trdExp, l)
 	trdExp='select * from StopLoss'
-	u.registerEventListener(trdExp, new TradeListener());
+	u.registerEventListener(trdExp, l);
 	
 	def lastSig = 'select * from LastEOD'
 	u.registerEventListener(lastSig, new StopSystem());

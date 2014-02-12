@@ -12,7 +12,7 @@ public class EODHandler implements UpdateListener  {
 	 * 
 	 */
 //	private static final long serialVersionUID = 1L;
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.listeners");
 	volatile int count=0;
 	PFManager pfm = PFManager.getInstance();
 	@Override

@@ -14,7 +14,7 @@ import vadi.test.sarb.event.StopLoss;
 import vadi.test.sarb.event.TradeSignal;
 
 public class Portfolio {
-	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.portfolio");
 	public double ammount = 10000;
 	public double cash = ammount;
 	public double shortCash = 0;

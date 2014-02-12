@@ -15,7 +15,7 @@ import com.espertech.esper.client.UpdateListener;
 public class MyListener implements UpdateListener {
 	 volatile int count =0;
 	 PFManager pfm = PFManager.getInstance();
-	 java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	 java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.listeners");
     @Override
 	public void update(EventBean[] newEvents, EventBean[] oldEvents) {
     	try{

@@ -7,7 +7,7 @@ import com.tictactec.ta.lib.RetCode;
 
 public class MACDGenerator  {
 
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.data");
 	int slow = 26;//26;
 	int fast = 12;//12;
 	int crossover = 9 ; //9

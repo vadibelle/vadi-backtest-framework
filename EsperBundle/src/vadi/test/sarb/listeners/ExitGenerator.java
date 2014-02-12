@@ -8,7 +8,7 @@ import com.espertech.esper.client.UpdateListener;
 
 public class ExitGenerator implements UpdateListener {
 
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.listeners");
 	volatile int count=0;
 	PFManager pfm = PFManager.getInstance();
 	@Override

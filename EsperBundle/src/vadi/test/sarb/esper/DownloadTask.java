@@ -9,7 +9,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 public class DownloadTask implements Callable<String> {
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper");
 	public String getUrl() {
 		return url;
 	}

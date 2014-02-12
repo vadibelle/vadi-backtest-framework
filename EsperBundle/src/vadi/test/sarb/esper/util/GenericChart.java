@@ -23,7 +23,7 @@ public class GenericChart {
 	
 	XYPlot plot;
 	int index;
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.util");
 	String title ;
 	String xLabel ;
 	String yLabel ;

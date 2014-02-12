@@ -27,7 +27,7 @@ public class StatArbHandler implements UpdateListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.listeners");
 	 CalculateRatio calc;
 	public CalculateRatio getCalc() {
 		return calc;
@@ -140,7 +140,7 @@ public class StatArbHandler implements UpdateListener {
   public  class CalculateRatio implements UpdateListener {
     	SimpleRegression reg = new SimpleRegression();
     	SummaryStatistics stats = new SummaryStatistics();
-    	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
+    	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.listeners");
 		/**
 		 * 
 		 */

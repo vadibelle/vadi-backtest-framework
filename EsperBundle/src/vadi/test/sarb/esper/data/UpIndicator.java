@@ -15,7 +15,7 @@ import com.espertech.esper.epl.agg.service.AggregationValidationContext;
 	
 public class UpIndicator implements AggregationFunctionFactory,com.espertech.esper.epl.agg.aggregator.AggregationMethod  {
 	
-	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.data");
 	private  Level level = Level.OFF;
 	private String name;
 	private Double bup ;

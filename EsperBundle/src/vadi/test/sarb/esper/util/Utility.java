@@ -29,7 +29,7 @@ import vadi.test.sarb.listeners.DummyListener;
 
 public class Utility {
 
-	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.util");
 	static final int NUM_THREADS = 10;
 	private static volatile Utility instance = null;
 	private ExecutorService executor = null;

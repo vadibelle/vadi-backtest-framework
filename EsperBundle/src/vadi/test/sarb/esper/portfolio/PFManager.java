@@ -13,7 +13,7 @@ import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.*;
 
 public class PFManager {
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.sarb");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.portfolio");
 	
 
 	double portfolio = 0;

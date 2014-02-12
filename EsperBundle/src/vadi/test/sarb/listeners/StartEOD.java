@@ -28,7 +28,7 @@ public class StartEOD implements UpdateListener,Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -4076557417437457642L;
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global"); //$NON-NLS-1$
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.listeners"); //$NON-NLS-1$
 	private HashMap<String,OptionPrice> map ;
 	LinkedBlockingQueue<Future<String>> queue ;
 	public StartEOD()

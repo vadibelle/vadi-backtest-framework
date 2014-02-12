@@ -215,7 +215,7 @@ class StopSystem implements UpdateListener {
 
 		catch(e){
 			println "Error consolidating "+e
-			e.printStackTrace();
+			//e.printStackTrace();
 			System.exit(0)
 			
 		}

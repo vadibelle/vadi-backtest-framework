@@ -18,7 +18,7 @@ import vadi.test.sarb.esper.util.GenericChart;
 @Deprecated
 public class GoogleDownload implements Serializable {
 	private static final long serialVersionUID = -5810851685267610906L;
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper");
 	static final int NUM_THREADS = 10000;
 	static  DbUtil dbUtil = null;
 	static final ExecutorService executor = Executors

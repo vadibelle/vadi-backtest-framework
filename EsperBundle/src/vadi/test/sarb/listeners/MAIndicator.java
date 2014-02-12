@@ -8,7 +8,7 @@ import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
 
 public class MAIndicator implements UpdateListener {
-	java.util.logging.Logger log = java.util.logging.Logger.getLogger("global");
+	java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.listeners");
 	
 	@Override
 	public void update(EventBean[] arg0, EventBean[] arg1) {
