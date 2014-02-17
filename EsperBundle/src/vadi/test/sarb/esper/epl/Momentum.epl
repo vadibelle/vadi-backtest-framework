@@ -1,7 +1,7 @@
 context SymbolContext
 insert into mstream
 //select *, pnld(atr(high,low,close), atr(prev(si,high),prev(si,low),prev(si,close))) as pnl,
-select *,(pnl(close, prev(si,close))) as pnl,
+select *,avg(pnl(close, prev(si,close))) as pnl,
 stddev(pnl(close, prev(si,close))) as dev
 from EODQuote.win:length(si+1)
 ;
@@ -15,39 +15,45 @@ insert into mstreamcross
 select 'BUY' as signal,ms.high as high,ms.low as low, 
 ms.open as open, ms.close as close, ms.timestamp as timestamp,
 ms.symbol as symbol, ms.volume as volume
-from mstream.win:length(5) ms , bupnumber.win:length(5) b,
-ecprice.win:length(5) cp
+from mstream.win:length(si+1) ms 
+//, avgbup.win:length(5) b,
+//ecprice.win:length(5) cp
 where
-ms.pnl > 2.5 and
-b.bup > 0.0 and 
-b.timestamp = ms.timestamp and
-b.symbol = ms.symbol and
-cp.timestamp = ms.timestamp and
-cp.ema > 1
+((ms.pnl > 3 and prev(1,ms.pnl) < 3) 
+or (longPosition(symbol) <= 0 ) and ms.pnl > 3 
+or ( ms.pnl > 3 and ms.pnl >= prev(si,ms.pnl))) 
+//b.bup > 0.6 and 
+//b.timestamp = ms.timestamp and
+//b.symbol = ms.symbol and
+//cp.timestamp = ms.timestamp and
+//cp.ema > 1
+
 ;
 
 insert into mstreamcross
 select 'SELL' as signal,ms.high as high,ms.low as low, 
 ms.open as open, ms.close as close, ms.timestamp as timestamp,
 ms.symbol as symbol, ms.volume as volume
-from mstream.win:length(3) ms, bupnumber.win:length(5) b,
+from mstream.win:length(3) ms, avgbup.win:length(5) b,
 ecprice.win:length(5) cp
 where
-(ms.pnl < 0  or b.bup < 0) and
+(ms.pnl < 3  and b.bup < 0.35  and cp.ema < 1) and
 ms.timestamp = b.timestamp and
 ms.symbol = b.symbol and
 //and prev(1,ml.pnll) > prev(1,ms.pnl)
 cp.timestamp = ms.timestamp and
-cp.ema < 1
+ms.symbol = cp.symbol
+//cp.ema < 1
 ;
 
+/*
 insert into nullstr
 select signal, q.timestamp as timestamp,q.symbol as symbol
  from mstreamcross.win:length(numSym+5)  ms
 full outer join EODQuote.win:length(numSym+5) q on
 q.timestamp = ms.timestamp;
 
-/*
+
 insert into mstreamcross
 select 'CLOSE_SHORT' as signal,*
 from mstream.win:length(3) ms
@@ -73,17 +79,20 @@ insert into StockSignal(symbol,open,high,low,close,signal,indicator,timestamp)
 select symbol,open,high,low,close,signal,
 'MTUM' as indicator, cast(timestamp,string)
 from
-mstreamcross.win:length(1);
+mstreamcross.win:length(1) 
+where hasExit(symbol) != true;
 
 
 insert into TradeSignal(symbol,open,high,low,close,signal,indicator,timestamp)
 select q.symbol,q.open,q.high,q.low,q.close,cross.signal,'MTUM',cast(q.timestamp,string) 
 from 
-EODQuote.win:length(numSym+5) q , mstreamcross.win:length(numSym+5) cross,
-nullstr.win:length(numSym+5) ns
+EODQuote.win:length(numSym+5) q , mstreamcross.win:length(numSym+5) cross
+//nullstr.win:length(numSym+5) ns
 where
-cross.timestamp=prev(numSym,q.timestamp) 
+cross.timestamp=prev(1,q.timestamp) and
 //and ns.timestamp = cross.timestamp
-// and prev(1,cross.signal) != ns.signal
+//and prev(1,cross.signal) != ns.signal
+hasExit(q.symbol) != true
+
 
 ;

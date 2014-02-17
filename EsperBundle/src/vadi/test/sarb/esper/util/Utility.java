@@ -117,7 +117,8 @@ public class Utility {
 		if ( pr.equals("true"))
 			print = true;
 		//config.getEngineDefaults().getLogging().setEnableExecutionDebug(true);
-        config.addEventTypeAutoName("vadi.test.sarb.event");
+      //  config.addEventTypeAutoName("vadi.test.sarb.event");
+       // config.addImport()
        // config.getEngineDefaults().getThreading().setListenerDispatchPreserveOrder(false);
        // config.getEngineDefaults().getThreading().setInsertIntoDispatchPreserveOrder(false);
        // config.getEngineDefaults().getThreading().setEngineFairlock(false);

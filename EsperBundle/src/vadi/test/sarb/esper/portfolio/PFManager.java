@@ -156,7 +156,10 @@ public class PFManager {
 				p.stopLossAmmount = stopLossAmmount;
 				p.stopLoss = stopLoss;
 				p.tradeSize = tradeSize;
-				 
+				p.highPrice = Double.parseDouble(sig.high);
+				p.lastPrice = Double.parseDouble(sig.close);
+				p.lowPrice = Double.parseDouble(sig.low);
+				
 			//	tradeSize = 0.2; // 20% each time
 				pfList.put(sig.symbol, p);
 				p.addLongPosition(sig);
@@ -257,6 +260,7 @@ public class PFManager {
 			{
 				if ( print )
 					log.info("No position in the portfolio ");
+				return;
 			}
 			pfList.get(sig.symbol).closeLongPosition(sig);
 			return;
@@ -827,6 +831,18 @@ public class PFManager {
 	{
 		
 	}
-	
+	public double longPosition(String symbol)
+	{
+		if ( pfList.containsKey(symbol) )
+			return pfList.get(symbol).positions;
+		else return 0;
+	}
+	public boolean hasExit(String symbol)
+	{
+		if (pfList.containsKey(symbol))
+			return pfList.get(symbol).hasExit;
+		else
+			return false;
+	}
 	
 }

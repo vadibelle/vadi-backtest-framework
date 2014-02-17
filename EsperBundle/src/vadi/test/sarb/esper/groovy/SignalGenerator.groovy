@@ -62,7 +62,8 @@ def loadModules() {
 	
 	println "$configFile is set"	
 	Utility u = Utility.getInstance();
-		
+	def config = u.getEpService().getEPAdministrator().getConfiguration();
+	config.addEventTypeAutoName("vadi.test.sarb.event");
 	def epl_dir = Messages.getString("epl.dir")
 	u.createIntVar('si', Integer.parseInt(Messages.getString("var.si")))
 	u.createIntVar('li', Integer.parseInt(Messages.getString("var.li")))
@@ -75,16 +76,22 @@ def loadModules() {
 	u.addEPLFactory("BUP", "vadi.test.sarb.esper.data.UpIndicator")
 	u.addEPLFactory("CORREL", "vadi.test.sarb.esper.util.Correlation")
 	
-	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("toDouble",
+	//u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("toDouble",
+	
+	config.addPlugInSingleRowFunction("toDouble",
 		"vadi.test.sarb.esper.util.SingleRowFunction", "toDouble");
-	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("diff",
+	config.addPlugInSingleRowFunction("diff",
 		"vadi.test.sarb.esper.util.SingleRowFunction", "diff");
-	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("pnl",
+	config.addPlugInSingleRowFunction("pnl",
 		"vadi.test.sarb.esper.util.SingleRowFunction", "pnl");
-	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("pnld",
+	config.addPlugInSingleRowFunction("pnld",
 		"vadi.test.sarb.esper.util.SingleRowFunction", "pnld");
-	u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("atr",
+	config.addPlugInSingleRowFunction("atr",
 		"vadi.test.sarb.esper.util.SingleRowFunction", "atr");
+	config.addPlugInSingleRowFunction("longPosition",
+		"vadi.test.sarb.esper.util.SingleRowFunction", "longPosition");
+	config.addPlugInSingleRowFunction("hasExit",
+		"vadi.test.sarb.esper.groovy.GroovyHelper", "hasExit");
 	
 	def mods = Messages.getString("load.modules")
 	mods.split(",").each { 
@@ -204,7 +211,7 @@ def debug() {
 	//'EODQuote.win:length(390) group by symbol'
 	//def str='select * from StockSignal'
 	def l = new GenericListener()
-//	u.registerEventListener('select * from TradeSignal',l)
+u.registerEventListener('select * from mstream',l)
 //	u.registerEventListener('select * from bupnumber',l)
 	//u.registerEventListener('select * from nullstr',l)
 	

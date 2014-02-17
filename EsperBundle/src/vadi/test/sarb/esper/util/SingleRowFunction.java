@@ -2,6 +2,8 @@ package vadi.test.sarb.esper.util;
 
 import org.jfree.util.Log;
 
+import vadi.test.sarb.esper.portfolio.PFManager;
+
 public class SingleRowFunction {
 	final static java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.util");
 
@@ -36,7 +38,7 @@ public class SingleRowFunction {
 		try {
 			double cl = Double.parseDouble(c);
 			double pr = Double.parseDouble(p);
-			double pnl = 100*((cl-pr)/pr);
+			double pnl = 100*((cl-pr)/cl);
 			//log.info("close="+cl+" prv="+pr+" pnl="+pnl);
 			return pnl;
 		} catch (NumberFormatException e) {
@@ -65,5 +67,13 @@ public class SingleRowFunction {
 		return (( high+low+close/3))
 		;
 	}
+	
+	public static double longPosition(String symbol)
+	{
+		double pos = PFManager.getInstance().longPosition(symbol);
+		log.info("long position "+symbol+" "+pos);
+		return pos;
+		
+		}
 	
 }

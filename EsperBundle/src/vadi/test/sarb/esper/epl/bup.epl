@@ -5,3 +5,9 @@ insert into bupnumber
 select BUP(close,open) as bup,symbol,close ,timestamp 
 from EODQuote.win:length(si+1) 
 group by symbol;
+
+
+insert into avgbup
+select avg(bup) as bup , symbol,close,timestamp
+from bupnumber.win:length(si+1)
+group by symbol;

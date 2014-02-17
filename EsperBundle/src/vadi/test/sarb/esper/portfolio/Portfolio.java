@@ -106,8 +106,8 @@ public class Portfolio {
 			
 		} catch (Throwable e) {
 			if ( print ) {
-			log.info("ERROR adding position " + sig.toString());
-			e.printStackTrace();
+			log.info("ERROR adding position " +e.getMessage()+" "+ sig.toString());
+			//e.printStackTrace();
 			}
 		}
 
@@ -529,6 +529,7 @@ public class Portfolio {
 		}
 	}
 
+	
 	@Override
 	public String toString() {
 		return "Portfolio [cash=" + cash + ", shortCash=" + shortCash
