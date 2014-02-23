@@ -238,8 +238,7 @@ public static void createStmt(String eventExpr){
 		try {
 			Module module =  deployAdmin.read(new File(file));
 			deployAdmin.deploy(module, new DeploymentOptions());
-			 
-			
+						
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

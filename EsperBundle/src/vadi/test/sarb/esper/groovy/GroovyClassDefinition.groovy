@@ -12,6 +12,10 @@ import vadi.test.sarb.event.StopLoss
 
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
+import com.espertech.esper.client.hook.AggregationFunctionFactory;
+import com.espertech.esper.epl.agg.aggregator.AggregationMethod;
+import com.espertech.esper.epl.agg.service.AggregationValidationContext;
+
 import vadi.test.sarb.esper.util.*
 import vadi.test.sarb.esper.Messages;
 
@@ -140,12 +144,12 @@ class StopSignal implements UpdateListener {
 }
 
 
-class StopSystem implements UpdateListener {
+class ConsolidateOutput implements UpdateListener {
 	def outfile = "C:\\temp\\output.csv"
 	def output
 	def map
 	def symList
-	def StopSystem() {
+	def ConsolidateOutput() {
 		def f = new File(outfile)
 		if ( f.exists())
 			f.delete()
@@ -203,7 +207,7 @@ class StopSystem implements UpdateListener {
 				q.enqueue()
 			}
 			else {
-				println "Shutting down"
+				println "Consolidating.."
 				symList.each { sym ->
 					map = pfm.getDetails(sym)
 					output.add(map)
@@ -216,7 +220,7 @@ class StopSystem implements UpdateListener {
 		catch(e){
 			println "Error consolidating "+e
 			//e.printStackTrace();
-			System.exit(0)
+		//	System.exit(0)
 			
 		}
 		
@@ -235,16 +239,81 @@ class StopSystem implements UpdateListener {
 				fw.writeLine(it.toString())
 				mailStr += it.toString()+"\n"
 			}
+			def isMail = Messages.getString('send.mail')
+			if (isMail == 'true') {
 			def sm = new SendMail()
 			if ( Messages.getString('forward.test').equalsIgnoreCase('true'))
 				sm.subject = 'ForwardTest'
 			//	sm.send(output.toString())
 			sm.send(mailStr)
+			}
 		}
-		System.exit(0)
+	//	System.exit(0)
 	}
 }
 
+class RSIIndicator
+implements AggregationFunctionFactory,com.espertech.esper.epl.agg.aggregator.AggregationMethod{
+	
+	def name = ''
+	def start = false
+	def list = []
+
+	@Override
+	public void clear() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void enter(Object arg0) {
+		// TODO Auto-generated method stub
+		
+		
+	}
+
+	@Override
+	public Object getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void leave(Object arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Class getValueType() {
+		// TODO Auto-generated method stub
+		return Double.class;
+	}
+
+	@Override
+	public AggregationMethod newAggregator() {
+		// TODO Auto-generated method stub
+		return new RSIIndicator()
+	}
+
+	@Override
+	public void setFunctionName(String arg0) {
+		// TODO Auto-generated method stub
+		name = arg0
+		
+	}
+
+	@Override
+	public void validate(AggregationValidationContext arg0) {
+		// TODO Auto-generated method stub
+		if (arg0.getParameterTypes()[0] != String.class) {
+			throw new IllegalArgumentException("Concat aggregation requires a parameter of type String");
+		  
+	}
+		
+	}
+	
+}
 
 class ProcessArgs {
 	def configFile = ''

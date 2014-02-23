@@ -69,6 +69,7 @@ def loadModules() {
 	u.createIntVar('li', Integer.parseInt(Messages.getString("var.li")))
 	u.createIntVar('st', Integer.parseInt(Messages.getString("var.si")))
 	u.createIntVar('lt', Integer.parseInt(Messages.getString("var.lt")))
+	u.createIntVar('ml', Integer.parseInt(Messages.getString("var.ml")))
 	
 	
 	u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
@@ -149,7 +150,7 @@ def TradeHandler() {
 	u.registerEventListener(trdExp, l);
 	
 	def lastSig = 'select * from LastEOD'
-	u.registerEventListener(lastSig, new StopSystem());
+	u.registerEventListener(lastSig, new ConsolidateOutput());
 		
 	//u.addModuleListener("crossover_b", new GenericListener())
 	//u.addModuleListener("crossover_s", new GenericListener())
@@ -211,7 +212,9 @@ def debug() {
 	//'EODQuote.win:length(390) group by symbol'
 	//def str='select * from StockSignal'
 	def l = new GenericListener()
-u.registerEventListener('select * from mstream',l)
+//u.registerEventListener('select * from rsi',l)
+//u.registerEventListener('select * from emashort',l)
+//u.registerEventListener('select * from emalong',l)
 //	u.registerEventListener('select * from bupnumber',l)
 	//u.registerEventListener('select * from nullstr',l)
 	

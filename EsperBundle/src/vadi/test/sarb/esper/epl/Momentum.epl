@@ -37,7 +37,7 @@ ms.symbol as symbol, ms.volume as volume
 from mstream.win:length(3) ms, avgbup.win:length(5) b,
 ecprice.win:length(5) cp
 where
-(ms.pnl < 3  and b.bup < 0.35  and cp.ema < 1) and
+(ms.pnl < 3  or ( b.bup < 0.35  and cp.ema < 1)) and
 ms.timestamp = b.timestamp and
 ms.symbol = b.symbol and
 //and prev(1,ml.pnll) > prev(1,ms.pnl)

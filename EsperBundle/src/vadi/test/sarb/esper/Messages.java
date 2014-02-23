@@ -41,4 +41,8 @@ public class Messages {
 			return '!' + key + '!';
 		}
 	}
+	
+	public static void setProrperty(String key, String value){
+		props.setProperty(key, value);
+	}
 }

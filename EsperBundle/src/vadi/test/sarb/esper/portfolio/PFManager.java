@@ -42,6 +42,7 @@ public class PFManager {
 	private static PFManager pfMgr = null;// new PFManager();
 	DbUtil dbutil ;
 	double stopLoss = 0.2;
+	
 
 	
 	private PFManager() {

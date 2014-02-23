@@ -1,0 +1,33 @@
+insert into emashort
+select *, EMA(close) as ema from EODQuote.win:length(st+1) group by symbol;
+
+insert into emalong
+select *, EMA(close) as ema from EODQuote.win:length(lt+1) group by symbol;
+
+insert into macd
+select *, EMA(es.ema - el.ema) as macd from
+emashort.win:length(ml) es,emalong.win:length(ml) el
+where
+es.timestamp = el.timestamp and 
+es.symbol = el.symbol
+;
+
+
+
+insert into rsu
+select *,EMA(close) as up ,prev(1,close) as p from EODQuote.win:length(st)
+where close > p
+;
+
+insert into rsd
+select *,EMA(close) as down from EODQuote.win:length(st)
+where close < prev(1,close);
+
+insert into rsi
+select *,(100 -(100/(1+(up/down)))) as rsi from
+rsu.win:length(si) u , rsd.win:length(si) d
+where u.timestamp = d.timestamp and
+u.symbol = d.symbol and
+d.down != 0
+;
+

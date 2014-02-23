@@ -30,11 +30,15 @@ public class Portfolio {
 	PFManager pfm ;
 	public double stopLossAmmount = 1500;
 	 public  double stopLoss = 0.2;
+	 public boolean stopLossExit = true;
+	 public long noOfStopLoss = 0;
 	 	
 	public Portfolio(String symbol) {
 		super();
 		positions = short_positions = noOfTrades = 0;
 		lastPrice = highPrice = 0.0;
+		
+		
 		lowPrice = ammount;
 		drawDown = cash;
 		
@@ -301,6 +305,8 @@ public class Portfolio {
 		try {
 		String symbol = eq.getSymbol();
 		
+		if( !stopLossExit)
+			return;
 		if ( positions == 0 && short_positions ==0)
 		{
 			//log.info("no position for "+symbol);
@@ -336,6 +342,7 @@ public class Portfolio {
 						TradeSignal ts = new TradeSignal(symbol,
 								eq.getOpen(),eq.getHigh(),eq.getLow(),eq.getClose(),
 								"SELL","STOPLOSS",Long.toString(eq.getTimestamp()));
+						
 						this.closeLongPosition(ts);
 						return;
 					}
@@ -347,13 +354,13 @@ public class Portfolio {
 					}
 					if ( close < chp*stopLoss){
 						if ( print)
-						log.info("Buy: close<.9*high");
+						log.info("Buy: close "+stopLoss*chp);
 						eSig=true;
 					}
 					if ((cb - close*qty) > stopLossAmmount ){
 						eSig=true;
 						if (print)
-						log.info("cb-close*qty >1200");
+						log.info("cb-close*qty >"+stopLossAmmount);
 					}
 					
 					/*cb = (1-stopLoss)*cb; // for long if stock price falls below stoploss
@@ -368,6 +375,7 @@ public class Portfolio {
 						TradeSignal ts = new TradeSignal(symbol,
 								eq.getOpen(),eq.getHigh(),eq.getLow(),eq.getClose(),
 								"BUY","STOPLOSS",Long.toString(eq.getTimestamp()));
+						
 						this.closeShortPosition(ts);
 						return;
 						
@@ -400,6 +408,7 @@ public class Portfolio {
 					log.info("Genering stop loss for symbol "+symbol+" price "+close+" "+
 							 new Timestamp(eq.getTimestamp()).toString());
 					hasExit =  true;
+					noOfStopLoss++;
 					StopLoss exitSig = new StopLoss(symbol,act,eq.getClose(),
 						eq.getTimestamp());
 					exitSig.enqueue();
@@ -419,7 +428,8 @@ public class Portfolio {
 		
 		HashMap<String,String> map = new HashMap<String,String>();
 		
-		map.put("symbol",symbol);
+		map.put(symbol,this.toString());
+		/*map.put("symbol",symbol);
 				
 		double d = positionValue(symbol);
 		map.put("total",Double.toString(d));
@@ -441,7 +451,7 @@ public class Portfolio {
 			map.put("ratio",Double.toString((ammount-drawDown)/d));	
 			map.put("cash", Double.toString(cash));
 			map.put("last position",lastPosition);
-			
+			*/
 		
 		return map;
 	}
@@ -532,14 +542,17 @@ public class Portfolio {
 	
 	@Override
 	public String toString() {
-		return "Portfolio [cash=" + cash + ", shortCash=" + shortCash
-				+ ", symbol=" + symbol + ", positions=" + positions
-				+ ", short_positions=" + short_positions + ", noOfTrades="
-				+ noOfTrades + ", lastPrice=" + lastPrice + ", highPrice="
-				+ highPrice + ", lowPrice=" + lowPrice + ", drawDown="
-				+ drawDown + ", hasExit=" + hasExit + ", lastTrade="
-				+ lastTrade + ", lastPosition=" + lastPosition + ", tradeSize="
-				+ tradeSize + ", dbutil=" + dbutil + "]";
+		return "Portfolio [cash=" + cash + ", symbol=" + symbol
+				+ ", positions=" + positions + ", short_positions="
+				+ short_positions + ", noOfTrades=" + noOfTrades
+				+ ", lastPrice=" + lastPrice + ", highPrice=" + highPrice
+				+ ", lowPrice=" + lowPrice + ", drawDown=" + drawDown
+				+ ", hasExit=" + hasExit + ", lastTrade=" + lastTrade
+				+ ", lastPosition=" + lastPosition + ", tradeSize=" + tradeSize
+				+ ", stopLossAmmount=" + stopLossAmmount + ", stopLoss="
+				+ stopLoss + ", stopLossExit=" + stopLossExit
+				+ ", noOfStopLoss=" + noOfStopLoss + ", portfolio=" + portfolio
+				+ ", stopOpen=" + stopOpen + "]";
 	}
 
 	

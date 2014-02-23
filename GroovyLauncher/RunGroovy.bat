@@ -1,0 +1,1 @@
+C:\Programs\Groovy\Groovy-2.1.1\bin\groovy C:\Users\Meku-laptop\git\VadiAlgoProject\EsperBundle\src\vadi\test\sarb\esper\groovy\SignalGenerator.groovy  -c=C:\Users\Meku-laptop\git\VadiAlgoProject\GroovyLauncher\temp.properties -s=C:\Users\Meku-laptop\git\VadiAlgoProject\GroovyLauncher\symbol.list
