@@ -48,6 +48,7 @@ class SignalGenerator {
 def configFile = ''
 def symbolList = ''
 def init=false
+def modlist = [:]
  
 def loadModules() {
 	if ( !init )
@@ -96,7 +97,8 @@ def loadModules() {
 	
 	def mods = Messages.getString("load.modules")
 	mods.split(",").each { 
-		u.deployModule(epl_dir+it+".epl")
+		def str = u.deployModule(epl_dir+it+".epl")
+		modlist.putAt(it,str)
 	}
 //	u.deployModule(epl_dir+"init.epl")
 //	u.deployModule(epl_dir+"context.epl")
@@ -358,6 +360,36 @@ def loadPosition()
 	
 }
 
+def loadBuyNHold()
+{
+	def u = Utility.getInstance();
+	while( !u.isSymbolListEmpty()){
+		println "waiting ..."
+		sleep(1000)
+		
+	}
+	Messages.setProrperty("system.exit","true")
+	Messages.setProrperty('stop.loss','false')
+	modlist.each {
+		u.undeploy(it.value)
+	}
+	
+	def epl_dir = Messages.getString("epl.dir")
+	u.deployModule(epl_dir+"buynhold.epl")
+	def mkt=Messages.getString("mkt.indicators")
+	
+	
+	mkt.split(",").each {key->
+	u.addToSymboList(key)
+	}
+	
+	
+	def smbl = u.getSymbolList().get(0)
+	
+	new StartEODQuote(smbl).enqueue()
+	 
+}
+
 //main lo
  static  main(String[] args)  {
 	def  gv = new SignalGenerator()
@@ -374,6 +406,9 @@ def loadPosition()
 		gv.loadPosition()
 		Utility.getInstance().getPortfolioList()[0].enqueue()
 	}
+	
+	// load mkt
+	gv.loadBuyNHold()
 
  }
 

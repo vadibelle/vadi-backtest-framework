@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import vadi.test.sarb.esper.Messages;
 import vadi.test.sarb.esper.db.DbUtil;
 import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.EODQuote;
@@ -304,6 +305,8 @@ public class Portfolio {
 	public  void  generateExits(EODQuote eq){
 		try {
 		String symbol = eq.getSymbol();
+		if ( Messages.getString("stop.loss").equals("false"))
+			return;
 		
 		if( !stopLossExit)
 			return;
@@ -428,8 +431,8 @@ public class Portfolio {
 		
 		HashMap<String,String> map = new HashMap<String,String>();
 		
-		map.put(symbol,this.toString());
-		/*map.put("symbol",symbol);
+	//	map.put(symbol,this.toString());
+		map.put("symbol",symbol);
 				
 		double d = positionValue(symbol);
 		map.put("total",Double.toString(d));
@@ -451,7 +454,7 @@ public class Portfolio {
 			map.put("ratio",Double.toString((ammount-drawDown)/d));	
 			map.put("cash", Double.toString(cash));
 			map.put("last position",lastPosition);
-			*/
+			
 		
 		return map;
 	}

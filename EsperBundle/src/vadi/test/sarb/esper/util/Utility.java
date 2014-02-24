@@ -20,6 +20,7 @@ import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.UpdateListener;
 import com.espertech.esper.client.deploy.DeploymentOptions;
+import com.espertech.esper.client.deploy.DeploymentResult;
 import com.espertech.esper.client.deploy.EPDeploymentAdmin;
 import com.espertech.esper.client.deploy.Module;
 import com.espertech.esper.client.deploy.ParseException;
@@ -231,13 +232,14 @@ public static void createStmt(String eventExpr){
 		
 	}
 	
-	public static void deployModule(String file)
+	public static String deployModule(String file)
 	{
 		EPDeploymentAdmin deployAdmin = getInstance().getEpService().
 				getEPAdministrator().getDeploymentAdmin();
 		try {
 			Module module =  deployAdmin.read(new File(file));
-			deployAdmin.deploy(module, new DeploymentOptions());
+			DeploymentResult d = deployAdmin.deploy(module, new DeploymentOptions());
+			return d.getDeploymentId();
 						
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -249,8 +251,22 @@ public static void createStmt(String eventExpr){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return "";
 	}
 	
+	public void undeploy(String did){
+		EPDeploymentAdmin deployAdmin = getInstance().getEpService().
+				getEPAdministrator().getDeploymentAdmin();
+		try {
+			deployAdmin.undeployRemove(did);
+									
+		} 
+		catch(Throwable e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
 	public static void addModuleListener(String name, UpdateListener listener ) {
 		try {
 			System.out.println("Register listner for module "+name);

@@ -1,4 +1,4 @@
 insert into TradeSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
-select q.symbol,q.open,q.high,q.low,q.close,signal,'BUYNHOLD',cast(q.timestamp,string)
+select q.symbol,q.open,q.high,q.low,q.close,'BUY','BUYNHOLD',cast(q.timestamp,string)
 from 
-EODQuote.win:length(numSym+5) q;
+EODQuote.win:length(si) q;

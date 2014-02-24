@@ -157,6 +157,8 @@ class ConsolidateOutput implements UpdateListener {
 		map = [:]
 		symList = []
 
+		
+		
 
 	}
 
@@ -166,6 +168,9 @@ class ConsolidateOutput implements UpdateListener {
 			//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
 			//println "Shutting down"
 			def f = new File(outfile)
+			def doExit = false
+			if ( Messages.getString('system.exit') == 'true')
+				doExit = true
 			LastEOD evt = arg0[0].getUnderlying();
 			def u = Utility.getInstance();
 			symList.add(evt.getSymbol())
@@ -183,13 +188,15 @@ class ConsolidateOutput implements UpdateListener {
 				//output.add(map)
 				//output += "\n"
 				if( u.isSymbolListEmpty()){
-					println "Shutting down"
+					println "Consoliddate output"
 					symList.each { sym ->
 						map = pfm.getDetails(sym)
 						output.add(map)
 						
 					}
 					SendOutput(f)
+					if ( doExit)
+					System.exit(0)
 				}
 				else {
 					//	PFManager.getInstance().setCash(10000)
@@ -202,6 +209,7 @@ class ConsolidateOutput implements UpdateListener {
 			// begin forward test
 			else if (fwd == 'true' && !u.isPortfolioEmpty())
 			{
+				
 				def q = u.getPortfolioList()[0]
 				u.removeFromPortfolio(q)
 				q.enqueue()
@@ -248,7 +256,7 @@ class ConsolidateOutput implements UpdateListener {
 			sm.send(mailStr)
 			}
 		}
-	//	System.exit(0)
+		
 	}
 }
 
