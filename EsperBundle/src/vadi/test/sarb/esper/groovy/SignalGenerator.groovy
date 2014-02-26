@@ -47,6 +47,7 @@ class SignalGenerator {
 //evaluate(new File((vadi.test.sarb.esper.Messages.getString("StatnUtil")))
 def configFile = ''
 def symbolList = ''
+def sList = []
 def init=false
 def modlist = [:]
  
@@ -228,49 +229,15 @@ def debug() {
 	
 }
 
-def sendSignals()
+def stratergyTest()
 {
 	if ( !init  )
 	{
 		println "not initialized"
 		return
 	}
-	def u = Utility.getInstance()
-	if ( symbolList != '')
-	new File(symbolList).eachLine { line ->
-		if (!line.startsWith('#'))
-		line.split(',').each { st->
-			print st +" "
-			u.addToSymboList(st)
-		}
-		println ""
 	
-	}
-	def qList = vadi.test.sarb.esper.Messages.getString("EOD.quote.file")
-	println "quotes file $qList"
-	
-	if ( qList != '')
-	new File(qList).eachLine { line ->
-		for ( st in line.split(',')) {
-			print st+" "
-			u.addToSymboList(st)
-		}
-		println ""
-	  }
-	
-	println "Loading all the Quotes"
-	def lp = new LoadPortfolio();
-	lp.setCash(10000);
-	lp.enqueue()
-	
-	for( st in vadi.test.sarb.esper.Messages.getString("EOD.quote.list").split(",")){
-		print st+"\n"
-		u.addToSymboList(st)
-		//evt = new StartEODQuote(st);
-		//evt.enqueue();
-	}
-	
-	def smbl = u.getSymbolList().get(0)
+	def smbl = loadSymbols()
 	//u.getSymbolList().each {
 		//new StartEODQuote(it).enqueue()
 	//}
@@ -279,6 +246,50 @@ def sendSignals()
 	
 	
 }
+
+	private String loadSymbols() {
+		def u = Utility.getInstance()
+		if ( symbolList != '')
+			new File(symbolList).eachLine { line ->
+				if (!line.startsWith('#'))
+					line.split(',').each { st->
+						print st +" "
+						u.addToSymboList(st)
+						sList.add(st)
+					}
+				println ""
+
+			}
+		def qList = vadi.test.sarb.esper.Messages.getString("EOD.quote.file")
+		println "quotes file $qList"
+
+		if ( qList != '')
+			new File(qList).eachLine { line ->
+				for ( st in line.split(',')) {
+					print st+" "
+					u.addToSymboList(st)
+					sList.add(st)
+				}
+				println ""
+			}
+
+		println "Loading all the Quotes"
+		//def lp = new LoadPortfolio();
+		//lp.setCash(10000);
+		//lp.enqueue()
+
+		for( st in vadi.test.sarb.esper.Messages.getString("EOD.quote.list").split(",")){
+			print st+"\n"
+			u.addToSymboList(st)
+			//evt = new StartEODQuote(st);
+			//evt.enqueue();
+		}
+
+		//println "Slist is $sList"
+		def smbl = u.getSymbolList().get(0)
+		return smbl
+		
+	}
 
 
 def init(args) {
@@ -360,15 +371,14 @@ def loadPosition()
 	
 }
 
-def loadBuyNHold()
+def buyNHoldTest()
 {
 	def u = Utility.getInstance();
 	while( !u.isSymbolListEmpty()){
-		println "waiting ..."
-		sleep(1000)
+		sleep(1100)
 		
 	}
-	Messages.setProrperty("system.exit","true")
+	Messages.setProrperty("system.exit",'true')
 	Messages.setProrperty('stop.loss','false')
 	modlist.each {
 		u.undeploy(it.value)
@@ -376,18 +386,9 @@ def loadBuyNHold()
 	
 	def epl_dir = Messages.getString("epl.dir")
 	u.deployModule(epl_dir+"buynhold.epl")
-	def mkt=Messages.getString("mkt.indicators")
-	
-	
-	mkt.split(",").each {key->
-	u.addToSymboList(key)
-	}
-	
-	
-	def smbl = u.getSymbolList().get(0)
-	
+			
+	def smbl = loadSymbols()
 	new StartEODQuote(smbl).enqueue()
-	 
 }
 
 //main lo
@@ -399,7 +400,7 @@ def loadBuyNHold()
 	gv.debug()
 	def fwdTest = Messages.getString('forward.test')
 	if ( fwdTest != 'true' ) {
-	gv.sendSignals()
+	gv.stratergyTest()
 	}
 	else
 	{
@@ -408,7 +409,7 @@ def loadBuyNHold()
 	}
 	
 	// load mkt
-	gv.loadBuyNHold()
+	gv.buyNHoldTest()
 
  }
 

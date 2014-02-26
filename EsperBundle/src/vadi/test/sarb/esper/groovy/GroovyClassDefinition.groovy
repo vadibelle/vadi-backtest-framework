@@ -191,12 +191,14 @@ class ConsolidateOutput implements UpdateListener {
 					println "Consoliddate output"
 					symList.each { sym ->
 						map = pfm.getDetails(sym)
+						pfm.removePosition(sym)
 						output.add(map)
 						
 					}
 					SendOutput(f)
 					if ( doExit)
 					System.exit(0)
+					
 				}
 				else {
 					//	PFManager.getInstance().setCash(10000)
@@ -218,9 +220,12 @@ class ConsolidateOutput implements UpdateListener {
 				println "Consolidating.."
 				symList.each { sym ->
 					map = pfm.getDetails(sym)
+					pfm.removePosition(sym)
 					output.add(map)
 				}
 				SendOutput(f);
+				if ( doExit)
+				System.exit(0)
 			}
 			//SendOutput(f);
 		}

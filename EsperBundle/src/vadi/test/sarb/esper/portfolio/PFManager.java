@@ -846,4 +846,15 @@ public class PFManager {
 			return false;
 	}
 	
+	public  boolean hasPosition(String symbol)
+	{
+		return pfList.containsKey(symbol);
+	}
+	
+	public void removePosition(String symbol)
+	{
+		if (pfList.containsKey(symbol))
+			pfList.remove(symbol);
+	}
+	
 }

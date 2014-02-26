@@ -306,8 +306,9 @@ public class Portfolio {
 		try {
 		String symbol = eq.getSymbol();
 		if ( Messages.getString("stop.loss").equals("false"))
+		{
 			return;
-		
+		}
 		if( !stopLossExit)
 			return;
 		if ( positions == 0 && short_positions ==0)
@@ -454,6 +455,7 @@ public class Portfolio {
 			map.put("ratio",Double.toString((ammount-drawDown)/d));	
 			map.put("cash", Double.toString(cash));
 			map.put("last position",lastPosition);
+			map.put("no of stoploss",Long.toString(noOfStopLoss));
 			
 		
 		return map;
