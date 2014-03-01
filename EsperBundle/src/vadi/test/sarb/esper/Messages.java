@@ -26,6 +26,7 @@ public class Messages {
 			InputStream in = new FileInputStream(filename);
 			props.load(in);
 			in.close();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

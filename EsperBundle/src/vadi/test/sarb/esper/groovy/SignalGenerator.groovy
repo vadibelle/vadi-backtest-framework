@@ -1,4 +1,4 @@
-package vadi.test.sarb.esper.groovy;
+package vadi.test.sarb.esper.groovy
 import java.awt.geom.Arc2D.Double;
 import java.util.concurrent.ConcurrentSkipListMap.Iter;
 
@@ -30,13 +30,13 @@ import vadi.test.sarb.listeners.EODHandler
 import vadi.test.sarb.listeners.ExitGenerator
 import vadi.test.sarb.listeners.LongPosition
 import vadi.test.sarb.listeners.MAIndicator
-import vadi.test.sarb.listeners.MacdListerner
+
 import vadi.test.sarb.listeners.MyListener
 import vadi.test.sarb.listeners.PositionLoader
 import vadi.test.sarb.listeners.ShortPosition
 import vadi.test.sarb.listeners.StartEOD
 import vadi.test.sarb.listeners.StatArbHandler
-import vadi.test.sarb.listeners.OldSimulator;
+
 
 import vadi.test.sarb.esper.Messages;
 import vadi.test.sarb.esper.data.UpIndicator;
@@ -51,56 +51,40 @@ def sList = []
 def init=false
 def modlist = [:]
  
+
+def loadModules(namelist){
+	def ed = Messages.getString("epl.dir")
+	def u = Utility.getInstance()
+	
+	while( !u.isSymbolListEmpty())
+	sleep(1100)
+	
+	modlist.each {
+		u.undeploy(it.value)
+	}
+	println "loading modules "+namelist
+	
+	namelist.split(',').each {f->
+		def str = u.deployModule(ed+f+'.epl')
+		modlist.putAt(f,str)
+		}
+	
+//	def sb = "select * from StartEODQuote";
+//	u.registerEventListener(sb, new StartEOD());
+}
+
 def loadModules() {
 	if ( !init )
 	{
 		println "not initialized"
 		return
 	}
-	try {
-		
-		//def gdir="C:/Users/Meku-laptop//git/VadiAlgoProject/EsperBundle/src/vadi/test/sarb/esper/groovy/"
-		//evaluate(new File(gdir+"DbScripts.groovy"))
 	
 	println "$configFile is set"	
-	Utility u = Utility.getInstance();
-	def config = u.getEpService().getEPAdministrator().getConfiguration();
-	config.addEventTypeAutoName("vadi.test.sarb.event");
-	def epl_dir = Messages.getString("epl.dir")
-	u.createIntVar('si', Integer.parseInt(Messages.getString("var.si")))
-	u.createIntVar('li', Integer.parseInt(Messages.getString("var.li")))
-	u.createIntVar('st', Integer.parseInt(Messages.getString("var.si")))
-	u.createIntVar('lt', Integer.parseInt(Messages.getString("var.lt")))
-	u.createIntVar('ml', Integer.parseInt(Messages.getString("var.ml")))
-	
-	
-	u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
-	u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
-	u.addEPLFactory("BUP", "vadi.test.sarb.esper.data.UpIndicator")
-	u.addEPLFactory("CORREL", "vadi.test.sarb.esper.util.Correlation")
-	
-	//u.getEpService().getEPAdministrator().getConfiguration().addPlugInSingleRowFunction("toDouble",
-	
-	config.addPlugInSingleRowFunction("toDouble",
-		"vadi.test.sarb.esper.util.SingleRowFunction", "toDouble");
-	config.addPlugInSingleRowFunction("diff",
-		"vadi.test.sarb.esper.util.SingleRowFunction", "diff");
-	config.addPlugInSingleRowFunction("pnl",
-		"vadi.test.sarb.esper.util.SingleRowFunction", "pnl");
-	config.addPlugInSingleRowFunction("pnld",
-		"vadi.test.sarb.esper.util.SingleRowFunction", "pnld");
-	config.addPlugInSingleRowFunction("atr",
-		"vadi.test.sarb.esper.util.SingleRowFunction", "atr");
-	config.addPlugInSingleRowFunction("longPosition",
-		"vadi.test.sarb.esper.util.SingleRowFunction", "longPosition");
-	config.addPlugInSingleRowFunction("hasExit",
-		"vadi.test.sarb.esper.groovy.GroovyHelper", "hasExit");
 	
 	def mods = Messages.getString("load.modules")
-	mods.split(",").each { 
-		def str = u.deployModule(epl_dir+it+".epl")
-		modlist.putAt(it,str)
-	}
+	loadModules(mods)
+	
 //	u.deployModule(epl_dir+"init.epl")
 //	u.deployModule(epl_dir+"context.epl")
 //	u.deployModule(epl_dir+"bup.epl")
@@ -114,14 +98,14 @@ def loadModules() {
 	//u.deployModule(epl_dir+"MAStdev.epl")
 	//u.deployModule(epl_dir+"Momentum.epl")
 	
-	def sb = "select * from StartEODQuote";
-	u.registerEventListener(sb, new StartEOD());
-	}
-	catch(Throwable e){
-		e.printStackTrace();
-	}
-	
-	
+
+}
+def loadStrategy(name)
+{
+	if (name == '')
+	name = Messages.getString('load.strategy')
+ 	def namelist = Messages.getString('strategy.'+name)
+	 loadModules(namelist)
 }
 
 def TradeHandler() {
@@ -229,25 +213,8 @@ def debug() {
 	
 }
 
-def stratergyTest()
-{
-	if ( !init  )
-	{
-		println "not initialized"
-		return
-	}
-	
-	def smbl = loadSymbols()
-	//u.getSymbolList().each {
-		//new StartEODQuote(it).enqueue()
-	//}
-	
-	new StartEODQuote(smbl).enqueue()
-	
-	
-}
 
-	private String loadSymbols() {
+def loadSymbols() {
 		def u = Utility.getInstance()
 		if ( symbolList != '')
 			new File(symbolList).eachLine { line ->
@@ -285,9 +252,11 @@ def stratergyTest()
 			//evt.enqueue();
 		}
 
+		//println "SYMBOL LIST"+u.getSymbolList()
 		//println "Slist is $sList"
 		def smbl = u.getSymbolList().get(0)
-		return smbl
+		new StartEODQuote(smbl).enqueue()
+	
 		
 	}
 
@@ -297,7 +266,7 @@ def init(args) {
 ProcessArgs pArgs = new ProcessArgs(args)
 configFile = pArgs.configFile
 symbolList = pArgs.symbolList
-def sb = new StatArb('SSO','QQQ')
+
 //sb.enqueue();
 def u = Utility.getInstance();
 
@@ -308,6 +277,42 @@ if ( vadi.test.sarb.esper.Messages.getString("clean.db") == "true" ) {
 }	
 
 new File("C:\\temp\\test.csv").delete();
+
+def config = u.getEpService().getEPAdministrator().getConfiguration();
+config.addEventTypeAutoName("vadi.test.sarb.event");
+
+def epl_dir = Messages.getString("epl.dir")
+u.createIntVar('si', Integer.parseInt(Messages.getString("var.si")))
+u.createIntVar('li', Integer.parseInt(Messages.getString("var.li")))
+u.createIntVar('st', Integer.parseInt(Messages.getString("var.si")))
+u.createIntVar('lt', Integer.parseInt(Messages.getString("var.lt")))
+u.createIntVar('ml', Integer.parseInt(Messages.getString("var.ml")))
+
+
+u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
+u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
+u.addEPLFactory("BUP", "vadi.test.sarb.esper.data.UpIndicator")
+u.addEPLFactory("CORREL", "vadi.test.sarb.esper.util.Correlation")
+
+
+config.addPlugInSingleRowFunction("toDouble",
+	"vadi.test.sarb.esper.util.SingleRowFunction", "toDouble");
+config.addPlugInSingleRowFunction("diff",
+	"vadi.test.sarb.esper.util.SingleRowFunction", "diff");
+config.addPlugInSingleRowFunction("pnl",
+	"vadi.test.sarb.esper.util.SingleRowFunction", "pnl");
+config.addPlugInSingleRowFunction("pnld",
+	"vadi.test.sarb.esper.util.SingleRowFunction", "pnld");
+config.addPlugInSingleRowFunction("atr",
+	"vadi.test.sarb.esper.util.SingleRowFunction", "atr");
+config.addPlugInSingleRowFunction("longPosition",
+	"vadi.test.sarb.esper.util.SingleRowFunction", "longPosition");
+config.addPlugInSingleRowFunction("hasExit",
+	"vadi.test.sarb.esper.groovy.GroovyHelper", "hasExit");
+
+def sb = "select * from StartEODQuote";
+u.registerEventListener(sb, new StartEOD());
+
 init = true
 
   }
@@ -365,7 +370,7 @@ def loadPosition()
 	}
 	
 	}
-	catch (e) {
+	catch (Throwable e) {
 		e.printStackTrace()
 	}
 	
@@ -385,28 +390,31 @@ def buyNHoldTest()
 	}
 	
 	def epl_dir = Messages.getString("epl.dir")
-	u.deployModule(epl_dir+"buynhold.epl")
+	def str = u.deployModule(epl_dir+"buynhold.epl")
+	modlist.putAt('buynhold',str)
+	
 			
-	def smbl = loadSymbols()
-	new StartEODQuote(smbl).enqueue()
+	loadSymbols()
+	
 }
 
 //main lo
  static  main(String[] args)  {
 	def  gv = new SignalGenerator()
 	gv.init(args)
-	gv.loadModules()
+	gv.loadStrategy('')
 	gv.TradeHandler()
+	gv.loadSymbols()
 	gv.debug()
 	def fwdTest = Messages.getString('forward.test')
-	if ( fwdTest != 'true' ) {
+	/*if ( fwdTest != 'true' ) {
 	gv.stratergyTest()
 	}
 	else
 	{
 		gv.loadPosition()
 		Utility.getInstance().getPortfolioList()[0].enqueue()
-	}
+	}*/
 	
 	// load mkt
 	gv.buyNHoldTest()
