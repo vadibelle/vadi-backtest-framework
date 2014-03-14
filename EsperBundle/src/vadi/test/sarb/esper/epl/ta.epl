@@ -1,8 +1,12 @@
+insert into statistics
+select avg(diff(high,low)) as avgSwing,EMA(volume) as avgVol, avg(diff(open,prev(1,close))) as openSwing,symbol,timestamp from
+EODQuote.win:length(si+1);
+
 insert into emashort
-select *, EMA(close) as ema from EODQuote.win:length(st+1) group by symbol;
+select *, EMA(atr(high,low,close)) as ema from EODQuote.win:length(msi) group by symbol;
 
 insert into emalong
-select *, EMA(close) as ema from EODQuote.win:length(lt+1) group by symbol;
+select *, EMA(atr(high,low,close)) as ema from EODQuote.win:length(mli) group by symbol;
 
 insert into macd
 select *, EMA(es.ema - el.ema) as macd from
@@ -13,21 +17,7 @@ es.symbol = el.symbol
 ;
 
 
-
-insert into rsu
-select *,EMA(close) as up ,prev(1,close) as p from EODQuote.win:length(st)
-where close > p
-;
-
-insert into rsd
-select *,EMA(close) as down from EODQuote.win:length(st)
-where close < prev(1,close);
-
 insert into rsi
-select *,(100 -(100/(1+(up/down)))) as rsi from
-rsu.win:length(si) u , rsd.win:length(si) d
-where u.timestamp = d.timestamp and
-u.symbol = d.symbol and
-d.down != 0
-;
-
+//select * ,RSI((cast(close,float) - cast(prev(1,close),float))) as rsi 
+select * ,RSI(cast(atr(high,low,close) - atr(prev(1,high),prev(1,low),prev(1,close)),float)) as rsi 
+from EODQuote.win:length(rsint);

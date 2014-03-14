@@ -1,35 +1,71 @@
-context SymbolContext
-insert into mstream
+//context SymbolContext
+insert into  mstream_avg
 //select *, pnld(atr(high,low,close), atr(prev(si,high),prev(si,low),prev(si,close))) as pnl,
-select *,avg(pnl(close, prev(si,close))) as pnl,
+select symbol,open,high,low, close,timestamp,volume,avg(pnl(close, prev(si,close))) as pnl,
 stddev(pnl(close, prev(si,close))) as dev
-from EODQuote.win:length(si+1)
+from EODQuote.win:length(15) group by symbol
+;
+
+
+insert into mstream
+select SLOPE(pnl) as slope,high , low , open, close,pnl,
+ timestamp, volume,symbol from
+mstream_avg.win:length(si+15)
+//select *,SLOPE(cast(close,double)) as pnl from EODQuote.win:length(si);
 ;
 /*
 insert into mstream
 select *, EMA(pnl) as pnl 
 from mstreamtmp.win:length(si+1);
-*/
 
+*/
 insert into mstreamcross
 select 'BUY' as signal,ms.high as high,ms.low as low, 
 ms.open as open, ms.close as close, ms.timestamp as timestamp,
 ms.symbol as symbol, ms.volume as volume
-from mstream.win:length(si+1) ms 
+from mstream.win:length(si+1) ms ,
+macd.win:length(si) m
 //, avgbup.win:length(5) b,
 //ecprice.win:length(5) cp
 where
-((ms.pnl > 3 and prev(1,ms.pnl) < 3) 
-or (longPosition(symbol) <= 0 ) and ms.pnl > 3 
-or ( ms.pnl > 3 and ms.pnl >= prev(si,ms.pnl))) 
+ms.pnl > 0 and prev(1,ms.pnl) < 0
+and ms.slope > 0 
+//or (longPosition(symbol) <= 0 and ms.pnl > 3 )
+//or ( ms.pnl > 3 and ms.pnl >= prev(5,ms.pnl))) 
+and m.macd > 0 
+and m.es.symbol = ms.symbol
+and m.es.timestamp = ms.timestamp
 //b.bup > 0.6 and 
 //b.timestamp = ms.timestamp and
 //b.symbol = ms.symbol and
 //cp.timestamp = ms.timestamp and
 //cp.ema > 1
-
 ;
 
+insert into mstreamcross
+select 'SELL' as signal,ms.high as high,ms.low as low, 
+ms.open as open, ms.close as close, ms.timestamp as timestamp,
+ms.symbol as symbol, ms.volume as volume
+from mstream.win:length(si+1) ms ,
+macd.win:length(si) m
+//, avgbup.win:length(5) b,
+//ecprice.win:length(5) cp
+where
+((ms.pnl < 0 and prev(1,ms.pnl)  > 0))
+//or (longPosition(symbol) <= 0 and ms.pnl > 3 )
+//or ( ms.pnl > 3 and ms.pnl >= prev(5,ms.pnl))) 
+and m.macd < 0 
+and ms.slope < 0 
+and m.es.symbol = ms.symbol
+and m.es.timestamp = ms.timestamp
+//b.bup > 0.6 and 
+//b.timestamp = ms.timestamp and
+//b.symbol = ms.symbol and
+//cp.timestamp = ms.timestamp and
+//cp.ema > 1
+;
+
+/*
 insert into mstreamcross
 select 'SELL' as signal,ms.high as high,ms.low as low, 
 ms.open as open, ms.close as close, ms.timestamp as timestamp,
@@ -37,7 +73,7 @@ ms.symbol as symbol, ms.volume as volume
 from mstream.win:length(3) ms, avgbup.win:length(5) b,
 ecprice.win:length(5) cp
 where
-(ms.pnl < 3  or ( b.bup < 0.35  and cp.ema < 1)) and
+//((ms.pnl < 3  and prev(1,ms.pnl) > 3 ) or ( b.bup < 0.35  and cp.ema < 1)) and
 ms.timestamp = b.timestamp and
 ms.symbol = b.symbol and
 //and prev(1,ml.pnll) > prev(1,ms.pnl)
@@ -45,7 +81,7 @@ cp.timestamp = ms.timestamp and
 ms.symbol = cp.symbol
 //cp.ema < 1
 ;
-
+*/
 /*
 insert into nullstr
 select signal, q.timestamp as timestamp,q.symbol as symbol
@@ -93,6 +129,4 @@ cross.timestamp=prev(1,q.timestamp) and
 //and ns.timestamp = cross.timestamp
 //and prev(1,cross.signal) != ns.signal
 hasExit(q.symbol) != true
-
-
 ;

@@ -1,0 +1,34 @@
+insert into cross
+select 'BUY' as signal,q.timestamp as timestamp,* from EODQuote.win:length(ml) q ,macd.win:length(ml) m,
+rsi.win:length(ml) r
+where
+q.timestamp = m.es.timestamp and
+q.symbol = m.es.symbol and
+q.timestamp = r.timestamp and
+q.symbol = r.symbol and
+m.macd > 0 and
+prev(1,m.macd) < 0 and
+r.rsi < 30 
+;
+
+insert into cross
+select 'SELL' as signal,q.timestamp as timestamp,* from EODQuote.win:length(ml) q ,macd.win:length(ml) m,
+rsi.win:length(ml) r
+where
+q.timestamp = m.es.timestamp and
+q.symbol = m.es.symbol and
+q.timestamp = r.timestamp and
+q.symbol = r.symbol and
+m.macd < 0 and
+prev(1,m.macd) > 0
+and r.rsi > 70
+;
+
+
+insert into TradeSignal(symbol,open,high,low,close,signal,indicator,timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,cross.signal,'MACDRSI',cast(q.timestamp,string) 
+from 
+EODQuote.win:length(numSym+5) q , cross.win:length(numSym+5) cross
+where
+cross.timestamp=prev(1,q.timestamp) and
+hasExit(q.symbol) != true;

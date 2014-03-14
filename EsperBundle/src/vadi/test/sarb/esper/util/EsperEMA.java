@@ -82,6 +82,7 @@ public class EsperEMA implements AggregationMethod {
 		counter--;
 		start = true;
 		log.log(level,"leaving "+arg0.toString()+" size "+counter);
+		//System.out.println("EMA length "+counter);
 		
 	}
 

@@ -1,5 +1,6 @@
 package vadi.test.sarb.esper.groovy
 
+import java.awt.geom.Arc2D.Double;
 import java.awt.image.Kernel;
 
 import vadi.test.sarb.esper.portfolio.PFManager;
@@ -18,6 +19,7 @@ import com.espertech.esper.epl.agg.service.AggregationValidationContext;
 
 import vadi.test.sarb.esper.util.*
 import vadi.test.sarb.esper.Messages;
+import vadi.test.sarb.listeners.PositionLoader;
 
 //utility to convert long to date string
 class Datetime
@@ -265,68 +267,153 @@ class ConsolidateOutput implements UpdateListener {
 	}
 }
 
-class RSIIndicator
+class UpdateStatistics implements UpdateListener {
+	def p = PFManager.getInstance()
+	def avol = 0
+	def os  = 0 
+	def aswing = 0
+	def UpdateStatistics()
+	{
+		
+	}
+	public void update(EventBean[] arg0, EventBean[] arg1){
+		try {
+					
+			def symbol = arg0[0].get('symbol')
+			if (!p.hasPosition(symbol))
+				return
+			def pos = p.getPosition(symbol)
+			
+			 avol =  arg0[0].get('avgVol')
+			 aswing = arg0[0].get('avgSwing')
+			os = arg0[0].get('openSwing')
+			
+			pos.avgVol = avol
+			pos.avgSwing = aswing
+			pos.openSwing = os
+		
+				
+		}
+		catch(e)
+		{
+			println e
+		}
+		
+	}
+}
+
+/*class RSIIndicator
 implements AggregationFunctionFactory,com.espertech.esper.epl.agg.aggregator.AggregationMethod{
 	
 	def name = ''
 	def start = false
 	def list = []
-
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
+	def emaU = 0 
+	def emaD = 0
+	def max = 0
+	def counter = 0
+	def prev = 0
+	def k = 0.75
+	def rsi=0
+	
+	
+	public RSIIndicator()
+	{
 		
 	}
-
-	@Override
+	def void print(String str){
+		if ( Messages.getString('do.print').equals('true'))
+		println str
+	}
+	public void clear() {
+		list = []
+		start = false
+		emaU=emaD=0
+		
+	}
+	
+	
 	public void enter(Object arg0) {
 		// TODO Auto-generated method stub
+		counter ++;
+		if ( max < counter )
+		max = counter;
+		print('counter='+counter+'max='+max)
+	//	def k = (2/(1+counter))
 		
+		def c = Double.parseDouble(arg0.toString());
+		if ( prev > c)
+			emaD = (prev-c)k + (1-k)emaD
+		if ( c > prev)
+			emaU = (c-prev)k + (1-k)emaU
 		
+		if( c == prev )
+		{
+			emaD = (1-k)emaD
+			emaU = (1-k)emaU
+		}
+		prev = c
+		if ( emaD !=0 )
+			rsi = emaU/emaD
+		
+		if ( rsi != 0 )
+			rsi = 100 - (100/(1+rsi))
+		print('rsi='+rsi)
+		list.add(arg0)
+			
 	}
 
-	@Override
+	
 	public Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void leave(Object arg0) {
-		// TODO Auto-generated method stub
+		if ( !start )
+		return 0
+		else
+		return rsi
+		
 		
 	}
 
-	@Override
+	
+	public void leave(Object arg0) {
+		start = true
+		def up = 0
+		def down = 0
+		//for ( i in 1..list.size())
+		counter--;
+		list.remove(arg0)
+				
+	}
+
+	
 	public Class getValueType() {
 		// TODO Auto-generated method stub
 		return Double.class;
 	}
 
-	@Override
+	
 	public AggregationMethod newAggregator() {
 		// TODO Auto-generated method stub
 		return new RSIIndicator()
 	}
 
-	@Override
+	
 	public void setFunctionName(String arg0) {
 		// TODO Auto-generated method stub
 		name = arg0
 		
 	}
 
-	@Override
+	
 	public void validate(AggregationValidationContext arg0) {
 		// TODO Auto-generated method stub
-		if (arg0.getParameterTypes()[0] != String.class) {
-			throw new IllegalArgumentException("Concat aggregation requires a parameter of type String");
+		if (arg0.getParameterTypes()[0] != Float.class) {
+			throw new IllegalArgumentException("Concat aggregation requires a parameter of type float");
 		  
 	}
 		
 	}
 	
-}
+}*/
 
 class ProcessArgs {
 	def configFile = ''
@@ -351,7 +438,6 @@ class ProcessArgs {
 			vadi.test.sarb.esper.Messages.loadProperties(configFile)
 
 	}
-
 
 
 

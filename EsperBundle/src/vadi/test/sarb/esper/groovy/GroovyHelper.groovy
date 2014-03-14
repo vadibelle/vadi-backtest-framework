@@ -9,5 +9,5 @@ class GroovyHelper {
 		return PFManager.getInstance().hasExit(symbol)
 		
 	}
-
+	
 }

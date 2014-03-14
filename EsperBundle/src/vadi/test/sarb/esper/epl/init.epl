@@ -12,4 +12,9 @@ create variable integer li=65;
 create variable integer lt=65;
 create variable integer st=10; */
 create variable integer numSym=1;
-create variable double vlimit=1.1
+create variable double vlimit=1.1;
+
+create variable integer msi=12;
+create variable integer mli=26;
+
+create variable integer rsint=14;

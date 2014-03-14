@@ -856,5 +856,21 @@ public class PFManager {
 		if (pfList.containsKey(symbol))
 			pfList.remove(symbol);
 	}
+	public void updateStatistics(String symbol,double avgVol,
+			double avgSwing,double openSwing)
+	{
+		if ( pfList.containsKey(symbol))
+		{
+			Portfolio p = pfList.get(symbol);
+			p.avgVol = avgVol;
+			p.avgSwing = avgSwing;
+			p.openSwing = openSwing;
+		}
+	}
 	
+	public Portfolio getPosition(String symbol){
+		
+			return pfList.get(symbol);
+		
+	}
 }

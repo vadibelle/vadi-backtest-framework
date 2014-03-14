@@ -53,6 +53,7 @@ def modlist = [:]
  
 
 def loadModules(namelist){
+	try {
 	def ed = Messages.getString("epl.dir")
 	def u = Utility.getInstance()
 	
@@ -68,7 +69,11 @@ def loadModules(namelist){
 		def str = u.deployModule(ed+f+'.epl')
 		modlist.putAt(f,str)
 		}
-	
+	}
+	catch(Exception e){
+		println "Error loading modules "+e.getMessage()
+		System.exit(-1)
+	}
 //	def sb = "select * from StartEODQuote";
 //	u.registerEventListener(sb, new StartEOD());
 }
@@ -146,7 +151,9 @@ def TradeHandler() {
 	u.registerEventListener("select * from EODQuote",new EODHandler());
 	if (vadi.test.sarb.esper.Messages.getString('stop.loss') == 'true')
 		u.registerEventListener("select * from EODQuote",new ExitGenerator());
- 
+	
+	def st = new UpdateStatistics()
+		u.registerEventListener('select * from statistics',st)
 //Utility.addEPLFunction("EMA","vadi.test.sarb.esper.util.EsperEMA")
 //u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 //u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
@@ -199,7 +206,10 @@ def debug() {
 	//'EODQuote.win:length(390) group by symbol'
 	//def str='select * from StockSignal'
 	def l = new GenericListener()
-//u.registerEventListener('select * from rsi',l)
+	//def l = new UpdateStatistics()
+//.registerEventListener('select * from mstream_tmp',l)
+u.registerEventListener('select * from mstream_avg',l)
+
 //u.registerEventListener('select * from emashort',l)
 //u.registerEventListener('select * from emalong',l)
 //	u.registerEventListener('select * from bupnumber',l)
@@ -293,6 +303,7 @@ u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
 u.addEPLFactory("BUP", "vadi.test.sarb.esper.data.UpIndicator")
 u.addEPLFactory("CORREL", "vadi.test.sarb.esper.util.Correlation")
+u.addEPLFactory('RSI','vadi.test.sarb.esper.util.RSICalculator')
 
 
 config.addPlugInSingleRowFunction("toDouble",
@@ -385,14 +396,7 @@ def buyNHoldTest()
 	}
 	Messages.setProrperty("system.exit",'true')
 	Messages.setProrperty('stop.loss','false')
-	modlist.each {
-		u.undeploy(it.value)
-	}
-	
-	def epl_dir = Messages.getString("epl.dir")
-	def str = u.deployModule(epl_dir+"buynhold.epl")
-	modlist.putAt('buynhold',str)
-	
+	loadModules('BuyNHold')
 			
 	loadSymbols()
 	
@@ -405,7 +409,7 @@ def buyNHoldTest()
 	gv.loadStrategy('')
 	gv.TradeHandler()
 	gv.loadSymbols()
-	gv.debug()
+	//gv.debug()
 	def fwdTest = Messages.getString('forward.test')
 	/*if ( fwdTest != 'true' ) {
 	gv.stratergyTest()

@@ -33,6 +33,9 @@ public class Portfolio {
 	 public  double stopLoss = 0.2;
 	 public boolean stopLossExit = true;
 	 public long noOfStopLoss = 0;
+	 public double avgSwing = 0;
+	 public double avgVol = 0;
+	 public double openSwing = 0;
 	 	
 	public Portfolio(String symbol) {
 		super();
@@ -452,10 +455,15 @@ public class Portfolio {
 			map.put("low price",Double.toString(lowPrice));
 			map.put("drawDown",Double.toString(drawDown/ammount));
 			map.put("last Trade",lastTrade);
-			map.put("ratio",Double.toString((ammount-drawDown)/d));	
+		//	map.put("ratio",Double.toString((ammount-drawDown)/d));	
+			double ratio = (noOfTrades/(noOfTrades+noOfStopLoss));
+			map.put("ratio",Double.toString(ratio));
 			map.put("cash", Double.toString(cash));
 			map.put("last position",lastPosition);
 			map.put("no of stoploss",Long.toString(noOfStopLoss));
+			map.put("average Swing", Double.toString(avgSwing));
+			map.put("average Volume", Double.toString(avgVol));
+			map.put("Open Swing", Double.toString(openSwing));
 			
 		
 		return map;
