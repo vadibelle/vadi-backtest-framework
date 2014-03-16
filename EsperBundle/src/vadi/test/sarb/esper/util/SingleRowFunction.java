@@ -2,11 +2,13 @@ package vadi.test.sarb.esper.util;
 
 import org.jfree.util.Log;
 
+import vadi.test.sarb.esper.Messages;
 import vadi.test.sarb.esper.portfolio.PFManager;
 
 public class SingleRowFunction {
 	final static java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.util");
-
+	static Utility u = Utility.getInstance();
+	
 	public static double toDouble(String str){
 		try {
 			if (str == null)
@@ -36,12 +38,18 @@ public class SingleRowFunction {
 	
 	public static double pnl(String c, String p) {
 		try {
+			u.trace("close="+c+" prv="+p);
+			if ( c == null || p == null ){
+				return -999;
+			}
 			double cl = Double.parseDouble(c);
 			double pr = Double.parseDouble(p);
 			double pnl = 100*((cl-pr)/cl);
-			//log.info("close="+cl+" prv="+pr+" pnl="+pnl);
+		
+			u.trace("close="+cl+" prv="+pr+" pnl="+pnl);
+			
 			return pnl;
-		} catch (NumberFormatException e) {
+		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

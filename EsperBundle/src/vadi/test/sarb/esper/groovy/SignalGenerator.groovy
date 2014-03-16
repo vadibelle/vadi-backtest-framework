@@ -407,9 +407,11 @@ def buyNHoldTest()
 	def  gv = new SignalGenerator()
 	gv.init(args)
 	gv.loadStrategy('')
+	//gv.loadStrategy('momentum')
 	gv.TradeHandler()
 	gv.loadSymbols()
-	//gv.debug()
+	
+		//gv.debug()
 	def fwdTest = Messages.getString('forward.test')
 	/*if ( fwdTest != 'true' ) {
 	gv.stratergyTest()
@@ -419,6 +421,9 @@ def buyNHoldTest()
 		gv.loadPosition()
 		Utility.getInstance().getPortfolioList()[0].enqueue()
 	}*/
+	
+	//gv.loadStrategy('MA')
+	//gv.loadSymbols()
 	
 	// load mkt
 	gv.buyNHoldTest()

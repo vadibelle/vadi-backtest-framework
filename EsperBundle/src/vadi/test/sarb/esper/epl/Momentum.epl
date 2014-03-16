@@ -1,19 +1,27 @@
 //context SymbolContext
-insert into  mstream_avg
-//select *, pnld(atr(high,low,close), atr(prev(si,high),prev(si,low),prev(si,close))) as pnl,
-select symbol,open,high,low, close,timestamp,volume,avg(pnl(close, prev(si,close))) as pnl,
-stddev(pnl(close, prev(si,close))) as dev
-from EODQuote.win:length(15) group by symbol
+//create variable integer si=15;
+insert into  mstream_tmp
+//select *, pnld(atr(high,low,close), atr(prev(si,high),prev(si,low),prev(si,close))) as pl,
+select symbol,open,high,low, close,timestamp,volume,pnl(close, prev(si,close)) as pl
+from EODQuote.win:length(si+1)
+group by symbol
 ;
 
 
+insert into mstream_avg
+select symbol,open,high,low, close,timestamp,volume,avg(pl) as pl,
+stddev(pl) as dev
+from mstream_tmp.win:length(si+1)
+group by symbol
+;
+
 insert into mstream
-select SLOPE(pnl) as slope,high , low , open, close,pnl,
- timestamp, volume,symbol from
+select SLOPE(pl) as slope,high , low , open, close,pl,
+ timestamp, volume,symbol,dev from
 mstream_avg.win:length(si+15)
 //select *,SLOPE(cast(close,double)) as pnl from EODQuote.win:length(si);
 ;
-/*
+/*; 
 insert into mstream
 select *, EMA(pnl) as pnl 
 from mstreamtmp.win:length(si+1);
@@ -28,11 +36,13 @@ macd.win:length(si) m
 //, avgbup.win:length(5) b,
 //ecprice.win:length(5) cp
 where
-ms.pnl > 0 and prev(1,ms.pnl) < 0
+ms.pl > 2*ms.dev
+//and prev(1,ms.pl) < 2
+and ms.pl > 0
 and ms.slope > 0 
 //or (longPosition(symbol) <= 0 and ms.pnl > 3 )
 //or ( ms.pnl > 3 and ms.pnl >= prev(5,ms.pnl))) 
-and m.macd > 0 
+//and m.macd > 0 
 and m.es.symbol = ms.symbol
 and m.es.timestamp = ms.timestamp
 //b.bup > 0.6 and 
@@ -51,7 +61,7 @@ macd.win:length(si) m
 //, avgbup.win:length(5) b,
 //ecprice.win:length(5) cp
 where
-((ms.pnl < 0 and prev(1,ms.pnl)  > 0))
+((ms.pl < 2 and prev(1,ms.pl)  > 2))// or ( ms.macd < 0 ))
 //or (longPosition(symbol) <= 0 and ms.pnl > 3 )
 //or ( ms.pnl > 3 and ms.pnl >= prev(5,ms.pnl))) 
 and m.macd < 0 

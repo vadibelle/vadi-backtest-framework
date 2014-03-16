@@ -1,6 +1,3 @@
-insert into statistics
-select avg(diff(high,low)) as avgSwing,EMA(volume) as avgVol, avg(diff(open,prev(1,close))) as openSwing,symbol,timestamp from
-EODQuote.win:length(si+1);
 
 insert into emashort
 select *, EMA(atr(high,low,close)) as ema from EODQuote.win:length(msi) group by symbol;
@@ -9,7 +6,7 @@ insert into emalong
 select *, EMA(atr(high,low,close)) as ema from EODQuote.win:length(mli) group by symbol;
 
 insert into macd
-select *, EMA(es.ema - el.ema) as macd from
+select *, es.symbol as symbol ,es.timestamp as timestamp, EMA(es.ema - el.ema) as macd from
 emashort.win:length(ml) es,emalong.win:length(ml) el
 where
 es.timestamp = el.timestamp and 
@@ -19,5 +16,14 @@ es.symbol = el.symbol
 
 insert into rsi
 //select * ,RSI((cast(close,float) - cast(prev(1,close),float))) as rsi 
-select * ,RSI(cast(atr(high,low,close) - atr(prev(1,high),prev(1,low),prev(1,close)),float)) as rsi 
+select * ,RSI(cast(atr(high,low,close) - atr(prev(1,high),prev(1,low),prev(1,close)),double)) as rsi 
 from EODQuote.win:length(rsint);
+
+insert into statistics
+select avg(diff(q.high,q.low)) as avgSwing,EMA(q.volume) as avgVol, avg(diff(q.open,prev(1,q.close))) as openSwing,
+q.symbol as symbol,q.timestamp  as timestamp,macd,rsi from
+EODQuote.win:length(5) q , rsi.win:length(5) r, macd.win:length(5) m
+where q.timestamp = m.timestamp and
+q.timestamp = r.timestamp and
+q.symbol = r.symbol and
+q.symbol = m.symbol;

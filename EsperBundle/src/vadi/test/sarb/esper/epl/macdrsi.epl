@@ -1,6 +1,6 @@
 insert into cross
-select 'BUY' as signal,q.timestamp as timestamp,* from EODQuote.win:length(ml) q ,macd.win:length(ml) m,
-rsi.win:length(ml) r
+select 'BUY' as signal,q.timestamp as timestamp,* from EODQuote.win:length(ml+1) q ,macd.win:length(ml+1) m,
+rsi.win:length(ml+1) r
 where
 q.timestamp = m.es.timestamp and
 q.symbol = m.es.symbol and
@@ -12,8 +12,8 @@ r.rsi < 30
 ;
 
 insert into cross
-select 'SELL' as signal,q.timestamp as timestamp,* from EODQuote.win:length(ml) q ,macd.win:length(ml) m,
-rsi.win:length(ml) r
+select 'SELL' as signal,q.timestamp as timestamp,* from EODQuote.win:length(ml+1) q ,macd.win:length(ml+1) m,
+rsi.win:length(ml+1) r
 where
 q.timestamp = m.es.timestamp and
 q.symbol = m.es.symbol and

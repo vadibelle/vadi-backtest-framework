@@ -24,6 +24,8 @@ import com.espertech.esper.client.deploy.DeploymentResult;
 import com.espertech.esper.client.deploy.EPDeploymentAdmin;
 import com.espertech.esper.client.deploy.Module;
 import com.espertech.esper.client.deploy.ParseException;
+
+import vadi.test.sarb.esper.Messages;
 import vadi.test.sarb.esper.db.DbUtil;
 import vadi.test.sarb.event.StartEODQuote;
 import vadi.test.sarb.listeners.DummyListener;
@@ -42,10 +44,12 @@ public class Utility {
 	private long currentTime = 0;
 	private ArrayList<String> symbolList;
 	private boolean print = false;
+	private boolean trace = false;
 	private ArrayList<StartEODQuote> quoteList;
 
 	static {
 		System.out.println("Initializing esper engine");
+			
 		getInstance();
 		/*
 		container = new JFrame("Dashboard");
@@ -84,6 +88,12 @@ public class Utility {
 		if ( print)
 			log.info(message);
 	}
+	public void trace(String message)
+	{
+		//String print = vadi.test.sarb.esper.Messages.getString("do.print");
+		if ( trace)
+			log.info(message);
+	}
 			 
 	public  synchronized ExecutorService getExecutor() {
 		
@@ -117,6 +127,10 @@ public class Utility {
 		String pr = vadi.test.sarb.esper.Messages.getString("do.print");
 		if ( pr.equals("true"))
 			print = true;
+		
+		if ( Messages.getString("do.trace").equals("true"))
+			trace = true;
+		
 		//config.getEngineDefaults().getLogging().setEnableExecutionDebug(true);
       //  config.addEventTypeAutoName("vadi.test.sarb.event");
        // config.addImport()

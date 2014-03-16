@@ -158,9 +158,7 @@ class ConsolidateOutput implements UpdateListener {
 		output = []
 		map = [:]
 		symList = []
-
-		
-		
+	
 
 	}
 
@@ -291,6 +289,8 @@ class UpdateStatistics implements UpdateListener {
 			pos.avgVol = avol
 			pos.avgSwing = aswing
 			pos.openSwing = os
+			pos.rsi = arg0[0].get('rsi')
+			pos.macd = arg0[0].get('macd')
 		
 				
 		}

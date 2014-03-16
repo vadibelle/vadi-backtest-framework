@@ -46,8 +46,9 @@ public class RSICalculator implements AggregationFunctionFactory,com.espertech.e
 			if ( max < counter )
 			max = counter;
 			print("counter="+counter+"max="+max);
-			k = (2/(1+counter));
-			
+			k = (double)2/(double)(1+counter);
+			print("k="+k);
+			print(arg0.toString());
 			double c = Double.parseDouble(arg0.toString());
 			if ( prev > c)
 				emaD = (prev-c)*k + (1-k)*emaD;
@@ -60,8 +61,11 @@ public class RSICalculator implements AggregationFunctionFactory,com.espertech.e
 				emaU = (1-k)*emaU;
 			}
 			prev = c;
+			print("prev "+prev);
 			if ( emaD !=0 )
 				rsi = emaU/emaD;
+			print("emaU"+emaU);
+			print("emaU"+emaD);
 			
 			if ( rsi != 0 )
 				rsi = 100 - (100/(1+rsi));
@@ -86,6 +90,7 @@ public class RSICalculator implements AggregationFunctionFactory,com.espertech.e
 			
 			counter--;
 			list.remove(arg0);
+		print(Integer.toString(counter));
 					
 		}
 
@@ -111,10 +116,10 @@ public class RSICalculator implements AggregationFunctionFactory,com.espertech.e
 		
 		public void validate(AggregationValidationContext arg0) {
 			// TODO Auto-generated method stub
-			if (arg0.getParameterTypes()[0] != Float.class) {
-				throw new IllegalArgumentException("Concat aggregation requires a parameter of type float");
+			//if (arg0.getParameterTypes()[0] != Float.class) {
+			//	throw new IllegalArgumentException("Concat aggregation requires a parameter of type float");
 			  
-		}
+		//}
 			
 		}
 		

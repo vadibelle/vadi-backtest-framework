@@ -35,11 +35,11 @@ public class Regression  implements AggregationFunctionFactory  {
 
 	//
 	public void validate(AggregationValidationContext arg0) {
-		if ((arg0.getParameterTypes().length != 1) ||
+		/*if ((arg0.getParameterTypes().length != 1) ||
 			    (arg0.getParameterTypes()[0] != Double.class)) {
 			    throw new IllegalArgumentException("Concat aggregation requires a single parameter of type double");
 			  
-		}
+		}*/
 	}
 		public Class getValueType() {
 			// TODO Auto-generated method stub
