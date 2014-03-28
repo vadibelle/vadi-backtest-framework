@@ -1,0 +1,50 @@
+insert into ema65
+select *,EMA(close) as ema from EODQuote.win:length(65+1)
+group by symbol
+;
+
+/*
+insert into cc65
+select * from EODQuote.win:length(15) q, ema65.win:length(15) e
+where 
+e.symbol = q.symbol and
+e.timestamp = prev(2,q.timestamp) and
+cast(prev(2,q.close),double) > e.ema and
+cast(prev(1,q.close),double) > e.ema and
+cast(q.close,double) > e.ema
+;
+*/
+insert into cc65
+select * from pattern @SuppressOverlappingMatches [
+every q1=EODQuote -> q2=EODQuote ->q3=EODQuote -> e=ema65(
+cast(q1.close,double) > e.ema and 
+cast(q2.close,double) > e.ema and 
+cast(q3.close,double) > e.ema
+)];
+
+
+/*
+insert into cc65
+select *,q.timestamp as timestamp, 'BUY' as signal from exp65.win:length(10) c,
+EODQuote.win:length(10) q
+where
+prev(3,q.timestamp) = c.timestamp and
+cast(prev(3,q.close),double) > c.ema65 and
+cast(prev(2,q.close) ,double)> cast(prev(3,q.close),double) and
+cast(prev(1,q.close),double) > cast(prev(2,q.close),double) and
+cast(q.close,double) > cast(prev(1,q.close),double) and
+q.symbol = c.symbol;
+
+
+insert into TradeSignal(symbol,open,high,low,close,signal,indicator,timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,cross.signal,'65CC',cast(q.timestamp,string) 
+from 
+EODQuote.win:length(numSym+5) q , cc65.win:length(numSym+5) cross
+//nullstr.win:length(numSym+5) ns
+where
+cross.timestamp=prev(1,q.timestamp) and
+//and ns.timestamp = cross.timestamp
+//and prev(1,cross.signal) != ns.signal
+hasExit(q.symbol) != true
+;
+*/

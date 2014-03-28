@@ -151,6 +151,7 @@ class ConsolidateOutput implements UpdateListener {
 	def output
 	def map
 	def symList
+	def doExit = false
 	def ConsolidateOutput() {
 		def f = new File(outfile)
 		if ( f.exists())
@@ -168,7 +169,7 @@ class ConsolidateOutput implements UpdateListener {
 			//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
 			//println "Shutting down"
 			def f = new File(outfile)
-			def doExit = false
+			
 			if ( Messages.getString('system.exit') == 'true')
 				doExit = true
 			LastEOD evt = arg0[0].getUnderlying();
@@ -196,8 +197,8 @@ class ConsolidateOutput implements UpdateListener {
 						
 					}
 					SendOutput(f)
-					if ( doExit)
-					System.exit(0)
+					//if ( doExit)
+					//System.exit(0)
 					
 				}
 				else {
@@ -224,8 +225,6 @@ class ConsolidateOutput implements UpdateListener {
 					output.add(map)
 				}
 				SendOutput(f);
-				if ( doExit)
-				System.exit(0)
 			}
 			//SendOutput(f);
 		}
@@ -236,10 +235,28 @@ class ConsolidateOutput implements UpdateListener {
 		//	System.exit(0)
 			
 		}
-		
-
 	}
 
+	def sortOutput()
+	{
+		def bestalgo = [:]
+		output.each { map ->
+			println map
+			def sym = map.get('symbol')
+			def tot = map.get('total')
+			if ( bestalgo.containsKey(sym)){
+				if ( bestalgo.get(sym).get('total') < tot )
+					bestalgo.put(sym,map)
+			}	
+			else
+				bestalgo.put(sym, map)
+		}
+		println "Best algo"
+		bestalgo.each {
+			println it
+		}
+		
+	}
 	private SendOutput(File f) {
 		f = new File(outfile)
 		f.withWriter { fw ->
@@ -261,7 +278,12 @@ class ConsolidateOutput implements UpdateListener {
 			sm.send(mailStr)
 			}
 		}
-		
+		if ( GroovyHelper.isstListEmpty()){
+			println "Processing output"
+			sortOutput()
+				if ( doExit)
+				System.exit(0)
+			}
 	}
 }
 

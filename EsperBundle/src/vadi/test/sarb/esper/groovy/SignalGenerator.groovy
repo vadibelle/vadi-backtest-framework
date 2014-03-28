@@ -50,7 +50,8 @@ def symbolList = ''
 def sList = []
 def init=false
 def modlist = [:]
- 
+def tradehandler = false;
+
 
 def loadModules(namelist){
 	try {
@@ -61,8 +62,11 @@ def loadModules(namelist){
 	sleep(1100)
 	
 	modlist.each {
+		println "undeploying $it.key"
 		u.undeploy(it.value)
+		
 	}
+	modlist.clear()
 	println "loading modules "+namelist
 	
 	namelist.split(',').each {f->
@@ -109,14 +113,21 @@ def loadStrategy(name)
 {
 	if (name == '')
 	name = Messages.getString('load.strategy')
- 	def namelist = Messages.getString('strategy.'+name)
+	
+	def namelist = Messages.getString('strategy.'+name)
 	 loadModules(namelist)
+	
 }
 
 def TradeHandler() {
 	if ( !init )
 	{
 		println "not initialized"
+		return
+	}
+	if ( tradehandler)
+	{
+		println 'tradehandlers loaded'
 		return
 	}
 	println "Registering handlers"
@@ -186,6 +197,7 @@ def TradeHandler() {
 //u.registerEventListener("select * from EODQuote", new DummyListener());
 //u.registerEventListener("select * from OrderStockQuotes order by timestamp", new DummyListener());
 
+		tradehandler = true;
 	
 }
 
@@ -208,7 +220,7 @@ def debug() {
 	def l = new GenericListener()
 	//def l = new UpdateStatistics()
 //.registerEventListener('select * from mstream_tmp',l)
-u.registerEventListener('select * from mstream_avg',l)
+u.registerEventListener('select * from cc65',l)
 
 //u.registerEventListener('select * from emashort',l)
 //u.registerEventListener('select * from emalong',l)
@@ -402,16 +414,24 @@ def buyNHoldTest()
 	
 }
 
+
 //main lo
  static  main(String[] args)  {
 	def  gv = new SignalGenerator()
 	gv.init(args)
-	gv.loadStrategy('')
-	//gv.loadStrategy('momentum')
-	gv.TradeHandler()
-	gv.loadSymbols()
 	
+	while ( !GroovyHelper.isstListEmpty()){
+		def st = GroovyHelper.nextStrategy()
+		println " loading $st"
+		if ( st.contains('BuyNHold'))
+			Messages.setProrperty('stop.loss','false')
+			
+		gv.loadStrategy(st)
+		gv.TradeHandler()
+		gv.loadSymbols()
 		//gv.debug()
+	}
+				//gv.debug()
 	def fwdTest = Messages.getString('forward.test')
 	/*if ( fwdTest != 'true' ) {
 	gv.stratergyTest()
@@ -426,7 +446,7 @@ def buyNHoldTest()
 	//gv.loadSymbols()
 	
 	// load mkt
-	gv.buyNHoldTest()
+	//gv.buyNHoldTest()
 
  }
 

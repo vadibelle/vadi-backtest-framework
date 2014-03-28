@@ -99,7 +99,7 @@ public class Portfolio {
 				else
 					n = 0;
 				if (print)
-				log.info("@@Buying " + n + " stocks ");
+				log.info("@@Buying " + n + " stocks "+tradeSize+" of "+ammount);
 				if ( n <= 0 )
 					return;
 				positions += n;
