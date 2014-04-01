@@ -1,4 +1,9 @@
+insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,'BUY','BUYNHOLD',cast(q.timestamp,string)
+from 
+EODQuote.win:length(2) q;
+
 insert into TradeSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
 select q.symbol,q.open,q.high,q.low,q.close,'BUY','BUYNHOLD',cast(q.timestamp,string)
 from 
-EODQuote.win:length(si+1) q;
+EODQuote.win:length(2) q;

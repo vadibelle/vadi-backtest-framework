@@ -420,8 +420,10 @@ def buyNHoldTest()
 	def  gv = new SignalGenerator()
 	gv.init(args)
 	
-	while ( !GroovyHelper.isstListEmpty()){
-		def st = GroovyHelper.nextStrategy()
+	//while ( !GroovyHelper.isstListEmpty()){
+	//	def st = GroovyHelper.nextStrategy()
+		def stl = GroovyHelper.stlist.clone()
+		stl.each { st ->
 		println " loading $st"
 		if ( st.contains('BuyNHold'))
 			Messages.setProrperty('stop.loss','false')
@@ -430,7 +432,9 @@ def buyNHoldTest()
 		gv.TradeHandler()
 		gv.loadSymbols()
 		//gv.debug()
+		GroovyHelper.stlist.remove(st)
 	}
+
 				//gv.debug()
 	def fwdTest = Messages.getString('forward.test')
 	/*if ( fwdTest != 'true' ) {

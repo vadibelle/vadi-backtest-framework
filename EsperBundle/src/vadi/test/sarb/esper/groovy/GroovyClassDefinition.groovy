@@ -152,6 +152,10 @@ class ConsolidateOutput implements UpdateListener {
 	def map
 	def symList
 	def doExit = false
+	def finish = false
+	def fwd = 'false'
+	def bestalgo = [:]
+	def indList = []
 	def ConsolidateOutput() {
 		def f = new File(outfile)
 		if ( f.exists())
@@ -159,8 +163,9 @@ class ConsolidateOutput implements UpdateListener {
 		output = []
 		map = [:]
 		symList = []
-	
-
+		if ( Messages.getString('system.exit') == 'true')
+		doExit = true
+		fwd  = Messages.getString("forward.test")
 	}
 
 	public void update(EventBean[] arg0, EventBean[] arg1) {
@@ -169,14 +174,12 @@ class ConsolidateOutput implements UpdateListener {
 			//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
 			//println "Shutting down"
 			def f = new File(outfile)
-			
-			if ( Messages.getString('system.exit') == 'true')
-				doExit = true
+				
 			LastEOD evt = arg0[0].getUnderlying();
 			def u = Utility.getInstance();
 			symList.add(evt.getSymbol())
 			// Forward or backtest
-			def fwd  = Messages.getString("forward.test")
+		//	def fwd  = Messages.getString("forward.test")
 			PFManager pfm = PFManager.getInstance();
 			if ( fwd != 'true' ) {
 				u.removeFromSymbolList(evt.getSymbol())
@@ -196,7 +199,7 @@ class ConsolidateOutput implements UpdateListener {
 						output.add(map)
 						
 					}
-					SendOutput(f)
+				//	SendOutput(f)
 					//if ( doExit)
 					//System.exit(0)
 					
@@ -224,14 +227,15 @@ class ConsolidateOutput implements UpdateListener {
 					pfm.removePosition(sym)
 					output.add(map)
 				}
-				SendOutput(f);
+				//SendOutput(f);
 			}
-			//SendOutput(f);
+			if ( u.isSymbolListEmpty() && u.isPortfolioEmpty() && GroovyHelper.isstListEmpty())
+			SendOutput(f);
 		}
 
 		catch(e){
 			println "Error consolidating "+e
-			//e.printStackTrace();
+			e.printStackTrace();
 		//	System.exit(0)
 			
 		}
@@ -239,36 +243,81 @@ class ConsolidateOutput implements UpdateListener {
 
 	def sortOutput()
 	{
-		def bestalgo = [:]
+				
 		output.each { map ->
+			if (map != null ) {
 			println map
+						
 			def sym = map.get('symbol')
 			def tot = map.get('total')
+			def ltrade  = map.get('last Trade')
+			
+			if ( ltrade != null ) {
+			def ks = sym+','			
+			ltrade.split(',').each { k ->
+				if ( k.contains('indicator')  || k.contains('price_timestamp') || k.contains('type')) 
+					ks += k.split('=')[1]+','
+			}
+			
+			//def ks = ltrade.get 'symbol' +','+ ltrade.get 'indicator' +','+ ltrade.get 'price_timestamp'
+			indList.push ks
+			}			
 			if ( bestalgo.containsKey(sym)){
 				if ( bestalgo.get(sym).get('total') < tot )
 					bestalgo.put(sym,map)
 			}	
 			else
 				bestalgo.put(sym, map)
+			
+			}
 		}
 		println "Best algo"
+		def tmp = ['Best algo':'symbol']
+		
+	//	output.add(tmp)
+		
 		bestalgo.each {
 			println it
+		//	output.add(it)
 		}
+		println 'Algo list'
+		//output.add(['algo list':'symbol'])
+		indList.each {
+				println it
+				//output.add(it)
+			}
+		
 		
 	}
 	private SendOutput(File f) {
+		if (! GroovyHelper.isstListEmpty()){
+			return
+		}
+		sortOutput()
 		f = new File(outfile)
 		f.withWriter { fw ->
-			output = output.sort { it.get("price_timestamp")}
-			output = output.sort { it.get("returns")}
+			output = output.sort { it.getAt("price_timestamp")}
+			output = output.sort { it.getAt("returns")}
 			def mailStr = ""
 			output.each {
 				println it
 				//println ""
 				fw.writeLine(it.toString())
 				mailStr += it.toString()+"\n"
-			}
+				
+				}
+				mailStr += "Best Algo list \n"
+				bestalgo.each {
+					fw.writeLine(it.toString())
+					mailStr += it.toString()+"\n"
+					
+				}
+				mailStr += "Indicators list\n"
+				indList.each {
+					fw.writeLine(it.toString())
+					mailStr += it.toString()+"\n"
+				}
+				
 			def isMail = Messages.getString('send.mail')
 			if (isMail == 'true') {
 			def sm = new SendMail()
@@ -278,12 +327,12 @@ class ConsolidateOutput implements UpdateListener {
 			sm.send(mailStr)
 			}
 		}
-		if ( GroovyHelper.isstListEmpty()){
-			println "Processing output"
-			sortOutput()
-				if ( doExit)
-				System.exit(0)
-			}
+		
+		println "Processing output"
+		
+		if ( doExit)
+		System.exit(0)
+			
 	}
 }
 
