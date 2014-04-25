@@ -1,5 +1,5 @@
 package vadi.test.sarb.esper.groovy
-import java.awt.geom.Arc2D.Double;
+
 import java.util.concurrent.ConcurrentSkipListMap.Iter;
 
 import groovy.transform.EqualsAndHashCode;
@@ -143,6 +143,7 @@ def TradeHandler() {
 	
 	def trdExp = 'select * from TradeSignal.std:unique(price_timestamp)'
 	//'.std:unique(price_timestamp) group by symbol'
+	u.registerEventListener(trdExp, new GenericListener())
 	u.registerEventListener(trdExp, new LongPosition())
 	if (vadi.test.sarb.esper.Messages.getString('long.short') == 'true')
 		u.registerEventListener(trdExp, new ShortPosition())
@@ -220,7 +221,8 @@ def debug() {
 	def l = new GenericListener()
 	//def l = new UpdateStatistics()
 //.registerEventListener('select * from mstream_tmp',l)
-u.registerEventListener('select * from cc65',l)
+
+u.registerEventListener('select * from volatility',l)
 
 //u.registerEventListener('select * from emashort',l)
 //u.registerEventListener('select * from emalong',l)
@@ -309,6 +311,11 @@ u.createIntVar('li', Integer.parseInt(Messages.getString("var.li")))
 u.createIntVar('st', Integer.parseInt(Messages.getString("var.si")))
 u.createIntVar('lt', Integer.parseInt(Messages.getString("var.lt")))
 u.createIntVar('ml', Integer.parseInt(Messages.getString("var.ml")))
+u.createIntVar('numSym', Integer.parseInt(Messages.getString("var.numSym")))
+u.createDoubleVar('vlimit', Messages.getString("var.vlimit"))
+u.createIntVar('msi', Integer.parseInt(Messages.getString("var.msi")))
+u.createIntVar('mli', Integer.parseInt(Messages.getString("var.mli")))
+u.createIntVar('rsint', Integer.parseInt(Messages.getString("var.rsint")))
 
 
 u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")

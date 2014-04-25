@@ -152,6 +152,13 @@ public class Utility {
 		
 	}
 	
+	public void createDoubleVar(String name, String val){
+		
+		epService.getEPAdministrator().getConfiguration().
+		addVariable(name, Double.class, Double.parseDouble(val));
+		
+	}
+
 	public boolean doPrint(){
 		return print;
 	}

@@ -362,7 +362,7 @@ class UpdateStatistics implements UpdateListener {
 			pos.openSwing = os
 			pos.rsi = arg0[0].get('rsi')
 			pos.macd = arg0[0].get('macd')
-		
+			pos.vol = arg0[0].get('vol')
 				
 		}
 		catch(e)

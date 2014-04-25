@@ -1,6 +1,8 @@
 package vadi.test.sarb.listeners;
 
 import java.io.Serializable;
+import java.util.HashMap;
+
 import vadi.test.sarb.esper.portfolio.PFManager;
 import vadi.test.sarb.event.TradeSignal;
 
@@ -33,8 +35,24 @@ public class LongPosition implements UpdateListener,Serializable  {
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		// TODO Auto-generated method stub
 		try {
-						
-		TradeSignal sig = (TradeSignal)(arg0[0].getUnderlying());
+		System.out.println(arg0[0].toString())		;	
+		TradeSignal sig = null;
+		if ( arg0[0].getUnderlying() instanceof HashMap)
+		{
+			HashMap map = (HashMap)arg0[0].getUnderlying();
+			sig = new TradeSignal();
+			sig.close = map.get("close").toString();
+			sig.high = map.get("high").toString();
+			sig.indicator = map.get("indicator").toString();
+			sig.low  = map.get("low").toString();
+			sig.open = map.get("open").toString();
+			sig.price_timestamp = map.get("price_timestamp").toString();
+			sig.symbol = map.get("symbol").toString();
+			sig.type = map.get("signal").toString();
+			
+		}
+		else
+		 sig = (TradeSignal)(arg0[0].getUnderlying());
 		//System.out.println("print "+print+" Sig "+sig);
 		if (print)
 		log.info(sig.toString());

@@ -38,6 +38,7 @@ public class Portfolio {
 	 public double openSwing = 0;
 	 public double rsi = 0;
 	 public double macd = 0;
+	 public double vol = 0;
 	public Portfolio(String symbol) {
 		super();
 		positions = short_positions = noOfTrades = 0;
@@ -467,6 +468,7 @@ public class Portfolio {
 			map.put("Open Swing", Double.toString(openSwing));
 			map.put("RSI", Double.toString(rsi));
 			map.put("MACD", Double.toString(macd));
+			map.put("volatility", Double.toString(vol));
 		
 		return map;
 	}

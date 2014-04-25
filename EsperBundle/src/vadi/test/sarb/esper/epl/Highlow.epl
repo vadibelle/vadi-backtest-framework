@@ -57,7 +57,8 @@ highlow.win:length(1)
 ;
 
 insert into TradeSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
-select q.symbol,q.open,q.high,q.low,q.close,signal,indicator,cast(q.timestamp,string)
+//insert into TradeSignal
+select q.symbol,q.open,q.high,q.low,q.close,signal,indicator,cast(q.timestamp,string) as price_timestamp
  from EODQuote.win:length(5) q , highlow.win:length(5) hl where
  hl.symbol=q.symbol and
  prev(1,q.timestamp) = hl.timestamp;

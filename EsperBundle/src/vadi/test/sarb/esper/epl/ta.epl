@@ -21,9 +21,16 @@ from EODQuote.win:length(rsint);
 
 insert into statistics
 select avg(diff(q.high,q.low)) as avgSwing,EMA(q.volume) as avgVol, avg(diff(q.open,prev(1,q.close))) as openSwing,
-q.symbol as symbol,q.timestamp  as timestamp,macd,rsi from
-EODQuote.win:length(5) q , rsi.win:length(5) r, macd.win:length(5) m
-where q.timestamp = m.timestamp and
-q.timestamp = r.timestamp and
-q.symbol = r.symbol and
-q.symbol = m.symbol;
+q.symbol as symbol,q.timestamp  as timestamp,macd,rsi,vol
+from
+EODQuote.win:length(5) q 
+, rsi.win:length(5) r
+, macd.win:length(5) m
+, volatility.win:length(5) v
+where q.timestamp = m.timestamp
+and q.timestamp = r.timestamp 
+and q.symbol = r.symbol 
+and q.symbol = m.symbol
+and v.symbol = q.symbol 
+and v.timestamp = q.timestamp
+;
