@@ -293,6 +293,40 @@ class ConsolidateOutput implements UpdateListener {
 		if (! GroovyHelper.isstListEmpty()){
 			return
 		}
+		//Get index
+		def indx = Messages.getString('mkt.indicator')
+		
+		def indxRtn = 1
+		output.each {
+		if ( indx != null && it != null && it.getAt('symbol') == indx )
+			{
+				indxRtn = it.getAt('returns') as float
+			}
+		}
+		output.each {
+			def eqRtn = 0;
+			if ( it != null ) {
+			if ( it.containsKey('returns'))
+			eqRtn = it.getAt('returns') as float
+			
+			def vol = 0
+			if ( it.containsKey('volatility'))
+					vol = it.getAt('volatility') as float
+			def ddr = 0; def dd = 0
+			if ( it.containsKey('drawDown'))
+				dd = it.getAt('drawDown') as float
+			
+			def sr = 0
+			if ( vol != 0 ){
+				sr = (eqRtn - indxRtn)*100/vol as float
+				ddr = (eqRtn-dd)*100/vol as float
+			 it.putAt('sharpe', sr)
+			 it.put('ddSharpe',ddr)
+			}
+			}
+				
+		}
+		
 		sortOutput()
 		f = new File(outfile)
 		f.withWriter { fw ->

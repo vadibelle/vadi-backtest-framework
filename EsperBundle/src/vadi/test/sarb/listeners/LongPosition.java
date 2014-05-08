@@ -35,7 +35,7 @@ public class LongPosition implements UpdateListener,Serializable  {
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		// TODO Auto-generated method stub
 		try {
-		System.out.println(arg0[0].toString())		;	
+		//System.out.println(arg0[0].toString())		;	
 		TradeSignal sig = null;
 		if ( arg0[0].getUnderlying() instanceof HashMap)
 		{

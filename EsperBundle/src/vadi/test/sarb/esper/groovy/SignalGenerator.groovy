@@ -141,9 +141,11 @@ def TradeHandler() {
 	
 //	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
-	def trdExp = 'select * from TradeSignal.std:unique(price_timestamp)'
+	//def trdExp = 'select * from TradeSignal.std:unique(price_timestamp)'
+	def trdExp = 'select * from TradeSignal'
 	//'.std:unique(price_timestamp) group by symbol'
-	u.registerEventListener(trdExp, new GenericListener())
+	if (Messages.getString('do.debug') == 'true')
+		u.registerEventListener(trdExp, new GenericListener())
 	u.registerEventListener(trdExp, new LongPosition())
 	if (vadi.test.sarb.esper.Messages.getString('long.short') == 'true')
 		u.registerEventListener(trdExp, new ShortPosition())
@@ -166,6 +168,7 @@ def TradeHandler() {
 	
 	def st = new UpdateStatistics()
 		u.registerEventListener('select * from statistics',st)
+	
 //Utility.addEPLFunction("EMA","vadi.test.sarb.esper.util.EsperEMA")
 //u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
 //u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
@@ -207,6 +210,9 @@ def TradeHandler() {
 
 def debug() {
 	try {
+		if (Messages.getString('do.debug') != 'true')
+		return
+	
 	Utility u = Utility.getInstance();
 	
 	
@@ -222,7 +228,10 @@ def debug() {
 	//def l = new UpdateStatistics()
 //.registerEventListener('select * from mstream_tmp',l)
 
-u.registerEventListener('select * from volatility',l)
+//u.registerEventListener('select * from volatility',l)
+u.registerEventListener('select * from statistics',l)
+
+
 
 //u.registerEventListener('select * from emashort',l)
 //u.registerEventListener('select * from emalong',l)
@@ -438,11 +447,11 @@ def buyNHoldTest()
 		gv.loadStrategy(st)
 		gv.TradeHandler()
 		gv.loadSymbols()
-		//gv.debug()
+		gv.debug()
 		GroovyHelper.stlist.remove(st)
 	}
 
-				//gv.debug()
+	//gv.debug()
 	def fwdTest = Messages.getString('forward.test')
 	/*if ( fwdTest != 'true' ) {
 	gv.stratergyTest()

@@ -143,7 +143,9 @@ public class StartEOD implements UpdateListener,Serializable {
 				String str = this.data.get();
 				String arr[] = str.split("\n");
 				for(int i=arr.length-1 ;i > -1;i-- ){
+					try{
 					String line = arr[i];
+				//	log.info(arr[i]);
 				//for (String line:arr){
 					//log.info(getTick()+line);
 					if (line.contains("High") )
@@ -156,35 +158,45 @@ public class StartEOD implements UpdateListener,Serializable {
 					q.setHigh(rec[2]);
 					q.setLow(rec[3]);
 					q.setClose(rec[4]);
+					try {
+						q.setVolume(Long.parseLong(rec[5]));	
+					}
+					catch(Throwable e)
+					{
+						q.setVolume(-1);
+					}
 					q.setVolume(Long.parseLong(rec[5]));
 					Date dt = df.parse(rec[0]);
 					q.setTimestamp(dt.getTime());
 					q.enqueue();
 					Thread.sleep(10);
+					//log.info(q.toString());
+				} catch(Throwable e)
+				{
+					if (Utility.getInstance().doPrint())
+					log.fine("Error pasing..continue");
+					
 				}
+			}
 				LastEOD last = new LastEOD(getTick());
 				Thread.sleep(1000);
 				last.enqueue();
 				
-			} catch (ParseException e) {
-				// TODO Auto-generated catch blok
-				e.printStackTrace();
-				log.info("Error downloading");
-				error = true;
+			
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				log.info("Error downloading");
+				log.info("interprted Error downloading");
 				error = true;
 			} catch (ExecutionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				log.info("Error downloading");
+				log.info("execution Error downloading");
 				error = true;
 			}
 			catch (Throwable e)
 			{
-				log.info("Error downloading");
+				log.info(e.getMessage()+"Error downloading");
 				error = true;
 			}
 			if ( error) {

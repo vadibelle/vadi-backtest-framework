@@ -121,7 +121,7 @@ prev(1,pnl) > 1
 ;
 */
 
-insert into StockSignal(symbol,open,high,low,close,signal,indicator,timestamp)
+insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
 select symbol,open,high,low,close,signal,
 'MTUM' as indicator, cast(timestamp,string)
 from
@@ -129,7 +129,7 @@ mstreamcross.win:length(1)
 where hasExit(symbol) != true;
 
 
-insert into TradeSignal(symbol,open,high,low,close,signal,indicator,timestamp)
+insert into TradeSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
 select q.symbol,q.open,q.high,q.low,q.close,cross.signal,'MTUM',cast(q.timestamp,string) 
 from 
 EODQuote.win:length(numSym+5) q , mstreamcross.win:length(numSym+5) cross

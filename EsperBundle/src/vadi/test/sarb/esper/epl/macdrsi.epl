@@ -1,5 +1,6 @@
 insert into cross
-select 'BUY' as signal,q.timestamp as timestamp,* from EODQuote.win:length(ml+1) q ,macd.win:length(ml+1) m,
+select 'BUY' as signal,q.timestamp as timestamp,  
+* from EODQuote.win:length(ml+1) q ,macd.win:length(ml+1) m,
 rsi.win:length(ml+1) r
 where
 q.timestamp = m.es.timestamp and
@@ -12,7 +13,7 @@ r.rsi < 30
 ;
 
 insert into cross
-select 'SELL' as signal,q.timestamp as timestamp,* from EODQuote.win:length(ml+1) q ,macd.win:length(ml+1) m,
+select 'SELL' as signal,q.timestamp as timestamp, * from EODQuote.win:length(ml+1) q ,macd.win:length(ml+1) m,
 rsi.win:length(ml+1) r
 where
 q.timestamp = m.es.timestamp and
@@ -24,8 +25,14 @@ prev(1,m.macd) > 0
 and r.rsi > 70
 ;
 
+insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,signal,
+'MACDRSI' as indicator, cast(q.timestamp,string)
+from
+cross.win:length(1) 
+where hasExit(q.symbol) != true;
 
-insert into TradeSignal(symbol,open,high,low,close,signal,indicator,timestamp)
+insert into TradeSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
 select q.symbol,q.open,q.high,q.low,q.close,cross.signal,'MACDRSI',cast(q.timestamp,string) 
 from 
 EODQuote.win:length(numSym+5) q , cross.win:length(numSym+5) cross
