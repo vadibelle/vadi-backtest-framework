@@ -10,6 +10,7 @@ import vadi.test.sarb.event.LoadPortfolio
 import vadi.test.sarb.event.StartEODQuote
 import vadi.test.sarb.event.StockSignal
 import vadi.test.sarb.event.StopLoss
+import vadi.test.sarb.event.TradeSignal
 
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
@@ -94,8 +95,18 @@ class TradeListener implements UpdateListener {
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		try{
 			Object obj = arg0[0].getUnderlying();
+		//	Utility.info("Inserting into "+obj.getClass().getName())
+			if ( obj instanceof java.util.Map)
+			{
+				StockSignal sig = new StockSignal(
+					obj.get('symbol'), obj.get('open'),obj.get('high'),
+					obj.get('low'),obj.get('close'),obj.get('signal'),
+					obj.get('indicator'), obj.get('price_timestamp'))
+				PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
+			}
 			if ( obj instanceof StockSignal )
 			{
+				//Utility.log("Inserting into "+obj.toString());
 				StockSignal sig = (StockSignal)obj;
 				PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
 			}
@@ -104,9 +115,11 @@ class TradeListener implements UpdateListener {
 				StopLoss sig = (StopLoss)obj;
 				PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
 			}
+			
 			//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
 			//println "TradeReceived "+obj;
 			//TradeSignal sig = arg0[0].getUnderlying();
+			//PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
 			Utility.getInstance().dbUtil.execute("insert into signals ("+
 					" signal) values ('"+obj.toString()+"')");
 			//sig.enqueue();
@@ -245,11 +258,11 @@ class ConsolidateOutput implements UpdateListener {
 	{
 				
 		output.each { map ->
-			if (map != null ) {
+			if (map != null && map.size() > 0 ) {
 			println map
 						
 			def sym = map.get('symbol')
-			def tot = map.get('total')
+			def tot = map.get('total') as double
 			def ltrade  = map.get('last Trade')
 			
 			if ( ltrade != null ) {
@@ -263,11 +276,17 @@ class ConsolidateOutput implements UpdateListener {
 			indList.push ks
 			}			
 			if ( bestalgo.containsKey(sym)){
-				if ( bestalgo.get(sym).get('total') < tot )
+				def ntot =  bestalgo.get(sym).get('total') as double
+				//println "$sym $tot $ntot"
+				if ( tot > ntot ){
 					bestalgo.put(sym,map)
+					//println "inserted > $map"
+				}
 			}	
-			else
+			else{ 
 				bestalgo.put(sym, map)
+				//println "inserted $map entry null"
+			}
 			
 			}
 		}

@@ -53,7 +53,7 @@ insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timest
 select symbol,open,high,low,close,signal,
 'HIGH_LOW' as indicator, cast(timestamp,string)
 from
-highlow.win:length(1)
+highlow.win:length(3)
 ;
 
 insert into TradeSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)

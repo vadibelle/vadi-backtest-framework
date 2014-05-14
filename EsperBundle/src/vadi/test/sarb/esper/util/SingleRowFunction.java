@@ -44,7 +44,8 @@ public class SingleRowFunction {
 			}
 			double cl = Double.parseDouble(c);
 			double pr = Double.parseDouble(p);
-			double pnl = 100*((cl-pr)/cl);
+			//double pnl = 100*((cl-pr)/cl);
+			double pnl = 100*Math.log(cl)/Math.log(pr);
 		
 			u.trace("close="+cl+" prv="+pr+" pnl="+pnl);
 			
