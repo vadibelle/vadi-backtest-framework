@@ -278,7 +278,7 @@ class ConsolidateOutput implements UpdateListener {
 			if ( bestalgo.containsKey(sym)){
 				def ntot =  bestalgo.get(sym).get('total') as double
 				//println "$sym $tot $ntot"
-				if ( tot > ntot ){
+				if ( tot > ntot  ){
 					bestalgo.put(sym,map)
 					//println "inserted > $map"
 				}
@@ -313,22 +313,27 @@ class ConsolidateOutput implements UpdateListener {
 			return
 		}
 		//Get index
-		def indx = Messages.getString('mkt.indicator')
+		def indx = Messages.getString('mkt.indicators')
 		
 		def indxRtn = 1
+		def indxVol= 0
+		//Get index volatility, returns for sharpe
 		output.each {
 		if ( indx != null && it != null && it.getAt('symbol') == indx )
 			{
 				indxRtn = it.getAt('returns') as float
+				indxVol = it.getAt('volatility') as float
 			}
 		}
+		//add sharpe and relative volatility for each
 		output.each {
 			def eqRtn = 0;
 			if ( it != null ) {
 			if ( it.containsKey('returns'))
 			eqRtn = it.getAt('returns') as float
 			
-			def vol = 0
+			def vol = 0 
+			def relVol = 0
 			if ( it.containsKey('volatility'))
 					vol = it.getAt('volatility') as float
 			def ddr = 0; def dd = 0
@@ -341,9 +346,12 @@ class ConsolidateOutput implements UpdateListener {
 				ddr = (eqRtn-dd)*100/vol as float
 			 it.putAt('sharpe', sr)
 			 it.put('ddSharpe',ddr)
+			 relVol = vol/indxVol as float
+			 it.putAt('relVolatility',relVol)
 			}
+			
 			}
-				
+							
 		}
 		
 		sortOutput()
@@ -388,6 +396,7 @@ class ConsolidateOutput implements UpdateListener {
 			
 	}
 }
+
 
 class UpdateStatistics implements UpdateListener {
 	def p = PFManager.getInstance()
@@ -562,7 +571,5 @@ class ProcessArgs {
 			vadi.test.sarb.esper.Messages.loadProperties(configFile)
 
 	}
-
-
 
 }
