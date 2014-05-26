@@ -21,6 +21,7 @@ import vadi.test.sarb.esper.util.Utility;
 import vadi.test.sarb.event.EODQuote
 import vadi.test.sarb.event.LastEOD
 import vadi.test.sarb.event.LoadPortfolio
+import vadi.test.sarb.event.ResetVariables
 import vadi.test.sarb.event.StartEODQuote
 import vadi.test.sarb.event.StatArb;
 import vadi.test.sarb.event.StockQuote
@@ -430,6 +431,35 @@ def buyNHoldTest()
 	
 }
 
+def generateSignal(args){
+	init(args)
+	while ( true )	{	
+	println "Start iteration"	
+	Utility.getInstance().acquire()
+	def stl = GroovyHelper.stlist.clone()
+	println "started the next round "+stl.size()
+	println Utility.getInstance().getVariableValueAll()
+	stl.each { st ->
+	println " loading $st"
+	if ( st.contains('BuyNHold'))
+		Messages.setProrperty('stop.loss','false')
+		
+	this.loadStrategy(st)
+	this.TradeHandler()
+	this.loadSymbols()
+	this.debug()
+	GroovyHelper.stlist.remove(st)
+	//stl.remove(st)
+		}
+	Utility.getInstance().acquire()
+	
+	new ResetVariables(1.5).enqueue()
+	PFManager.getInstance().clear()
+	println "position value "+PFManager.getInstance().positionValue()
+	GroovyHelper.reloadStrategy()
+	Utility.getInstance().release()
+	}
+}
 
 //main lo
  static  main(String[] args)  {

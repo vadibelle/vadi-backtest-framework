@@ -830,7 +830,7 @@ public class PFManager {
 	}
 	public void clear()
 	{
-		
+		pfList.clear();
 	}
 	public double longPosition(String symbol)
 	{

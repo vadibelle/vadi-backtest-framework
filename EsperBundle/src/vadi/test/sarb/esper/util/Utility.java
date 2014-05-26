@@ -5,9 +5,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.JFrame;
 
@@ -46,7 +48,8 @@ public class Utility {
 	private boolean print = false;
 	private boolean trace = false;
 	private ArrayList<StartEODQuote> quoteList;
-
+	int maxExecutions = 1;
+	private Semaphore doneSemaphore;
 	static {
 		System.out.println("Initializing esper engine");
 			
@@ -117,7 +120,8 @@ public class Utility {
 		config.getEngineDefaults().getThreading().setThreadPoolInboundNumThreads(5);
 		config.getEngineDefaults().getThreading().setThreadPoolOutbound(true);
 		config.getEngineDefaults().getThreading().setThreadPoolOutboundNumThreads(5);*/
-	
+		
+		doneSemaphore = new Semaphore(maxExecutions);
 		if ( mode != null && mode.equals("true"))
 		{
 			simulationMode = true;
@@ -149,7 +153,6 @@ public class Utility {
 		
 		epService.getEPAdministrator().getConfiguration().
 		addVariable(name, Integer.class, val);
-		
 	}
 	
 	public void createDoubleVar(String name, String val){
@@ -159,6 +162,12 @@ public class Utility {
 		
 	}
 
+	public Object getVariable(String name){
+		return epService.getEPRuntime().getVariableValue(name);
+	}
+	public Map getVariableValueAll() {
+		return epService.getEPRuntime().getVariableValueAll();
+	}
 	public boolean doPrint(){
 		return print;
 	}
@@ -369,4 +378,18 @@ public static void createStmt(String eventExpr){
 		return quoteList;
 	}
 
+	public void acquire()
+	{
+		try {
+			System.out.println("get semaphore");
+			doneSemaphore.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void release()
+	{	System.out.println("release semaphore");
+		doneSemaphore.release();
+	}
 }

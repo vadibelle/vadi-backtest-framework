@@ -30,4 +30,10 @@ class GroovyHelper {
 		stlist.isEmpty()
 	}
 	
+	def static reloadStrategy()
+	{
+		def sttmp = Messages.getString('load.strategy').split(',')
+		stlist = sttmp as Set
+	}
+	
 }

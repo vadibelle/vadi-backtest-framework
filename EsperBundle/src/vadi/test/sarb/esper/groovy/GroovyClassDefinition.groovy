@@ -390,7 +390,7 @@ class ConsolidateOutput implements UpdateListener {
 		}
 		
 		println "Processing output"
-		
+		Utility.getInstance().release()
 		if ( doExit)
 		System.exit(0)
 			

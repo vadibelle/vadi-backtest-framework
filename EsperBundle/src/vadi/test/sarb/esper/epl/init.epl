@@ -20,3 +20,13 @@ create variable integer mli=26;
 
 create variable integer rsint=14;
 */
+
+create variable double multi=1.5;
+
+on ResetVariables
+set si = cast(si*multi,int), 
+li = cast(li*multi,int),
+st = cast(st*multi,int),
+msi=cast(msi*multi,int),
+mli = cast(mli*multi,int),
+rsint = cast(rsint*multi,int);
