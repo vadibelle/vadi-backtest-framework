@@ -179,6 +179,7 @@ class ConsolidateOutput implements UpdateListener {
 		if ( Messages.getString('system.exit') == 'true')
 		doExit = true
 		fwd  = Messages.getString("forward.test")
+		println "output "+output.size()
 	}
 
 	public void update(EventBean[] arg0, EventBean[] arg1) {
@@ -268,7 +269,8 @@ class ConsolidateOutput implements UpdateListener {
 			if ( ltrade != null ) {
 			def ks = sym+','			
 			ltrade.split(',').each { k ->
-				if ( k.contains('indicator')  || k.contains('price_timestamp') || k.contains('type')) 
+				if ( k.contains('indicator')  || k.contains('price_timestamp') 
+					|| k.contains('type')|| k.contains('sharpe')) 
 					ks += k.split('=')[1]+','
 			}
 			
@@ -277,6 +279,7 @@ class ConsolidateOutput implements UpdateListener {
 			}			
 			if ( bestalgo.containsKey(sym)){
 				def ntot =  bestalgo.get(sym).get('total') as double
+			//	def ntot =  bestalgo.get(sym).get('sharpe') as double
 				//println "$sym $tot $ntot"
 				if ( tot > ntot  ){
 					bestalgo.put(sym,map)
@@ -391,6 +394,12 @@ class ConsolidateOutput implements UpdateListener {
 		
 		println "Processing output"
 		Utility.getInstance().release()
+		output = [] 
+		bestalgo = [:]
+		indList = []
+		map = [:]
+		symList = []
+		
 		if ( doExit)
 		System.exit(0)
 			

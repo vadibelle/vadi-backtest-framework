@@ -35,7 +35,7 @@ corr.timestamp = q.timestamp and
 corr.symbol = q.symbol and
 corr.ema > 0
 ;
-/*
+
 //context SymbolContext
 insert into varcrossover
 select 'SELL' as signal,q.close as close,q.high as high ,q.low as low ,
@@ -56,7 +56,7 @@ corr.timestamp = q.timestamp and
 corr.symbol = q.symbol and
 corr.ema > 0
 ;
-*/
+
 //context SymbolContext
 insert into varcrossover
 select 'CLOSE_LONG' as signal,q.close as close,q.high as high ,q.low as low ,
@@ -78,7 +78,7 @@ corr.symbol = q.symbol and
 corr.ema < 0
 
 ;
-/*
+
 //context SymbolContext
 insert into varcrossover
 select 'CLOSE_SHORT' as signal,q.close as close,q.high as high ,q.low as low ,
@@ -100,7 +100,7 @@ corr.symbol = q.symbol and
 corr.ema < 0
 
 ;
-*/
+
 insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
 select symbol,open,high,low,close,signal,
 'MASTDEV' as indicator, cast(timestamp,string)

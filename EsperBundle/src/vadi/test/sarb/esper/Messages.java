@@ -43,7 +43,7 @@ public class Messages {
 		}
 	}
 	
-	public static void setProrperty(String key, String value){
+	public static void setProperty(String key, String value){
 		props.setProperty(key, value);
 	}
 }

@@ -423,8 +423,8 @@ def buyNHoldTest()
 		sleep(1100)
 		
 	}
-	Messages.setProrperty("system.exit",'true')
-	Messages.setProrperty('stop.loss','false')
+	Messages.setProperty("system.exit",'true')
+	Messages.setProperty('stop.loss','false')
 	loadModules('BuyNHold')
 			
 	loadSymbols()
@@ -433,16 +433,19 @@ def buyNHoldTest()
 
 def generateSignal(args){
 	init(args)
-	while ( true )	{	
+	def iter=2
+	while ( iter-- > 0 )	{	
 	println "Start iteration"	
 	Utility.getInstance().acquire()
+	new DbScripts().cleanDB()
+	
 	def stl = GroovyHelper.stlist.clone()
-	println "started the next round "+stl.size()
+	println "started the next round "+iter
 	println Utility.getInstance().getVariableValueAll()
 	stl.each { st ->
 	println " loading $st"
 	if ( st.contains('BuyNHold'))
-		Messages.setProrperty('stop.loss','false')
+		Messages.setProperty('stop.loss','false')
 		
 	this.loadStrategy(st)
 	this.TradeHandler()
@@ -455,7 +458,7 @@ def generateSignal(args){
 	
 	new ResetVariables(1.5).enqueue()
 	PFManager.getInstance().clear()
-	println "position value "+PFManager.getInstance().positionValue()
+//	println "position value "+PFManager.getInstance().positionValue()
 	GroovyHelper.reloadStrategy()
 	Utility.getInstance().release()
 	}
@@ -472,7 +475,7 @@ def generateSignal(args){
 		stl.each { st ->
 		println " loading $st"
 		if ( st.contains('BuyNHold'))
-			Messages.setProrperty('stop.loss','false')
+			Messages.setProperty('stop.loss','false')
 			
 		gv.loadStrategy(st)
 		gv.TradeHandler()

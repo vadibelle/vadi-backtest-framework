@@ -151,12 +151,14 @@ public class Utility {
 	}
 	public void createIntVar(String name, int val){
 		
+		epService.getEPAdministrator().getConfiguration().removeVariable(name, true);
 		epService.getEPAdministrator().getConfiguration().
 		addVariable(name, Integer.class, val);
+		
 	}
 	
 	public void createDoubleVar(String name, String val){
-		
+		epService.getEPAdministrator().getConfiguration().removeVariable(name, true);
 		epService.getEPAdministrator().getConfiguration().
 		addVariable(name, Double.class, Double.parseDouble(val));
 		
@@ -324,6 +326,7 @@ public static void createStmt(String eventExpr){
 		try {
 			getInstance().getEpService().getEPAdministrator().getConfiguration()
 			.addPlugInAggregationFunctionFactory(name, cls);
+						
 		} catch (ConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -392,4 +395,52 @@ public static void createStmt(String eventExpr){
 	{	System.out.println("release semaphore");
 		doneSemaphore.release();
 	}
+	
+	public void reset()
+	{
+		/*
+		epService.getEPAdministrator().destroyAllStatements();
+		epService.removeAllServiceStateListeners();
+		epService.removeAllStatementStateListeners();
+		
+		*/
+		epService.initialize();
+		String mode = vadi.test.sarb.esper.Messages.getString("sim.mode");
+		symbolList = new ArrayList<String>();
+		quoteList = new ArrayList<StartEODQuote>();
+		//String logLevel = vadi.test.sarb.esper.Messages.getString("log.level");
+		Configuration config = new Configuration();
+		/*config.getEngineDefaults().getThreading().setThreadPoolInbound(true);
+		config.getEngineDefaults().getThreading().setThreadPoolInboundNumThreads(5);
+		config.getEngineDefaults().getThreading().setThreadPoolOutbound(true);
+		config.getEngineDefaults().getThreading().setThreadPoolOutboundNumThreads(5);*/
+		
+		doneSemaphore = new Semaphore(maxExecutions);
+		if ( mode != null && mode.equals("true"))
+		{
+			simulationMode = true;
+			config.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
+			}
+		
+		String pr = vadi.test.sarb.esper.Messages.getString("do.print");
+		if ( pr.equals("true"))
+			print = true;
+		
+		if ( Messages.getString("do.trace").equals("true"))
+			trace = true;
+		
+		//config.getEngineDefaults().getLogging().setEnableExecutionDebug(true);
+      //  config.addEventTypeAutoName("vadi.test.sarb.event");
+       // config.addImport()
+       // config.getEngineDefaults().getThreading().setListenerDispatchPreserveOrder(false);
+       // config.getEngineDefaults().getThreading().setInsertIntoDispatchPreserveOrder(false);
+       // config.getEngineDefaults().getThreading().setEngineFairlock(false);
+       
+        epService = EPServiceProviderManager.getDefaultProvider(config);
+        
+        // epService.getEPAdministrator().getConfiguration().addPlugInAggregationFunction(arg0, arg1)
+      //  init();
+		
+	}
+	
 }

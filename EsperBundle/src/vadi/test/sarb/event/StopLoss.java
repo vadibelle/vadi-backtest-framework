@@ -7,6 +7,8 @@ public class StopLoss extends Event{
 	public String signal;
 	public String close;
 	public long timestamp;
+	public String indicator = "STOPLOSS";
+	public String type = "SELL";
 	
 	public StopLoss(String symbol, String signal, String close, long timestamp) {
 		super();
@@ -48,10 +50,11 @@ public class StopLoss extends Event{
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
-	@Override
+	
 	public String toString() {
 		return "StopLoss [symbol=" + symbol + ", signal=" + signal + ", close="
-				+ close + ", timestamp=" + new Timestamp((timestamp)).toString()+ "]";
+				+ close + ",  type=" + type + ", indicator="
+						+ indicator + ", price_timestamp=" +  new Timestamp((timestamp)).toString() + "]";
 	}
 
 }

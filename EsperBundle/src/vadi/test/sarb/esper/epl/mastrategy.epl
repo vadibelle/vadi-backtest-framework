@@ -23,7 +23,7 @@ symbol, timestamp ,close
  from EODQuote.win:length(st*numSym) 
  group by symbol ;
 
-//Crossover slope is not used don't know
+//Crossover slope is not used dont know
 insert into crossover
 select 'BUY' as signal, es.ema,es.timestamp as timestamp,
 es.close as close,es.symbol as symbol, es.mxhsi as high,es.mxlsi as low,
@@ -50,7 +50,7 @@ prev(numSym,bnum.bup) < 70 and
 cast(prev(numSym,q.close),double) <= prev(numSym,es.ema)
 group by es.symbol ;
 
-//Crossover slope is not used don't know
+//Crossover slope is not used dont know
 insert into crossover
 select 'SELL' as signal, es.ema,es.timestamp as timestamp,
 es.close as close,es.symbol as symbol, es.mxhsi as high,es.mxlsi as low,
