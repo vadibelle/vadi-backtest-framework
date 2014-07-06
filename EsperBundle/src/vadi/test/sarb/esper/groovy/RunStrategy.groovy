@@ -8,13 +8,19 @@ class RunStrategy {
 	
 	
 	static void main(String[] args){
+	new File('C:/temp/output.csv').delete()
+	
 	new SignalGenerator().generateSignal(args)
-	println "Long only done"
-	Messages.setProperty('long.short','true')
+	println "Long short done"
+	Messages.setProperty('long.short','false')
 	Utility.getInstance().reset()
+	def f = new File('C:/temp/output.csv')
+	f << 'long only \n'
 	new SignalGenerator().generateSignal(args)
 	println " long short done"
 	System.exit(0)
+	
+	
 	
 	}
 

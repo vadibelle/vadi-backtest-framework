@@ -133,12 +133,13 @@ class TradeListener implements UpdateListener {
 }
 
 class StopSignal implements UpdateListener {
-	def outfile = "C:\\temp\\output.csv"
+	//def outfile = "C:\\temp\\output.csv"
+	def outfile = Messages.getString('outfile')
 
 	def StopSignal() {
 		def f = new File(outfile)
-		if ( f.exists())
-			f.delete()
+	//	if ( f.exists())
+	//		f.delete()
 
 	}
 	public void update(EventBean[] arg0, EventBean[] arg1) {
@@ -160,7 +161,8 @@ class StopSignal implements UpdateListener {
 
 
 class ConsolidateOutput implements UpdateListener {
-	def outfile = "C:\\temp\\output.csv"
+	//def outfile = "C:\\temp\\output.csv"
+	def outfile = Messages.getString('outfile')
 	def output
 	def map
 	def symList
@@ -171,8 +173,8 @@ class ConsolidateOutput implements UpdateListener {
 	def indList = []
 	def ConsolidateOutput() {
 		def f = new File(outfile)
-		if ( f.exists())
-			f.delete()
+		//if ( f.exists())
+		//	f.delete()
 		output = []
 		map = [:]
 		symList = []
@@ -188,7 +190,7 @@ class ConsolidateOutput implements UpdateListener {
 			//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
 			//println "Shutting down"
 			def f = new File(outfile)
-				
+			def varList = Utility.getInstance().getVariableValueAll()	
 			LastEOD evt = arg0[0].getUnderlying();
 			def u = Utility.getInstance();
 			symList.add(evt.getSymbol())
@@ -209,8 +211,10 @@ class ConsolidateOutput implements UpdateListener {
 					println "Consoliddate output"
 					symList.each { sym ->
 						map = pfm.getDetails(sym)
+						map << varList
 						pfm.removePosition(sym)
-						output.add(map)
+						if ( map.size() > 0)
+							output.add(map)
 						
 					}
 				//	SendOutput(f)
@@ -270,7 +274,7 @@ class ConsolidateOutput implements UpdateListener {
 			def ks = sym+','			
 			ltrade.split(',').each { k ->
 				if ( k.contains('indicator')  || k.contains('price_timestamp') 
-					|| k.contains('type')|| k.contains('sharpe')) 
+					|| k.contains('type')|| k.contains('sharpe') || k.contains('total')) 
 					ks += k.split('=')[1]+','
 			}
 			
@@ -359,26 +363,33 @@ class ConsolidateOutput implements UpdateListener {
 		
 		sortOutput()
 		f = new File(outfile)
-		f.withWriter { fw ->
+		//f.withWriter { fw ->
+		//{
 			output = output.sort { it.getAt("price_timestamp")}
 			output = output.sort { it.getAt("returns")}
+			def fk = new File("C:/temp/keys.csv")
+			def kv = new File("C:/temp/value.csv")
 			def mailStr = ""
 			output.each {
 				println it
 				//println ""
-				fw.writeLine(it.toString())
+				//fw.writeLine(it.toString())
+				f << it.toString()+'\n'
 				mailStr += it.toString()+"\n"
-				
+				fk << it.keySet() +'\n'	
+				kv << it.values() + '\n'		
 				}
 				mailStr += "Best Algo list \n"
 				bestalgo.each {
-					fw.writeLine(it.toString())
+					//fw.writeLine(it.toString())
+					f<< it.toString()+'\n'
 					mailStr += it.toString()+"\n"
 					
 				}
 				mailStr += "Indicators list\n"
 				indList.each {
-					fw.writeLine(it.toString())
+					//fw.writeLine(it.toString())
+					f << it.toString()+'\n'
 					mailStr += it.toString()+"\n"
 				}
 				
@@ -390,7 +401,7 @@ class ConsolidateOutput implements UpdateListener {
 			//	sm.send(output.toString())
 			sm.send(mailStr)
 			}
-		}
+		//}
 		
 		println "Processing output"
 		Utility.getInstance().release()

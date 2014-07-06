@@ -444,28 +444,28 @@ public class Portfolio {
 		map.put("total",Double.toString(d));
 		map.put("returns",Double.toString(d/ammount));
 		//if ( positions >0)
-		map.put("long",Long.toString(positions));
+		map.put("long_position",Long.toString(positions));
 		
 		//if ( short_positions >0)
-			map.put("short",Long.toString(short_positions));
+			map.put("short_position",Long.toString(short_positions));
 		
 		//if ( noOfTrades > 0)
-			map.put("no of trades",Long.toString(noOfTrades));
-			map.put("last price",Double.toString(lastPrice));
+			map.put("no_of_trades",Long.toString(noOfTrades));
+			map.put("last_price",Double.toString(lastPrice));
 		
-			map.put("high price",Double.toString(highPrice));
-			map.put("low price",Double.toString(lowPrice));
+			map.put("high_price",Double.toString(highPrice));
+			map.put("low_price",Double.toString(lowPrice));
 			map.put("drawDown",Double.toString(drawDown/ammount));
-			map.put("last Trade",lastTrade);
+			map.put("last_Trade",lastTrade);
 		//	map.put("ratio",Double.toString((ammount-drawDown)/d));	
 			double ratio = (noOfTrades/(noOfTrades+noOfStopLoss));
 			map.put("ratio",Double.toString(ratio));
 			map.put("cash", Double.toString(cash));
-			map.put("last position",lastPosition);
-			map.put("no of stoploss",Long.toString(noOfStopLoss));
-			map.put("average Swing", Double.toString(avgSwing));
-			map.put("average Volume", Double.toString(avgVol));
-			map.put("Open Swing", Double.toString(openSwing));
+			map.put("last_position",lastPosition);
+			map.put("no_of_stoploss",Long.toString(noOfStopLoss));
+			map.put("average_Swing", Double.toString(avgSwing));
+			map.put("average_Volume", Double.toString(avgVol));
+			map.put("Open_Swing", Double.toString(openSwing));
 			map.put("RSI", Double.toString(rsi));
 			map.put("MACD", Double.toString(macd));
 			map.put("volatility", Double.toString(vol));

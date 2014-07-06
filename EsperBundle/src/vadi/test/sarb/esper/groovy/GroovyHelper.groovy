@@ -35,5 +35,8 @@ class GroovyHelper {
 		def sttmp = Messages.getString('load.strategy').split(',')
 		stlist = sttmp as Set
 	}
-	
+	def static double getFunds(String symbol)
+	{
+		return PFManager.getInstance().getFunds(symbol)
+	}
 }

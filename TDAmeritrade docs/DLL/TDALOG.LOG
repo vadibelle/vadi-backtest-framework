@@ -1,0 +1,183 @@
+====== LOG STARTED =========
+20:51:12.649 TDASetSourceApp Error: Hdl=0 cannot find object.
+20:51:12.649 TDASetLoginInfo Error: Hdl=0 cannot find object.
+20:51:12.649 TDAStart Error: Hdl=0 cannot find object.
+20:51:32.165 TDAStart Error: Hdl=0 cannot find object.
+20:51:33.990 TDAInitSession LL=10 Ver=135
+20:51:33.990 DLL Located in: 
+20:51:33.990 TDAInitSession RESULT=1
+20:51:33.990 *TDASetHTTPTimeout 600
+20:51:34.006 *TDASetLoginSite apis.tdameritrade.com
+20:51:34.006 *TDARegisterSubscriber
+20:51:34.006 Registered Subscriber 1 32118448 = 0
+20:51:34.006 *TDASetCallback 10 4652624
+20:51:34.006 SETCALLBACK 0 10 4652624
+20:51:34.006 *TDASetCallback 11 4653024
+20:51:34.006 SETCALLBACK 0 11 4653024
+20:51:34.006 *TDASetCallback 3 4653080
+20:51:34.021 SETCALLBACK 0 3 4653080
+20:51:34.021 *TDASetCallback 9 4653216
+20:51:34.021 SETCALLBACK 0 9 4653216
+20:51:37.438 *TDASetSourceApp TSTDLL
+20:51:37.438 SETTING TRDSOURCE to TSTDLL
+20:51:37.438 *TDASetLoginInfo vadiraja
+20:51:37.453 Changing Login Name
+20:51:37.453 Changing Login Password
+20:51:37.453 *TDAStart
+20:51:37.453 GO - was SUSPENDED
+20:51:37.453 GO - RESUMING
+20:51:37.453 SUSPENDIT=FALSE
+20:51:37.453 FLOGINNEW 1
+20:51:37.469 FLOGINNEW
+20:51:37.469 Status Change: Idle --> Logging In
+20:51:37.469 Calling status callback 0
+20:51:37.469 -> CallStatusCallback
+20:51:37.469 Called status callback 0
+20:51:37.469 Login N 1: POST https://apis.tdameritrade.com /apps/100/LogIn userid=vadiraja&password=*********&source=TSTDLL&version=1.0 TO=60 Elapsed=0 WaitRes=0 LEC=0 LE= TMDO=N
+20:51:37.484 Starting HTTP EXE: POST https://apis.tdameritrade.com /apps/100/LogIn userid=vadiraja&password=*********&source=TSTDLL&version=1.0 TO=60 Elapsed=0 WaitRes=0 LEC=0 LE= TMDO=N
+20:51:37.921 Through conc 1: POST https://apis.tdameritrade.com /apps/100/LogIn userid=vadiraja&password=*********&source=TSTDLL&version=1.0 TO=60 Elapsed=0 WaitRes=0 LEC=0 LE= TMDO=N
+20:51:37.937 --DEBUG 1 STATUS: INTERNET_STATUS_HANDLE_CREATED 
+20:51:37.984 --DEBUG 1 STATUS: INTERNET_STATUS_HANDLE_CREATED 
+20:51:38.093 --DEBUG 1 STATUS: INTERNET_STATUS_DETECTING_PROXY 
+20:51:38.108 --DEBUG 1 STATUS: INTERNET_STATUS_RESOLVING_NAME apis.tdameritrade.com{00}
+20:51:38.405 --DEBUG 1 STATUS: INTERNET_STATUS_NAME_RESOLVED 216.105.251.201{00}
+20:51:38.514 --DEBUG 1 STATUS: INTERNET_STATUS_CONNECTING_TO_SERVER 
+20:51:47.141 --DEBUG 1 STATUS: INTERNET_STATUS_CONNECTED_TO_SERVER 
+20:51:52.710 --DEBUG 1 STATUS: INTERNET_STATUS_SENDING_REQUEST 
+20:51:52.710 --DEBUG 1 STATUS: INTERNET_STATUS_REQUEST_SENT 
+20:51:52.710 --DEBUG 1 STATUS: INTERNET_STATUS_RECEIVING_RESPONSE 
+20:51:53.381 --DEBUG 1 STATUS: INTERNET_STATUS_RESPONSE_RECEIVED 
+20:51:53.381 --DEBUG 1 STATUS: INTERNET_STATUS_REQUEST_COMPLETE 
+20:51:53.428 WRITING TO BUF: 357: <?xml version="1.0"?><amtd><result>OK</result><xml-log-in><session-id>064AA2D417FAC4C75FFB2C7B92DABC
+20:51:53.459 --DEBUG 1 STATUS: INTERNET_STATUS_RECEIVING_RESPONSE 
+20:51:53.459 --DEBUG 1 STATUS: INTERNET_STATUS_RESPONSE_RECEIVED 
+20:51:53.459 WRITING TO BUF: 1828: aq-quotes>realtime</nasdaq-quotes><opra-quotes>realtime</opra-quotes><amex-quotes>realtime</amex-quo
+20:51:53.584 LOGIN RES <?xml version="1.0"?><amtd><result>OK</result><xml-log-in><session-id>064AA2D417FAC4C75FFB2C7B92DABCC7.9aWfXm8zPOyl4UDCkumxHg</session-id><user-id>vadiraja</user-id><cdi>A000000012301924</cdi><timeout>55</timeout><login-time>2014-05-20 20:51:38 EDT</login-time><associated-account-id>165787961</associated-account-id><nyse-quotes>realtime</nyse-quotes><nasdaq-quotes>realtime</nasdaq-quotes><opra-quotes>realtime</opra-quotes><amex-quotes>realtime</amex-quotes><cme-quotes>delayed</cme-quotes><ice-quotes>delayed</ice-quotes><forex-quotes>realtime</forex-quotes><exchange-status>non-professional</exchange-status><authorizations><options360>false</options360></authorizations><accounts><account><account-id>165787961</account-id><display-name>vadiraja</display-name><cdi>A000000005336932</cdi><description>VADIRAJA B NARASIMHA</description><associated-account>true</associated-account><company>AMER</company><segment>AMER</segment><unified>true</unified><preferences><express-trading>false</express-trading><option-direct-routing>false</option-direct-routing><stock-direct-routing>false</stock-direct-routing></preferences><authorizations><apex>true</apex><level2>true</level2><stock-trading>true</stock-trading><margin-trading>true</margin-trading><streaming-news>true</streaming-news><option-trading>full</option-trading><streamer>true</streamer><advanced-margin>true</advanced-margin></authorizations></account><account><account-id>166679666</account-id><display-name>vadiroth</display-name><cdi>A000000005424603</cdi><description>VADIRAJA B NARASIMHA ROTH IRA</description><associated-account>false</associated-account><company>AMER</company><segment>AMER</segment><unified>true</unified><preferences><express-trading>false</express-trading><option-direct-routing>false</option-direct-routing><stock-direct-routing>false</stock-direct-routing></preferences><authorizations><apex>true</apex><level2>true</level2><stock-trading>true</stock-trading><margin-trading>false</margin-trading><streaming-news>true</streaming-news><option-trading>long</option-trading><streamer>true</streamer><advanced-margin>false</advanced-margin></authorizations></account></accounts></xml-log-in></amtd>
+20:51:53.599 LOGIN COOKIE 
+20:51:53.599 Login N 2: GET https://apis.tdameritrade.com /apps/100/StreamerInfo;jsessionid=064AA2D417FAC4C75FFB2C7B92DABCC7.9aWfXm8zPOyl4UDCkumxHg?source=TSTDLL TO=60 Elapsed=0 WaitRes=0 LEC=0 LE= TMDO=N
+20:51:53.599 Starting HTTP EXE: GET https://apis.tdameritrade.com /apps/100/StreamerInfo;jsessionid=064AA2D417FAC4C75FFB2C7B92DABCC7.9aWfXm8zPOyl4UDCkumxHg?source=TSTDLL TO=60 Elapsed=0 WaitRes=0 LEC=0 LE= TMDO=N
+20:51:53.599 Through conc 1: GET https://apis.tdameritrade.com /apps/100/StreamerInfo;jsessionid=064AA2D417FAC4C75FFB2C7B92DABCC7.9aWfXm8zPOyl4UDCkumxHg?source=TSTDLL TO=60 Elapsed=0 WaitRes=0 LEC=0 LE= TMDO=N
+20:51:53.615 --DEBUG 2 STATUS: INTERNET_STATUS_HANDLE_CREATED 
+20:51:53.615 --DEBUG 2 STATUS: INTERNET_STATUS_HANDLE_CREATED 
+20:51:53.615 --DEBUG 2 STATUS: INTERNET_STATUS_DETECTING_PROXY 
+20:51:53.615 --DEBUG 2 STATUS: INTERNET_STATUS_CONNECTING_TO_SERVER 
+20:51:53.693 --DEBUG 2 STATUS: INTERNET_STATUS_CONNECTED_TO_SERVER 
+20:51:53.771 --DEBUG 2 STATUS: INTERNET_STATUS_SENDING_REQUEST 
+20:51:53.771 --DEBUG 2 STATUS: INTERNET_STATUS_REQUEST_SENT 
+20:51:53.771 --DEBUG 2 STATUS: INTERNET_STATUS_RECEIVING_RESPONSE 
+20:51:53.849 --DEBUG 2 STATUS: INTERNET_STATUS_RESPONSE_RECEIVED 
+20:51:53.849 --DEBUG 2 STATUS: INTERNET_STATUS_REQUEST_COMPLETE 
+20:51:53.896 WRITING TO BUF: 497: <?xml version="1.0"?><amtd><result>OK</result><streamer-info><streamer-url>ameritrade02.streamer.com
+20:51:53.989 STREAMERINFO=<amtd><result>OK</result><streamer-info><streamer-url>ameritrade02.streamer.com</streamer-url><token>15bdbe76fae7b2b7b36b58881fc90c6f6fd981ef</token><timestamp>1400633498866</timestamp><cd-domain-id>A000000005336932</cd-domain-id><usergroup>ACCT</usergroup><access-level>ACCT</access-level><acl>DADDDRESF7FUFXG1G3G5G7GBGKGRH1H3H5IPM1M2MANSOFPNQ2QSQTRFSDSPSVTETFTOTTUAURWSQ2NS</acl><app-id>TSTDLL</app-id><authorized>Y</authorized><error-msg></error-msg></streamer-info></amtd>
+20:51:53.989 FDKACL2=DADDDRESF7FUFXG1G3G5G7GBGKGRH1H3H5IPM1M2MANSOFPNQ2QSQTRFSDSPSVTETFTOTTUAURWSQ2NS
+20:51:53.989 Destroying TTDAAPI object: freeing internals POSBALREQ
+20:51:53.989 Destroying TTDAAPI object: freeing internals LOGOUTREQ
+20:51:53.989 Destroying TTDAAPI object: freeing internals KeepAliveREQ
+20:51:53.989 Destroying TTDAAPI object: freeing internals LastOrderStatusREQ
+20:51:53.989 Destroying TTDAAPI object: freeing internals ORDSTREQ
+20:51:53.989 Destroying TTDAAPI object: freeing internals BFREQ
+20:51:54.005 Destroying TTDAAPI object: freeing internals XMLQ
+20:51:54.005 Destroying TTDAAPI object: freeing internals ChainQ
+20:51:54.005 Destroying TTDAAPI object: freeing internals OldChainQ
+20:51:54.005 Destroying TTDAAPI object: freeing internals NWS
+20:51:54.005 Destroying TTDAAPI object: freeing internals OREQ
+20:51:54.005 Destroying TTDAAPI object: freeing internals MKREQ
+20:51:54.005 Destroying TTDAAPI object: freeing internals AccHistReq
+20:51:54.005 Status Change: Logging In --> Logged In
+20:51:54.005 Calling status callback 0
+20:51:54.020 -> CallStatusCallback
+20:51:54.020 *TDAGetAccountIDs
+20:51:54.020 *TDAGetAccountInfo 165787961
+20:51:54.020 *TDAGetAccountInfo 166679666
+20:51:54.020 Called status callback 0
+20:51:54.020 Exiting Login
+20:51:54.020 HTTP Requests = 0
+20:51:54.036 Status Change: Logged In --> Idle
+20:51:54.036 Calling status callback 0
+20:51:54.036 -> CallStatusCallback
+20:51:54.036 Called status callback 0
+20:52:34.786 *TDARegisterSubscriber
+20:52:34.786 Registered Subscriber 1 32120000 = 1
+20:52:34.786 *TDASetCallback 27 4598904
+20:52:34.802 SETCALLBACK 1 27 4598904
+20:52:34.802 *TDAGetAccountIDs
+20:52:34.802 *TDAGetAccountInfo 165787961
+20:52:34.802 *TDAGetAccountInfo 166679666
+20:52:40.387 *TDAUnregisterSubscriber
+20:52:50.836 *TDARegisterSubscriber
+20:52:50.836 Registered Subscriber 1 32169852 = 1
+20:52:50.836 *TDASetCallback 4 4590696
+20:52:50.836 SETCALLBACK 1 4 4590696
+20:52:50.836 *TDARequestNewsHistory stt
+20:52:50.851 GetNewsHist: GET http://ameritrade02.streamer.com /%21U%3D165787961%26W%3D15bdbe76fae7b2b7b36b58881fc90c6f6fd981ef%26A%3Duserid%3D165787961%26token%3D15bdbe76fae7b2b7b36b58881fc90c6f6fd981ef%26company%3DAMER%26segment%3DAMER%26cddomain%3DA000000005336932%26usergroup%3DACCT%26accesslevel%3DACCT%26authorized%3DY%26acl%3DDADDDRESF7FUFXG1G3G5G7GBGKGRH1H3H5IPM1M2MANSOFPNQ2QSQTRFSDSPSVTETFTOTTUAURWSQ2NS%26timestamp%3D1400633498866%26appid%3DTSTDLL%7Csource%3DTSTDLL%7CS%3DNEWS%26C%3DGET%26P%3Dstt%3B1398027600000 TO=600 Elapsed=0 WaitRes=0 LEC=0 LE= TMDO=N
+20:52:50.851 HTTP Requests = 1
+20:52:50.851 Starting HTTP EXE: GET http://ameritrade02.streamer.com /%21U%3D165787961%26W%3D15bdbe76fae7b2b7b36b58881fc90c6f6fd981ef%26A%3Duserid%3D165787961%26token%3D15bdbe76fae7b2b7b36b58881fc90c6f6fd981ef%26company%3DAMER%26segment%3DAMER%26cddomain%3DA000000005336932%26usergroup%3DACCT%26accesslevel%3DACCT%26authorized%3DY%26acl%3DDADDDRESF7FUFXG1G3G5G7GBGKGRH1H3H5IPM1M2MANSOFPNQ2QSQTRFSDSPSVTETFTOTTUAURWSQ2NS%26timestamp%3D1400633498866%26appid%3DTSTDLL%7Csource%3DTSTDLL%7CS%3DNEWS%26C%3DGET%26P%3Dstt%3B1398027600000 TO=600 Elapsed=0 WaitRes=0 LEC=0 LE= TMDO=N
+20:52:50.851 Through conc 0: GET http://ameritrade02.streamer.com /%21U%3D165787961%26W%3D15bdbe76fae7b2b7b36b58881fc90c6f6fd981ef%26A%3Duserid%3D165787961%26token%3D15bdbe76fae7b2b7b36b58881fc90c6f6fd981ef%26company%3DAMER%26segment%3DAMER%26cddomain%3DA000000005336932%26usergroup%3DACCT%26accesslevel%3DACCT%26authorized%3DY%26acl%3DDADDDRESF7FUFXG1G3G5G7GBGKGRH1H3H5IPM1M2MANSOFPNQ2QSQTRFSDSPSVTETFTOTTUAURWSQ2NS%26timestamp%3D1400633498866%26appid%3DTSTDLL%7Csource%3DTSTDLL%7CS%3DNEWS%26C%3DGET%26P%3Dstt%3B1398027600000 TO=600 Elapsed=0 WaitRes=0 LEC=0 LE= TMDO=N
+20:52:50.851 --DEBUG 3 STATUS: INTERNET_STATUS_HANDLE_CREATED 
+20:52:50.851 --DEBUG 3 STATUS: INTERNET_STATUS_HANDLE_CREATED 
+20:52:50.867 --DEBUG 3 STATUS: INTERNET_STATUS_DETECTING_PROXY 
+20:52:50.867 --DEBUG 3 STATUS: INTERNET_STATUS_RESOLVING_NAME ameritrade02.streamer.com{00}
+20:52:51.023 --DEBUG 3 STATUS: INTERNET_STATUS_NAME_RESOLVED 216.105.251.37{00}
+20:52:51.039 --DEBUG 3 STATUS: INTERNET_STATUS_CONNECTING_TO_SERVER 
+20:52:51.101 --DEBUG 3 STATUS: INTERNET_STATUS_CONNECTED_TO_SERVER 
+20:52:51.101 --DEBUG 3 STATUS: INTERNET_STATUS_SENDING_REQUEST 
+20:52:51.101 --DEBUG 3 STATUS: INTERNET_STATUS_REQUEST_SENT 
+20:52:51.101 --DEBUG 3 STATUS: INTERNET_STATUS_RECEIVING_RESPONSE 
+20:52:51.163 --DEBUG 3 STATUS: INTERNET_STATUS_RESPONSE_RECEIVED 
+20:52:51.288 --DEBUG 3 STATUS: INTERNET_STATUS_REQUEST_COMPLETE 
+20:52:51.397 --DEBUG 3 STATUS: INTERNET_STATUS_RECEIVING_RESPONSE 
+20:52:51.397 --DEBUG 3 STATUS: INTERNET_STATUS_RESPONSE_RECEIVED 
+20:52:51.397 WRITING TO BUF: 57: N 28   .  stt  #Results not available at this time.ÿ
+
+20:52:51.429 --DEBUG 3 STATUS: INTERNET_STATUS_RECEIVING_RESPONSE 
+20:52:51.429 --DEBUG 3 STATUS: INTERNET_STATUS_RESPONSE_RECEIVED 
+20:52:51.429 --DEBUG 3 STATUS: INTERNET_STATUS_CLOSING_CONNECTION 
+20:52:51.429 --DEBUG 3 STATUS: INTERNET_STATUS_CONNECTION_CLOSED 
+20:52:51.475 NewsReq done 57
+20:52:51.475 ReqEnded: GET http://ameritrade02.streamer.com /%21U%3D165787961%26W%3D15bdbe76fae7b2b7b36b58881fc90c6f6fd981ef%26A%3Duserid%3D165787961%26token%3D15bdbe76fae7b2b7b36b58881fc90c6f6fd981ef%26company%3DAMER%26segment%3DAMER%26cddomain%3DA000000005336932%26usergroup%3DACCT%26accesslevel%3DACCT%26authorized%3DY%26acl%3DDADDDRESF7FUFXG1G3G5G7GBGKGRH1H3H5IPM1M2MANSOFPNQ2QSQTRFSDSPSVTETFTOTTUAURWSQ2NS%26timestamp%3D1400633498866%26appid%3DTSTDLL%7Csource%3DTSTDLL%7CS%3DNEWS%26C%3DGET%26P%3Dstt%3B1398027600000 TO=600 Elapsed=1 WaitRes=0 LEC=0 LE= TMDO=N
+20:52:51.475 ProcessNewsHistory "N 28   .  stt  #Results no"
+20:52:51.475 HISTNEWS DATA: N 28   .  stt  #Results not available at this time.ÿ
+
+20:52:52.661 *TDAUnregisterSubscriber
+20:52:59.775 *TDARegisterSubscriber
+20:52:59.775 Registered Subscriber 1 32171276 = 1
+20:52:59.775 *TDAGetAccountIDs
+20:52:59.790 *TDAGetAccountInfo 165787961
+20:52:59.790 *TDAGetAccountInfo 166679666
+20:52:59.790 *TDAGetAccountInfo 165787961
+20:53:02.661 *TDAGetAccountIDs
+20:53:02.676 *TDAGetAccountInfo 165787961
+20:53:02.676 *TDAGetAccountInfo 166679666
+20:53:02.676 *TDAGetAccountInfo 165787961
+20:53:03.519 *TDAUnregisterSubscriber
+20:53:07.434 TERMINATING SESSION
+20:53:07.450 Session Terminated
+20:53:07.450 MAINEXEC ALLDONE
+20:53:07.466 TERMINATING SESSION 1 - ALLDONE
+20:53:07.466 Destroying TTDAAPI object
+20:53:07.466 Destroying TTDAAPI object: waiting to terminate
+20:53:07.481 Destroying WaitForCancels
+20:53:07.481 Destroying TTDAAPI object: freeing internals STU
+20:53:07.481 Destroying TTDAAPI object: freeing internals FAS
+20:53:07.481 Destroying TTDAAPI object: freeing internals FLOCKS
+20:53:07.481 Destroying TTDAAPI object: freeing internals MSTR
+20:53:07.481 Destroying TTDAAPI object: freeing internals POSBALREQ
+20:53:07.481 Destroying TTDAAPI object: freeing internals LOGOUTREQ
+20:53:07.481 Destroying TTDAAPI object: freeing internals KeepAliveREQ
+20:53:07.481 Destroying TTDAAPI object: freeing internals LastOrderStatusREQ
+20:53:07.481 Destroying TTDAAPI object: freeing internals ORDSTREQ
+20:53:07.481 Destroying TTDAAPI object: freeing internals BFREQ
+20:53:07.497 Destroying TTDAAPI object: freeing internals XMLQ
+20:53:07.497 Destroying TTDAAPI object: freeing internals ChainQ
+20:53:07.497 Destroying TTDAAPI object: freeing internals OldChainQ
+20:53:07.497 Destroying TTDAAPI object: freeing internals NWS
+20:53:07.497 Destroying TTDAAPI object: freeing internals OREQ
+20:53:07.497 Destroying TTDAAPI object: freeing internals MKREQ
+20:53:07.497 Destroying TTDAAPI object: freeing internals AccHistReq
+20:53:07.497 Destroying TTDAAPI object: freeing internals MHTTP
+20:53:07.497 Destroying TTDAAPI object: freeing internals SYML
+20:53:07.497 Destroying TTDAAPI object: freeing internals STD
+20:53:07.497 Destroying TTDAAPI object: freeing internals FRES
+20:53:07.497 Destroying TTDAAPI object: freeing internals INH
+20:53:07.512 Destroying TTDAAPI object: Done
+20:53:07.512 TERMINATING SESSION - DONE

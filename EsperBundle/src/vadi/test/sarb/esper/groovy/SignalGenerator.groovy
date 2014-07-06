@@ -1,5 +1,6 @@
 package vadi.test.sarb.esper.groovy
 
+import java.awt.GraphicsConfiguration.DefaultBufferCapabilities;
 import java.util.concurrent.ConcurrentSkipListMap.Iter;
 
 import groovy.transform.EqualsAndHashCode;
@@ -231,7 +232,7 @@ def debug() {
 
 //u.registerEventListener('select * from volatility',l)
 u.registerEventListener('select * from statistics',l)
-
+u.registerEventListener('select * from volatility',l)
 
 
 //u.registerEventListener('select * from emashort',l)
@@ -304,13 +305,17 @@ symbolList = pArgs.symbolList
 //sb.enqueue();
 def u = Utility.getInstance();
 
+if (Messages.getString('init.db')== 'true')
+{
+	def db  = new DbScripts()
+	db.initDB()
+}
 
 if ( vadi.test.sarb.esper.Messages.getString("clean.db") == "true" ) {
 	def db = new DbScripts()
 	db.cleanDB()
 }	
 
-new File("C:\\temp\\test.csv").delete();
 
 def config = u.getEpService().getEPAdministrator().getConfiguration();
 config.addEventTypeAutoName("vadi.test.sarb.event");
@@ -349,6 +354,8 @@ config.addPlugInSingleRowFunction("longPosition",
 	"vadi.test.sarb.esper.util.SingleRowFunction", "longPosition");
 config.addPlugInSingleRowFunction("hasExit",
 	"vadi.test.sarb.esper.groovy.GroovyHelper", "hasExit");
+config.addPlugInSingleRowFunction("getFunds",
+	"vadi.test.sarb.esper.groovy.GroovyHelper", "getFunds");
 
 def sb = "select * from StartEODQuote";
 u.registerEventListener(sb, new StartEOD());
@@ -385,8 +392,9 @@ def loadPosition()
 		q.stDate = d.split(' ')[0]
 		q.endDate = today
 		u.addToPortfolio(q)
-		//q.enqueue()
-		/*def p = new Portfolio()
+		/*
+		q.enqueue()
+		def p = new Portfolio()
 		p.symbol = it.get(1)
 		
 		p.ammount = Messages.getString("original.ammount") as double
@@ -399,11 +407,12 @@ def loadPosition()
 		if (it.get(3) == 'BUY')
 			p.positions = it.get(0) as long
 		else
-			p.short_positions = it.get(0) as long*/
-		
+			p.short_positions = it.get(0) as long
+		*/
 		 	
 		 PFManager.getInstance().loadPosition(it.get(0))
 		 println PFManager.getInstance().positionValue(true)
+		 
 				
 		}
 		
@@ -441,7 +450,9 @@ def generateSignal(args){
 	
 	def stl = GroovyHelper.stlist.clone()
 	println "started the next round "+iter
+	def f = new File(Messages.getString('outfile'))
 	println Utility.getInstance().getVariableValueAll()
+//	f << Utility.getInstance().getVariableValueAll().toString()+'\n'
 	stl.each { st ->
 	println " loading $st"
 	if ( st.contains('BuyNHold'))

@@ -6,6 +6,8 @@ import vadi.test.sarb.esper.groovy.*
 def initDB() {
 
 def db = new DbUtil();
+//dropTable('position')
+
 def sql = "create table position("
 sql += " id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
 sql += " symbol varchar(100), "
@@ -16,10 +18,13 @@ sql += " cost float,"
 sql += " date datetime)"
 
 println "sql "+sql;
-db.execute("drop table position;");
+
+db.execute('drop table position')
 db.execute(sql);
+
 println  db.execute("select * from position");
 
+//dropTable('position_archive')
 sql = "";
 sql = "create table position_archive( "
 sql += " id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
@@ -29,9 +34,10 @@ sql += " lors varchar(20), "
 sql += " price float, "
 sql += " cost float,"
 sql += " date datetime, "
-sql += " curdate datetime default (CURRENT_TIMESTAMP())"
+sql += " curdate datetime default (CURRENT_TIMESTAMP()))"
 println "sql "+sql
-db.execute("drop table position_archive;");
+
+db.execute("drop table position_archive");
 db.execute(sql);
 //sql="ALTER TABLE position_archive ADD CONSTRAINT contraint_name DEFAULT GETDATE() FOR curdate;"
 //db.execute(sql);
@@ -51,9 +57,20 @@ sql = "create table signals( "
 sql += " id  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,"
 sql += " signal varchar(255),"
 sql += " currdate datetime default (current_timestamp()))"
-execute(sql)
+db.execute('drop table signals')
+db.execute(sql)
 }
 
+def dropTable(name)
+{
+	//def dt = "IF EXISTS ( SELECT [name] FROM sys.tables WHERE [name] = '"+name+"' )"+
+	//' BEGIN '+
+	def dt = 'DROP TABLE '+name
+	//' go '
+	//' END '
+	println dt
+	execute(dt)
+}
 def execute(sql) {
 	def db = new DbUtil();
 	for ( e in db.execute(sql))
@@ -73,12 +90,14 @@ def cleanDB(){
 	sql="delete from signals"
 	execute(sql)
 }
-//initDB()
+
+ProcessArgs pArgs = new ProcessArgs(args)
+initDB()
 
 //sql = "insert into position (symbol,qty,lors,price,cost,date) values "
 //sql += " ('sso',10,'buy',10,100,'2010-11-01')";
 //cleanDB()
-ProcessArgs pArgs = new ProcessArgs(args)
+
 
 sql="select * from position"
 execute(sql)

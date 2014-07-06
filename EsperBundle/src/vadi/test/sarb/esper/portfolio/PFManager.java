@@ -138,6 +138,13 @@ public class PFManager {
 	public synchronized double getFunds() {
 		return (tradeSize * ammount > cash ? cash : (tradeSize * ammount));
 	}
+	public synchronized Double getFunds(String symbol) {
+		if ( pfList.containsKey(symbol)) {
+			return pfList.get(symbol).getFunds();
+		}
+		else
+			return ammount;
+	}
 
 	public  void addLongPosition(TradeSignal sig) {
 		try {
