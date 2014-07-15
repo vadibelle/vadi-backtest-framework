@@ -446,7 +446,7 @@ def generateSignal(args){
 	while ( iter-- > 0 )	{	
 	println "Start iteration"	
 	Utility.getInstance().acquire()
-	new DbScripts().cleanDB()
+	//new DbScripts().cleanDB()
 	
 	def stl = GroovyHelper.stlist.clone()
 	println "started the next round "+iter

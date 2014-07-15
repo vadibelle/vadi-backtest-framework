@@ -1,5 +1,6 @@
 package vadi.test.sarb.esper.groovy
 
+import groovy.json.JsonSlurper
 import vadi.test.sarb.esper.db.*;
 import vadi.test.sarb.esper.groovy.*
 
@@ -34,7 +35,7 @@ sql += " lors varchar(20), "
 sql += " price float, "
 sql += " cost float,"
 sql += " date datetime, "
-sql += " curdate datetime default (CURRENT_TIMESTAMP()))"
+sql += " currdate datetime default (CURRENT_TIMESTAMP()))"
 println "sql "+sql
 
 db.execute("drop table position_archive");
@@ -59,6 +60,53 @@ sql += " signal varchar(255),"
 sql += " currdate datetime default (current_timestamp()))"
 db.execute('drop table signals')
 db.execute(sql)
+
+sql=""
+sql = '''
+CREATE TABLE RESULTS
+(
+   symbol varchar,
+   cash float,
+   total float,
+   drawdown float,
+   returns float,
+   long_position int,
+   no_of_trades int,
+   no_of_stoploss int,
+   last_price float,
+   open_swing float,
+   average_swing float,
+average_volume float,
+   volatility float,
+   macd float,
+   rsi float,
+   short_position int,
+   last_trade varchar,
+   last_trade_close float,
+   last_trade_type varchar,
+   last_trade_indicator varchar,
+   last_trade_timestamp timestamp,
+   last_position varchar,
+   last_postion_close float,
+   last_position_type varchar,
+   last_position_indicator varchar,
+   last_poition_timestamp timestamp,
+   li int ,
+   rsint int,
+   mli int,
+   numSym int,
+   lt int,
+   st int,
+   vlimit int,
+   ml int,
+   msi int,
+   si int,
+   currdate timestamp default  (current_timestamp())
+)
+;'''
+db.execute('drop table results')
+db.execute(sql)
+
 }
 
 def dropTable(name)
@@ -78,6 +126,107 @@ def execute(sql) {
 	
 }
 
+def persistResult(map)
+{
+	if (map.getAt('last_trade') == null)
+	return;
+	println map
+	 def ltr = [:]
+
+	def close=''
+	def type=''
+	def ind =''
+	def pr_ts=''
+	
+	def jstring = map.getAt('last_trade').
+	replace('TradeSignal','').replace('StopLoss','').
+			replaceAll(/\[/,'').replaceAll(/\]/,'')
+	println jstring
+	jstring.split(',').each {
+		def k = it.split('=')[0].stripIndent().stripMargin()
+		def v = it.split('=')[1].stripIndent().stripMargin()
+		ltr.put(k,v)
+		if ( k.contains('close'))
+			close = v
+		if ( k.contains('indicator'))
+			ind = v
+		if ( k.contains('price_timestamp'))
+			pr_ts = v
+		if ( k.contains('type'))
+			type = v
+		}
+	
+	assert ltr.getAt('price_timestamp')	!= null
+	def lpos = [:]
+	def lastpos = map.getAt('last_position')
+	if ( lastpos != null)
+		lastpos = lastpos.replace('TradeSignal','').
+			replaceAll(/\[/,'').replaceAll(/\]/,'')
+			lastpos.split(',').each {
+				def k = it.split('=')[0].stripIndent().stripIndent()
+				def v = it.split('=')[1].stripIndent().stripMargin()
+				lpos.put(k, v)
+				/*if ( k.contains('close'))
+				lpos.put('close', v)
+				if ( k.contains('price_timestamp'))
+				lpos.put('price_timestamp', v)
+				if ( k.contains('type'))
+				lpos.put('type', v)
+				if ( k.contains('indicator'))
+				lpos.put('indicator', v)*/
+				
+			}
+	
+			//println "vol "+map.getAt('volatility')
+	def sql="""\
+	insert into results (symbol,cash,total,drawdown,returns,volatility,macd,rsi,
+	long_position,short_position,average_volume,average_swing,open_swing,no_of_trades,
+	no_of_stoploss,last_trade,last_trade_close,last_trade_type,last_trade_indicator,
+	last_trade_timestamp,last_position, last_postion_close ,last_position_type ,
+   last_position_indicator , last_position_timestamp , li , rsint , mli ,
+	numSym , lt , st , vlimit , ml ,  msi ,  si) values (
+	"""
+	sql += "'"+map.getAt('symbol')+"',"
+	sql += map.getAt('cash')+','
+	sql += map.getAt('total')+','
+	sql += map.getAt('drawdown')+','
+	sql += map.getAt('returns')+','
+	sql += map.getAt('volatility')+','
+	sql += map.getAt('macd')+','
+	sql += map.getAt('rsi')+','
+	sql += map.getAt('long_position')+','
+	sql += map.getAt('short_position')+','
+	sql += map.getAt('average_volume')+','
+	sql += map.getAt('average_swing')+','
+	sql += map.getAt('open_swing')+','
+	sql += map.getAt('no_of_trades')+','
+	sql += map.getAt('no_of_stoploss')+','
+	sql += "'"+map.getAt('last_trade')+"',"
+	sql += close +','
+	sql += "'"+type +"',"
+	sql += "'"+ind+"',"
+	sql += "'"+pr_ts+"',"
+	sql += "'"+map.getAt('last_position')+"',"
+	if (lpos.size() == 0)
+	sql += null+','+null+','+null+','+null+','
+	else
+	sql+= lpos.getAt('close')+','+"'"+lpos.getAt('type')+"','"+lpos.getAt('indicator')+"','"+lpos.getAt('price_timestamp')+"',"
+	
+	sql += map.getAt('li')+','
+	sql += map.getAt('rsint')+','
+	sql += map.getAt('mli')+','
+	sql += map.getAt('numSym')+','
+	sql += map.getAt('lt')+','
+	sql += map.getAt('st')+','
+	sql += map.getAt('vlimit')+','
+	sql += map.getAt('ml')+','
+	sql += map.getAt('msi')+','
+	sql += map.getAt('si')+')'
+	
+	println "SQL "+sql
+	execute(sql)
+		
+}
 def cleanDB(){
 	def sql="delete  from position;";
 	execute(sql)
@@ -89,10 +238,12 @@ def cleanDB(){
 	execute(sql)
 	sql="delete from signals"
 	execute(sql)
+	sql="delete from results"
+	execute(sql)
 }
 
 ProcessArgs pArgs = new ProcessArgs(args)
-initDB()
+//initDB()
 
 //sql = "insert into position (symbol,qty,lors,price,cost,date) values "
 //sql += " ('sso',10,'buy',10,100,'2010-11-01')";
@@ -111,4 +262,4 @@ execute (sql)
 //" group by symbol,lors"
 //execute(sql)
 
-
+execute('select symbol,last_trade_timestamp from results order by last_trade_timestamp')

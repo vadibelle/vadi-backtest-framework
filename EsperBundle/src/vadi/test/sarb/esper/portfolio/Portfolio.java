@@ -455,19 +455,19 @@ public class Portfolio {
 		
 			map.put("high_price",Double.toString(highPrice));
 			map.put("low_price",Double.toString(lowPrice));
-			map.put("drawDown",Double.toString(drawDown/ammount));
-			map.put("last_Trade",lastTrade);
+			map.put("drawdown",Double.toString(drawDown/ammount));
+			map.put("last_trade",lastTrade);
 		//	map.put("ratio",Double.toString((ammount-drawDown)/d));	
 			double ratio = (noOfTrades/(noOfTrades+noOfStopLoss));
 			map.put("ratio",Double.toString(ratio));
 			map.put("cash", Double.toString(cash));
 			map.put("last_position",lastPosition);
 			map.put("no_of_stoploss",Long.toString(noOfStopLoss));
-			map.put("average_Swing", Double.toString(avgSwing));
-			map.put("average_Volume", Double.toString(avgVol));
-			map.put("Open_Swing", Double.toString(openSwing));
-			map.put("RSI", Double.toString(rsi));
-			map.put("MACD", Double.toString(macd));
+			map.put("average_swing", Double.toString(avgSwing));
+			map.put("average_volume", Double.toString(avgVol));
+			map.put("open_swing", Double.toString(openSwing));
+			map.put("rsi", Double.toString(rsi));
+			map.put("macd", Double.toString(macd));
 			map.put("volatility", Double.toString(vol));
 		
 		return map;

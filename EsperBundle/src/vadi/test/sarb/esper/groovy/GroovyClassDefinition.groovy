@@ -3,6 +3,7 @@ package vadi.test.sarb.esper.groovy
 import java.awt.geom.Arc2D.Double;
 import java.awt.image.Kernel;
 
+import vadi.test.sarb.esper.db.DbUtil
 import vadi.test.sarb.esper.portfolio.PFManager;
 import vadi.test.sarb.esper.util.GenericChart;
 import vadi.test.sarb.event.LastEOD
@@ -171,6 +172,7 @@ class ConsolidateOutput implements UpdateListener {
 	def fwd = 'false'
 	def bestalgo = [:]
 	def indList = []
+	def dbu ;
 	def ConsolidateOutput() {
 		def f = new File(outfile)
 		//if ( f.exists())
@@ -178,6 +180,7 @@ class ConsolidateOutput implements UpdateListener {
 		output = []
 		map = [:]
 		symList = []
+		dbu = new DbScripts()
 		if ( Messages.getString('system.exit') == 'true')
 		doExit = true
 		fwd  = Messages.getString("forward.test")
@@ -211,11 +214,13 @@ class ConsolidateOutput implements UpdateListener {
 					println "Consoliddate output"
 					symList.each { sym ->
 						map = pfm.getDetails(sym)
-						map << varList
-						pfm.removePosition(sym)
-						if ( map.size() > 0)
-							output.add(map)
 						
+						pfm.removePosition(sym)
+						if ( map.size() > 0){
+							map << varList
+							output.add(map)
+							dbu.persistResult(map)
+						}
 					}
 				//	SendOutput(f)
 					//if ( doExit)
