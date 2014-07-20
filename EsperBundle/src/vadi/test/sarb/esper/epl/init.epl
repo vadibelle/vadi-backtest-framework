@@ -29,4 +29,7 @@ li = cast(li*multi,int),
 st = cast(st*multi,int),
 msi=cast(msi*multi,int),
 mli = cast(mli*multi,int),
-rsint = cast(rsint*multi,int);
+rsint = cast(rsint*multi,int),
+ml = cast(ml*multi,int),
+lt = cast(lt*multi,int)
+;

@@ -449,7 +449,7 @@ public class PFManager {
 	public  void closeShortPosition(TradeSignal sig) {
 		try {
 			if (pfList.containsKey(sig.symbol))
-				pfList.get(sig.symbol).closeLongPosition(sig);
+				pfList.get(sig.symbol).closeShortPosition(sig);
 			return;
 			/*
 		//	double price = Double.parseDouble(sig.getHigh());

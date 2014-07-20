@@ -223,7 +223,7 @@ def persistResult(map)
 	sql += map.getAt('msi')+','
 	sql += map.getAt('si')+')'
 	
-	println "SQL "+sql
+	//println "SQL "+sql
 	execute(sql)
 		
 }
