@@ -3,8 +3,13 @@ package vadi.test.sarb.esper.groovy
 import groovy.json.JsonSlurper
 import vadi.test.sarb.esper.db.*;
 import vadi.test.sarb.esper.groovy.*
+import vadi.test.sarb.esper.Messages
 
-def initDB() {
+def initDB()
+{
+	createTables()
+}
+def initDB_old() {
 
 def db = new DbUtil();
 //dropTable('position')
@@ -223,7 +228,7 @@ def persistResult(map)
 	sql += map.getAt('msi')+','
 	sql += map.getAt('si')+')'
 	
-	//println "SQL "+sql
+	println "SQL "+sql
 	execute(sql)
 		
 }
@@ -242,6 +247,12 @@ def cleanDB(){
 	execute(sql)
 }
 
+def createTables(){
+	def sql = new File(Messages.getString('create.sql')).text
+	//println sql
+	println "Creating tables "+execute(sql)
+}
+
 ProcessArgs pArgs = new ProcessArgs(args)
 //initDB()
 
@@ -249,7 +260,7 @@ ProcessArgs pArgs = new ProcessArgs(args)
 //sql += " ('sso',10,'buy',10,100,'2010-11-01')";
 //cleanDB()
 
-
+/*
 sql="select * from position"
 execute(sql)
 sql = "select * from position_archive  order by curdate asc"
@@ -263,3 +274,5 @@ execute (sql)
 //execute(sql)
 
 execute('select symbol,last_trade_timestamp from results order by last_trade_timestamp')
+*/
+createTables()

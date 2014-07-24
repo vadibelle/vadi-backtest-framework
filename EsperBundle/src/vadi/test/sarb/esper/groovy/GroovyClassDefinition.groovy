@@ -38,7 +38,7 @@ class GenericListener implements UpdateListener {
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		try{
 			// TODO Auto-generated method stub
-			def out = new File('c:\\temp\\test.csv')
+			def out = new File('/tmp/test.csv')
 			//	println "arg0 length "+arg0.length
 			for ( e in arg0 ){
 				//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
@@ -372,8 +372,8 @@ class ConsolidateOutput implements UpdateListener {
 		//{
 			output = output.sort { it.getAt("price_timestamp")}
 			output = output.sort { it.getAt("returns")}
-			def fk = new File("C:/temp/keys.csv")
-			def kv = new File("C:/temp/value.csv")
+			def fk = new File("/tmp/keys.csv")
+			def kv = new File("/tmp/value.csv")
 			def mailStr = ""
 			output.each {
 				println it

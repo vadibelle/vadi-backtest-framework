@@ -442,7 +442,7 @@ def buyNHoldTest()
 
 def generateSignal(args){
 	init(args)
-	def iter=4
+	def iter=2
 	while ( iter-- > 0 )	{	
 	println "Start iteration"	
 	Utility.getInstance().acquire()

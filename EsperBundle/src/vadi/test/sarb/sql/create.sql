@@ -1,3 +1,7 @@
+drop view  if exists min_result;
+
+
+ drop table if exists Results ;
 CREATE TABLE "RESULTS"
 (
    SYMBOL varchar(2147483647),
@@ -39,6 +43,9 @@ CREATE TABLE "RESULTS"
    CURRDATE timestamp DEFAULT CURRENT_TIMESTAMP()
 )
 ;
+create view min_result as select symbol,returns,drawdown,volatility,last_trade_indicator,last_trade_timestamp,last_trade_type,li,si,lt,st
+from results;
+drop table  if exists LIQUID_CASH;
 CREATE TABLE "LIQUID_CASH"
 (
    CASH double,
@@ -46,9 +53,10 @@ CREATE TABLE "LIQUID_CASH"
    CURRDATE timestamp DEFAULT CURRENT_TIMESTAMP()
 )
 ;
+drop table if exists POSITION;
 CREATE TABLE "POSITION"
 (
-   ID integer PRIMARY KEY NOT NULL,
+   ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
    SYMBOL varchar(100),
    QTY integer,
    LORS varchar(20),
@@ -57,11 +65,12 @@ CREATE TABLE "POSITION"
    DATE timestamp
 )
 ;
-CREATE UNIQUE INDEX PRIMARY_KEY_5 ON "POSITION"(ID)
-;
+--CREATE UNIQUE INDEX PRIMARY_KEY_5 ON "POSITION"(ID)
+
+drop table if exists POSITION_ARCHIVE;
 CREATE TABLE "POSITION_ARCHIVE"
 (
-   ID integer PRIMARY KEY NOT NULL,
+   ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
    SYMBOL varchar(100),
    QTY integer,
    LORS varchar(20),
@@ -71,14 +80,15 @@ CREATE TABLE "POSITION_ARCHIVE"
    CURDATE timestamp DEFAULT CURRENT_TIMESTAMP()
 )
 ;
-CREATE UNIQUE INDEX PRIMARY_KEY_8 ON "POSITION_ARCHIVE"(ID)
-;
+--CREATE UNIQUE INDEX PRIMARY_KEY_8 ON "POSITION_ARCHIVE"(ID)
+
+drop table if exists SIGNALS;
 CREATE TABLE "SIGNALS"
 (
-   ID integer PRIMARY KEY NOT NULL,
+   ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
    SIGNAL varchar(255),
    CURRDATE timestamp DEFAULT CURRENT_TIMESTAMP()
 )
 ;
-CREATE UNIQUE INDEX PRIMARY_KEY_A ON "SIGNALS"(ID)
-;
+--CREATE UNIQUE INDEX PRIMARY_KEY_A ON "SIGNALS"(ID)
+
