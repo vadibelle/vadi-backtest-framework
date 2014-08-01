@@ -4,7 +4,7 @@ import groovy.json.JsonSlurper
 import vadi.test.sarb.esper.db.*;
 import vadi.test.sarb.esper.groovy.*
 import vadi.test.sarb.esper.Messages
-
+import groovy.sql.Sql
 def initDB()
 {
 	createTables()
@@ -228,7 +228,7 @@ def persistResult(map)
 	sql += map.getAt('msi')+','
 	sql += map.getAt('si')+')'
 	
-	println "SQL "+sql
+	//println "SQL "+sql
 	execute(sql)
 		
 }
@@ -245,6 +245,7 @@ def cleanDB(){
 	execute(sql)
 	sql="delete from results"
 	execute(sql)
+	
 }
 
 def createTables(){
@@ -253,7 +254,7 @@ def createTables(){
 	println "Creating tables "+execute(sql)
 }
 
-ProcessArgs pArgs = new ProcessArgs(args)
+
 //initDB()
 
 //sql = "insert into position (symbol,qty,lors,price,cost,date) values "
@@ -275,4 +276,41 @@ execute (sql)
 
 execute('select symbol,last_trade_timestamp from results order by last_trade_timestamp')
 */
-createTables()
+//createTables()
+
+def calcSharpe()
+{
+	def db = new DbUtil().getConnection()
+	def sc = new Sql(db)
+	def ir =0
+	def vol=0
+	def count=0
+	sc.eachRow("select avg(returns) as avgret,avg(volatility) as avgvol from results where last_trade_indicator='BUYNHOLD'"
+		+" and symbol='SPY'")
+		 {row ->  
+		vol  += row.getAt('AVGVOL')
+		ir += row.getAt("AVGRET")
+		println row 
+		}
+	println 'ret '+ir +'vol '+vol
+	sc.eachRow("select returns,volatility,li,si,last_trade_indicator,last_trade_timestamp from results where symbol='SPY'") {
+		row -> println row
+	}
+//	sc.eachRow("select symbol,returns,volatility,last_trade_indicator from results ") { row->println row }
+	sc.eachRow("select symbol,(returns-"+ir+")/"+vol+" as sharpe ,volatility,drawdown,li,si,last_trade_indicator,last_trade_timestamp,"
+		+" long_position,short_position"
+		+ " from results where last_trade_indicator !='BUYNHOLD'"
+		+" and symbol != 'SPY'  order by last_trade_timestamp,sharpe")
+		{row->
+		//ret = row.getAt('RETURNS')
+		//vlt = row.getAt('VOLATILITY')
+		//print "ret "+ret+" vol"+vlt
+		//println "sharpe "+(ret-ir)/vlt+" rel vol"+vlt/vol+row
+			println row
+	}
+		
+	
+}
+
+ProcessArgs pArgs = new ProcessArgs(args)
+calcSharpe()

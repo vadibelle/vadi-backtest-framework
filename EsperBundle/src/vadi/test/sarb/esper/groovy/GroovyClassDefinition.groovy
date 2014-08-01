@@ -581,6 +581,7 @@ class ProcessArgs {
 		def map = [:]
 
 		args.each {param ->
+			//println "param is "+param
 			def nameAndValue = param.split("=")
 			map.put(nameAndValue[0], nameAndValue[1])
 		}

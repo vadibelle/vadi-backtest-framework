@@ -32,6 +32,7 @@ public class DbUtil {
 		  try {
 			Class.forName(driver).newInstance();
 			conn =  DriverManager.getConnection(url);
+			
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,6 +56,10 @@ public class DbUtil {
 	 {
 		  return 0;
 		 
+	 }
+	 public Connection getConnection()
+	 {
+		 return conn;
 	 }
 	 
 	public ArrayList<ArrayList> execute(String sql)

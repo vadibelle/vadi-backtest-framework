@@ -11,17 +11,27 @@ class RunStrategy {
 	def st = new Date()
 	println st
 	new File('C:/temp/output.csv').delete()
-		
-	new SignalGenerator().generateSignal(args)
+	def sig = new SignalGenerator()	
+	sig.init(args)
+	//Messages.setProperty('init.db','true')
+	sig.initDb()
+	sig.generateSignal(args)
+	//sig.generateSignal(args)
 	println "Long short done"
-	Messages.setProperty('long.short','false')
-	Messages.setProperty('clean.db','false')
-	Messages.setProperty('init.db','false')
+	
 	Utility.getInstance().reset()
 	def f = new File('/tmp/output.csv')
 	f << 'long only \n'
-	new SignalGenerator().generateSignal(args)
-	println " long short done"
+	sig = new SignalGenerator()
+	sig.init(args)
+	Messages.setProperty('long.short','false')
+	Messages.setProperty('clean.db','false')
+	Messages.setProperty('init.db','false')
+	sig.initDb()
+	sig.generateSignal(args)
+	//sig.reset()
+	//sig.generateSignal(args)
+	println " long  done"
 	println new Date()
 	System.exit(0)
 	

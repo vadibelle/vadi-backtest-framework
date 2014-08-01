@@ -305,17 +305,6 @@ symbolList = pArgs.symbolList
 //sb.enqueue();
 def u = Utility.getInstance();
 
-if (Messages.getString('init.db')== 'true')
-{
-	def db  = new DbScripts()
-	db.initDB()
-}
-
-if ( vadi.test.sarb.esper.Messages.getString("clean.db") == "true" ) {
-	def db = new DbScripts()
-	db.cleanDB()
-}	
-
 
 def config = u.getEpService().getEPAdministrator().getConfiguration();
 config.addEventTypeAutoName("vadi.test.sarb.event");
@@ -363,6 +352,20 @@ u.registerEventListener(sb, new StartEOD());
 init = true
 
   }
+
+def initDb()
+{
+	if (Messages.getString('init.db')== 'true')
+	{
+		def db  = new DbScripts()
+		db.initDB()
+	}
+	
+	if ( vadi.test.sarb.esper.Messages.getString("clean.db") == "true" ) {
+		def db = new DbScripts()
+		db.cleanDB()
+	}
+}
 
 def loadPosition()
 {
@@ -439,10 +442,15 @@ def buyNHoldTest()
 	loadSymbols()
 	
 }
-
+def reset()
+{
+	modlist.clear()
+}
 def generateSignal(args){
-	init(args)
+	//init(args)
 	def iter=2
+	def dbu  = new DbUtil()
+	def sql = 'select * from min_result'
 	while ( iter-- > 0 )	{	
 	println "Start iteration"	
 	Utility.getInstance().acquire()
@@ -457,6 +465,7 @@ def generateSignal(args){
 	println " loading $st"
 	if ( st.contains('BuyNHold'))
 		Messages.setProperty('stop.loss','false')
+	
 		
 	this.loadStrategy(st)
 	this.TradeHandler()
@@ -472,6 +481,7 @@ def generateSignal(args){
 //	println "position value "+PFManager.getInstance().positionValue()
 	GroovyHelper.reloadStrategy()
 	Utility.getInstance().release()
+	println " total size="+dbu.execute(sql).size()
 	}
 }
 
@@ -487,7 +497,7 @@ def generateSignal(args){
 		println " loading $st"
 		if ( st.contains('BuyNHold'))
 			Messages.setProperty('stop.loss','false')
-			
+		
 		gv.loadStrategy(st)
 		gv.TradeHandler()
 		gv.loadSymbols()

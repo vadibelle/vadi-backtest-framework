@@ -4,6 +4,7 @@ drop view  if exists min_result;
  drop table if exists Results ;
 CREATE TABLE "RESULTS"
 (
+   ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
    SYMBOL varchar(2147483647),
    CASH double,
    TOTAL double,
