@@ -33,6 +33,7 @@ class RunStrategy {
 	//sig.generateSignal(args)
 	println " long  done"
 	println new Date()
+	new DbScripts().calcSharpe()
 	System.exit(0)
 	
 	

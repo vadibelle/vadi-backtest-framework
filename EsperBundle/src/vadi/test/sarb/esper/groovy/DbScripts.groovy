@@ -9,6 +9,7 @@ def initDB()
 {
 	createTables()
 }
+/*
 def initDB_old() {
 
 def db = new DbUtil();
@@ -113,7 +114,7 @@ db.execute('drop table results')
 db.execute(sql)
 
 }
-
+*/
 def dropTable(name)
 {
 	//def dt = "IF EXISTS ( SELECT [name] FROM sys.tables WHERE [name] = '"+name+"' )"+
@@ -142,6 +143,9 @@ def persistResult(map)
 	def type=''
 	def ind =''
 	def pr_ts=''
+	def ls = 0
+	if ( Messages.getString("long.short").equals("true"))
+	ls = 1
 	
 	def jstring = map.getAt('last_trade').
 	replace('TradeSignal','').replace('StopLoss','').
@@ -184,12 +188,12 @@ def persistResult(map)
 	
 			//println "vol "+map.getAt('volatility')
 	def sql="""\
-	insert into results (symbol,cash,total,drawdown,returns,volatility,macd,rsi,
+	insert into results (symbol,cash,total,drawdown,returns,volatility,macd,rsi,last_price,
 	long_position,short_position,average_volume,average_swing,open_swing,no_of_trades,
 	no_of_stoploss,last_trade,last_trade_close,last_trade_type,last_trade_indicator,
 	last_trade_timestamp,last_position, last_postion_close ,last_position_type ,
    last_position_indicator , last_position_timestamp , li , rsint , mli ,
-	numSym , lt , st , vlimit , ml ,  msi ,  si) values (
+	numSym , lt , st , vlimit , ml ,  msi ,  si,long_short) values (
 	"""
 	sql += "'"+map.getAt('symbol')+"',"
 	sql += map.getAt('cash')+','
@@ -199,6 +203,7 @@ def persistResult(map)
 	sql += map.getAt('volatility')+','
 	sql += map.getAt('macd')+','
 	sql += map.getAt('rsi')+','
+	sql += map.getAt('last_price')+','
 	sql += map.getAt('long_position')+','
 	sql += map.getAt('short_position')+','
 	sql += map.getAt('average_volume')+','
@@ -226,7 +231,9 @@ def persistResult(map)
 	sql += map.getAt('vlimit')+','
 	sql += map.getAt('ml')+','
 	sql += map.getAt('msi')+','
-	sql += map.getAt('si')+')'
+	sql += map.getAt('si')+','
+	sql += ls+
+	')'
 	
 	//println "SQL "+sql
 	execute(sql)
@@ -283,30 +290,49 @@ def calcSharpe()
 	def db = new DbUtil().getConnection()
 	def sc = new Sql(db)
 	def ir =0
-	def vol=0
-	def count=0
-	sc.eachRow("select avg(returns) as avgret,avg(volatility) as avgvol from results where last_trade_indicator='BUYNHOLD'"
+	def ivol=0
+	def idd = 0
+	def bhrow = [:]
+	sc.eachRow("select avg(returns) as avgret,avg(volatility) as avgvol ,avg(drawdown) avgdd from results where last_trade_indicator='BUYNHOLD'"
 		+" and symbol='SPY'")
 		 {row ->  
-		vol  += row.getAt('AVGVOL')
+		ivol  += row.getAt('AVGVOL')
 		ir += row.getAt("AVGRET")
+		idd += row.getAt('avgdd')
 		println row 
 		}
-	println 'ret '+ir +'vol '+vol
-	sc.eachRow("select returns,volatility,li,si,last_trade_indicator,last_trade_timestamp from results where symbol='SPY'") {
-		row -> println row
-	}
+	
+	sc.eachRow("select symbol,avg(returns) as sret ,avg(volatility) svol,avg(drawdown) sdd from results "+
+		"where last_trade_indicator='BUYNHOLD' group by symbol") { row ->
+		//println row
+		bhrow.put(row['SYMBOL'],row.toRowResult())
+	} 
+		bhrow.each {
+			println "it "+it
+		}
 //	sc.eachRow("select symbol,returns,volatility,last_trade_indicator from results ") { row->println row }
-	sc.eachRow("select symbol,(returns-"+ir+")/"+vol+" as sharpe ,volatility,drawdown,li,si,last_trade_indicator,last_trade_timestamp,"
-		+" long_position,short_position"
+	sc.eachRow("select symbol,returns,(returns-"+ir+")/"+ivol+" as sharpe ,volatility,drawdown,"
+		+"volatility/"+ivol+" as relVol,drawdown/"+idd+" as relDD,"
+		+"li,si,last_trade_indicator,last_trade_timestamp,"
+		+" long_position,short_position,long_short "
 		+ " from results where last_trade_indicator !='BUYNHOLD'"
-		+" and symbol != 'SPY'  order by last_trade_timestamp,sharpe")
+		+" order by last_trade_timestamp,sharpe")
 		{row->
-		//ret = row.getAt('RETURNS')
-		//vlt = row.getAt('VOLATILITY')
-		//print "ret "+ret+" vol"+vlt
-		//println "sharpe "+(ret-ir)/vlt+" rel vol"+vlt/vol+row
-			println row
+		
+			tmp = row.toRowResult()
+			s = row['SYMBOL']
+			br = bhrow[s]['sret']
+			bd = bhrow[s]['sdd']
+			println "s "+s+" d"+bd+" r"+br
+			cr = row['returns']
+			cd = row['drawdown']
+			//println "s "+s+" d"+d+" cr "+cr+"cv "+cv+" cd "+cd
+			
+			tmp.put('relbhret',cr/br)
+		
+			tmp.put('relbhdd',cd/bd)
+	
+			println tmp
 	}
 		
 	

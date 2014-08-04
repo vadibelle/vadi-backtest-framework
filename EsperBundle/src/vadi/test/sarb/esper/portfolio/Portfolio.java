@@ -310,6 +310,7 @@ public class Portfolio {
 	public  void  generateExits(EODQuote eq){
 		try {
 		String symbol = eq.getSymbol();
+		log.fine("stop.loss is "+Messages.getString("stop.loss"));
 		if ( Messages.getString("stop.loss").equals("false"))
 		{
 			return;

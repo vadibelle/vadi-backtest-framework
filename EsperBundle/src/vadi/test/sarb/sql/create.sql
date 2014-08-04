@@ -6,6 +6,7 @@ CREATE TABLE "RESULTS"
 (
    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
    SYMBOL varchar(2147483647),
+   LONG_SHORT int,
    CASH double,
    TOTAL double,
    DRAWDOWN double,

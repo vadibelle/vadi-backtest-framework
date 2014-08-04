@@ -60,6 +60,8 @@ def loadModules(namelist){
 	def ed = Messages.getString("epl.dir")
 	def u = Utility.getInstance()
 	
+	def sl = Messages.getString('stop.loss')
+	
 	while( !u.isSymbolListEmpty())
 	sleep(1100)
 	
@@ -75,6 +77,11 @@ def loadModules(namelist){
 		def str = u.deployModule(ed+f+'.epl')
 		modlist.putAt(f,str)
 		}
+		if ( namelist.contains('buynhold'))
+		Messages.setProperty('stop.loss', 'false')
+		else
+		Messages.setProperty('stop.loss', sl)
+		//Messages.setProperty('current.strategy',)
 	}
 	catch(Exception e){
 		println "Error loading modules "+e.getMessage()
@@ -165,9 +172,10 @@ def TradeHandler() {
 	
 	
 	u.registerEventListener("select * from EODQuote",new EODHandler());
-	if (vadi.test.sarb.esper.Messages.getString('stop.loss') == 'true')
+	if (vadi.test.sarb.esper.Messages.getString('stop.loss').equals('true')){
 		u.registerEventListener("select * from EODQuote",new ExitGenerator());
-	
+		println "stop loss intiated"
+	}
 	def st = new UpdateStatistics()
 		u.registerEventListener('select * from statistics',st)
 	
@@ -448,9 +456,11 @@ def reset()
 }
 def generateSignal(args){
 	//init(args)
-	def iter=2
+	def iter=1
 	def dbu  = new DbUtil()
 	def sql = 'select * from min_result'
+
+	
 	while ( iter-- > 0 )	{	
 	println "Start iteration"	
 	Utility.getInstance().acquire()
@@ -463,9 +473,6 @@ def generateSignal(args){
 //	f << Utility.getInstance().getVariableValueAll().toString()+'\n'
 	stl.each { st ->
 	println " loading $st"
-	if ( st.contains('BuyNHold'))
-		Messages.setProperty('stop.loss','false')
-	
 		
 	this.loadStrategy(st)
 	this.TradeHandler()
@@ -495,8 +502,6 @@ def generateSignal(args){
 		def stl = GroovyHelper.stlist.clone()
 		stl.each { st ->
 		println " loading $st"
-		if ( st.contains('BuyNHold'))
-			Messages.setProperty('stop.loss','false')
 		
 		gv.loadStrategy(st)
 		gv.TradeHandler()
