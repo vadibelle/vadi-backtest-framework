@@ -136,8 +136,9 @@ public class Utility {
 			trace = true;
 		
 		//config.getEngineDefaults().getLogging().setEnableExecutionDebug(true);
-      //  config.addEventTypeAutoName("vadi.test.sarb.event");
-       // config.addImport()
+       config.addEventTypeAutoName("vadi.test.sarb.event");
+       config.addEventType(vadi.test.sarb.event.StartEODQuote.class);
+       //config.addImport();
        // config.getEngineDefaults().getThreading().setListenerDispatchPreserveOrder(false);
        // config.getEngineDefaults().getThreading().setInsertIntoDispatchPreserveOrder(false);
        // config.getEngineDefaults().getThreading().setEngineFairlock(false);
