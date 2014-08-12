@@ -10,6 +10,7 @@ class RunStrategy {
 	static void main(String[] args){
 	def st = new Date()
 	println st
+	println System.getProperty('java.class.path')
 	println args
 	new File('C:/temp/output.csv').delete()
 	def sig = new SignalGenerator()	

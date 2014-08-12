@@ -354,7 +354,7 @@ config.addPlugInSingleRowFunction("hasExit",
 config.addPlugInSingleRowFunction("getFunds",
 	"vadi.test.sarb.esper.groovy.GroovyHelper", "getFunds");
 
-def sb = "select * from vadi.test.sarb.event.StartEODQuote";
+def sb = "select * from StartEODQuote";
 u.registerEventListener(sb, new StartEOD());
 
 init = true

@@ -136,10 +136,21 @@ public class Utility {
 			trace = true;
 		
 		//config.getEngineDefaults().getLogging().setEnableExecutionDebug(true);
-       config.addEventTypeAutoName("vadi.test.sarb.event");
-       config.addEventType(vadi.test.sarb.event.StartEODQuote.class);
+	/*	config.addEventTypeAutoName("vadi.test.sarb.esper");
+       config.addEventTypeAutoName("vadi.test.sarb.esper.db");
+       config.addEventTypeAutoName("vadi.test.sarb.esper.data");
+       config.addEventTypeAutoName("vadi.test.sarb.esper.epl");
+       config.addEventTypeAutoName("vadi.test.sarb.esper.groovy");
+       config.addEventTypeAutoName("vadi.test.sarb.esper.json");
+       config.addEventTypeAutoName("vadi.test.sarb.esper.portfolio");
+       config.addEventTypeAutoName("vadi.test.sarb.esper.util");
+       config.addEventTypeAutoName("vadi.test.sarb.esper.event");
+       config.addEventTypeAutoName("vadi.test.sarb.esper.listeners");
+       */
+       
+      // config.addEventType(vadi.test.sarb.event.StartEODQuote.class);
        //config.addImport();
-       // config.getEngineDefaults().getThreading().setListenerDispatchPreserveOrder(false);
+       // config.getEngineDefauldatats().getThreading().setListenerDispatchPreserveOrder(false);
        // config.getEngineDefaults().getThreading().setInsertIntoDispatchPreserveOrder(false);
        // config.getEngineDefaults().getThreading().setEngineFairlock(false);
        
