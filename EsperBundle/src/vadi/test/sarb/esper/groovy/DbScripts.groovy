@@ -9,112 +9,7 @@ def initDB()
 {
 	createTables()
 }
-/*
-def initDB_old() {
 
-def db = new DbUtil();
-//dropTable('position')
-
-def sql = "create table position("
-sql += " id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-sql += " symbol varchar(100), "
-sql += " qty int,"
-sql += " lors varchar(20), "
-sql += " price float, "
-sql += " cost float,"
-sql += " date datetime)"
-
-println "sql "+sql;
-
-db.execute('drop table position')
-db.execute(sql);
-
-println  db.execute("select * from position");
-
-//dropTable('position_archive')
-sql = "";
-sql = "create table position_archive( "
-sql += " id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-sql += " symbol varchar(100), "
-sql += " qty int,"
-sql += " lors varchar(20), "
-sql += " price float, "
-sql += " cost float,"
-sql += " date datetime, "
-sql += " currdate datetime default (CURRENT_TIMESTAMP()))"
-println "sql "+sql
-
-db.execute("drop table position_archive");
-db.execute(sql);
-//sql="ALTER TABLE position_archive ADD CONSTRAINT contraint_name DEFAULT GETDATE() FOR curdate;"
-//db.execute(sql);
-println  db.execute("select * from position_archive");
-
-sql="";
-sql = "create table liquid_cash( "
-sql += " cash float,"
-sql+= " shortcash float ,"
-sql += "currdate datetime default (current_timestamp()))";
-print "sql "+sql
-db.execute("drop table liquid_cash")
-db.execute(sql)
-
-sql = "";
-sql = "create table signals( "
-sql += " id  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,"
-sql += " signal varchar(255),"
-sql += " currdate datetime default (current_timestamp()))"
-db.execute('drop table signals')
-db.execute(sql)
-
-sql=""
-sql = '''
-CREATE TABLE RESULTS
-(
-   symbol varchar,
-   cash float,
-   total float,
-   drawdown float,
-   returns float,
-   long_position int,
-   no_of_trades int,
-   no_of_stoploss int,
-   last_price float,
-   open_swing float,
-   average_swing float,
-average_volume float,
-   volatility float,
-   macd float,
-   rsi float,
-   short_position int,
-   last_trade varchar,
-   last_trade_close float,
-   last_trade_type varchar,
-   last_trade_indicator varchar,
-   last_trade_timestamp timestamp,
-   last_position varchar,
-   last_postion_close float,
-   last_position_type varchar,
-   last_position_indicator varchar,
-   last_poition_timestamp timestamp,
-   li int ,
-   rsint int,
-   mli int,
-   numSym int,
-   lt int,
-   st int,
-   vlimit int,
-   ml int,
-   msi int,
-   si int,
-   currdate timestamp default  (current_timestamp())
-)
-;'''
-db.execute('drop table results')
-db.execute(sql)
-
-}
-*/
 def dropTable(name)
 {
 	//def dt = "IF EXISTS ( SELECT [name] FROM sys.tables WHERE [name] = '"+name+"' )"+
@@ -287,12 +182,17 @@ execute('select symbol,last_trade_timestamp from results order by last_trade_tim
 
 def calcSharpe()
 {
+	try {
 	def db = new DbUtil().getConnection()
 	def sc = new Sql(db)
 	def ir =0
 	def ivol=0
 	def idd = 0
 	def bhrow = [:]
+
+	res = sc.rows("select * from results where symbol='SPY' and last_trade_indicator='BuyNHold'")
+	assert res.size() != 0
+	
 	sc.eachRow("select avg(returns) as avgret,avg(volatility) as avgvol ,avg(drawdown) avgdd from results where last_trade_indicator='BUYNHOLD'"
 		+" and symbol='SPY'")
 		 {row ->  
@@ -334,8 +234,11 @@ def calcSharpe()
 	
 			println tmp
 	}
-		
-	
+	}
+	catch(e){
+	println "Error calculating sharpe... please check the db"
+	return -1
+	}
 }
 
 ProcessArgs pArgs = new ProcessArgs(args)
