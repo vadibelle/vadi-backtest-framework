@@ -37,6 +37,7 @@ def init() {
 }
 def clean() {
 	ant.delete(dir: "${build_dir}")
+	ant.delete(file:base_dir+'algo.jar')
 
  }
 def build()

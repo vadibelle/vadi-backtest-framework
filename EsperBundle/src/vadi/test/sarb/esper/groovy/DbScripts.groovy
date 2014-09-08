@@ -5,13 +5,11 @@ import vadi.test.sarb.esper.db.*;
 import vadi.test.sarb.esper.groovy.*
 import vadi.test.sarb.esper.Messages
 import groovy.sql.Sql
-def initDB()
-{
+def initDB() {
 	createTables()
 }
 
-def dropTable(name)
-{
+def dropTable(name) {
 	//def dt = "IF EXISTS ( SELECT [name] FROM sys.tables WHERE [name] = '"+name+"' )"+
 	//' BEGIN '+
 	def dt = 'DROP TABLE '+name
@@ -23,16 +21,14 @@ def dropTable(name)
 def execute(sql) {
 	def db = new DbUtil();
 	for ( e in db.execute(sql))
-	println e
-	
+		println e
 }
 
-def persistResult(map)
-{
+def persistResult(map) {
 	if (map.getAt('last_trade') == null)
-	return;
+		return;
 	println map
-	 def ltr = [:]
+	def ltr = [:]
 
 	def close=''
 	def type=''
@@ -40,10 +36,10 @@ def persistResult(map)
 	def pr_ts=''
 	def ls = 0
 	if ( Messages.getString("long.short").equals("true"))
-	ls = 1
-	
+		ls = 1
+
 	def jstring = map.getAt('last_trade').
-	replace('TradeSignal','').replace('StopLoss','').
+			replace('TradeSignal','').replace('StopLoss','').
 			replaceAll(/\[/,'').replaceAll(/\]/,'')
 	println jstring
 	jstring.split(',').each {
@@ -58,30 +54,29 @@ def persistResult(map)
 			pr_ts = v
 		if ( k.contains('type'))
 			type = v
-		}
-	
+	}
+
 	assert ltr.getAt('price_timestamp')	!= null
 	def lpos = [:]
 	def lastpos = map.getAt('last_position')
 	if ( lastpos != null)
 		lastpos = lastpos.replace('TradeSignal','').
-			replaceAll(/\[/,'').replaceAll(/\]/,'')
-			lastpos.split(',').each {
-				def k = it.split('=')[0].stripIndent().stripIndent()
-				def v = it.split('=')[1].stripIndent().stripMargin()
-				lpos.put(k, v)
-				/*if ( k.contains('close'))
-				lpos.put('close', v)
-				if ( k.contains('price_timestamp'))
-				lpos.put('price_timestamp', v)
-				if ( k.contains('type'))
-				lpos.put('type', v)
-				if ( k.contains('indicator'))
-				lpos.put('indicator', v)*/
-				
-			}
-	
-			//println "vol "+map.getAt('volatility')
+				replaceAll(/\[/,'').replaceAll(/\]/,'')
+	lastpos.split(',').each {
+		def k = it.split('=')[0].stripIndent().stripIndent()
+		def v = it.split('=')[1].stripIndent().stripMargin()
+		lpos.put(k, v)
+		/*if ( k.contains('close'))
+		 lpos.put('close', v)
+		 if ( k.contains('price_timestamp'))
+		 lpos.put('price_timestamp', v)
+		 if ( k.contains('type'))
+		 lpos.put('type', v)
+		 if ( k.contains('indicator'))
+		 lpos.put('indicator', v)*/
+	}
+
+	//println "vol "+map.getAt('volatility')
 	def sql="""\
 	insert into results (symbol,cash,total,drawdown,returns,volatility,macd,rsi,last_price,
 	long_position,short_position,average_volume,average_swing,open_swing,no_of_trades,
@@ -113,10 +108,11 @@ def persistResult(map)
 	sql += "'"+pr_ts+"',"
 	sql += "'"+map.getAt('last_position')+"',"
 	if (lpos.size() == 0)
-	sql += null+','+null+','+null+','+null+','
+		sql += null+','+null+','+null+','+null+','
 	else
-	sql+= lpos.getAt('close')+','+"'"+lpos.getAt('type')+"','"+lpos.getAt('indicator')+"','"+lpos.getAt('price_timestamp')+"',"
-	
+		sql+= lpos.getAt('close')+','+"'"+lpos.getAt('type')+"','"+lpos.getAt('indicator')+"','"+lpos.getAt('price_timestamp')+"',"
+
+
 	sql += map.getAt('li')+','
 	sql += map.getAt('rsint')+','
 	sql += map.getAt('mli')+','
@@ -128,11 +124,11 @@ def persistResult(map)
 	sql += map.getAt('msi')+','
 	sql += map.getAt('si')+','
 	sql += ls+
-	')'
-	
+			')'
+
 	//println "SQL "+sql
 	execute(sql)
-		
+
 }
 def cleanDB(){
 	def sql="delete  from position;";
@@ -147,7 +143,6 @@ def cleanDB(){
 	execute(sql)
 	sql="delete from results"
 	execute(sql)
-	
 }
 
 def createTables(){
@@ -164,61 +159,60 @@ def createTables(){
 //cleanDB()
 
 /*
-sql="select * from position"
-execute(sql)
-sql = "select * from position_archive  order by curdate asc"
-execute(sql)
-sql = "select * from  liquid_cash"
-execute(sql)
-sql= "select * from signals order by currdate asc"
-execute (sql)
-//sql="select sum(price*qty)/sum(qty) as cb,lors,symbol from position_archive "+
-//" group by symbol,lors"
-//execute(sql)
-
-execute('select symbol,last_trade_timestamp from results order by last_trade_timestamp')
-*/
+ sql="select * from position"
+ execute(sql)
+ sql = "select * from position_archive  order by curdate asc"
+ execute(sql)
+ sql = "select * from  liquid_cash"
+ execute(sql)
+ sql= "select * from signals order by currdate asc"
+ execute (sql)
+ //sql="select sum(price*qty)/sum(qty) as cb,lors,symbol from position_archive "+
+ //" group by symbol,lors"
+ //execute(sql)
+ execute('select symbol,last_trade_timestamp from results order by last_trade_timestamp')
+ */
 //createTables()
 
 def calcSharpe()
 {
 	try {
-	def db = new DbUtil().getConnection()
-	def sc = new Sql(db)
-	def ir =0
-	def ivol=0
-	def idd = 0
-	def bhrow = [:]
+		def db = new DbUtil().getConnection()
+		def sc = new Sql(db)
+		def ir =0
+		def ivol=0
+		def idd = 0
+		def bhrow = [:]
 
-	res = sc.rows("select * from results where symbol='SPY' and last_trade_indicator='BuyNHold'")
-	assert res.size() != 0
-	
-	sc.eachRow("select avg(returns) as avgret,avg(volatility) as avgvol ,avg(drawdown) avgdd from results where last_trade_indicator='BUYNHOLD'"
-		+" and symbol='SPY'")
-		 {row ->  
-		ivol  += row.getAt('AVGVOL')
-		ir += row.getAt("AVGRET")
-		idd += row.getAt('avgdd')
-		println row 
+		//res = sc.rows("select * from results where symbol='SPY' and last_trade_indicator='BUYNHOLD'")
+		res = sc.rows("select * from results where symbol='SPY' ")
+		println res
+		assert res.size() != 0
+
+		sc.eachRow("select avg(returns) as avgret,avg(volatility) as avgvol ,avg(drawdown) avgdd from results where last_trade_indicator='BUYNHOLD'"
+				+" and symbol='SPY'")
+		{row ->
+			ivol  += row.getAt('AVGVOL')
+			ir += row.getAt("AVGRET")
+			idd += row.getAt('avgdd')
+			println row
 		}
-	
-	sc.eachRow("select symbol,avg(returns) as sret ,avg(volatility) svol,avg(drawdown) sdd from results "+
-		"where last_trade_indicator='BUYNHOLD' group by symbol") { row ->
-		//println row
-		bhrow.put(row['SYMBOL'],row.toRowResult())
-	} 
-		bhrow.each {
-			println "it "+it
-		}
-//	sc.eachRow("select symbol,returns,volatility,last_trade_indicator from results ") { row->println row }
-	sc.eachRow("select symbol,returns,(returns-"+ir+")/"+ivol+" as sharpe ,volatility,drawdown,"
-		+"volatility/"+ivol+" as relVol,drawdown/"+idd+" as relDD,"
-		+"li,si,last_trade_indicator,last_trade_timestamp,"
-		+" long_position,short_position,long_short "
-		+ " from results where last_trade_indicator !='BUYNHOLD'"
-		+" order by last_trade_timestamp,sharpe")
+
+		sc.eachRow("select symbol,avg(returns) as sret ,avg(volatility) svol,avg(drawdown) sdd from results "+
+				"where last_trade_indicator='BUYNHOLD' group by symbol") { row ->
+					//println row
+					bhrow.put(row['SYMBOL'],row.toRowResult())
+				}
+		bhrow.each { println "it "+it }
+		//	sc.eachRow("select symbol,returns,volatility,last_trade_indicator from results ") { row->println row }
+		sc.eachRow("select symbol,returns,(returns-"+ir+")/"+ivol+" as sharpe ,volatility,drawdown,"
+				+"volatility/"+ivol+" as relVol,drawdown/"+idd+" as relDD,"
+				+"li,si,last_trade_indicator,last_trade_timestamp,"
+				+" long_position,short_position,long_short "
+				+ " from results where last_trade_indicator !='BUYNHOLD'"
+				+" order by last_trade_timestamp,sharpe")
 		{row->
-		
+
 			tmp = row.toRowResult()
 			s = row['SYMBOL']
 			br = bhrow[s]['sret']
@@ -227,17 +221,17 @@ def calcSharpe()
 			cr = row['returns']
 			cd = row['drawdown']
 			//println "s "+s+" d"+d+" cr "+cr+"cv "+cv+" cd "+cd
-			
+
 			tmp.put('relbhret',cr/br)
-		
+
 			tmp.put('relbhdd',cd/bd)
-	
+
 			println tmp
-	}
+		}
 	}
 	catch(e){
-	println "Error calculating sharpe... please check the db"
-	return -1
+		println "Error calculating sharpe... please check the db"
+		return -1
 	}
 }
 

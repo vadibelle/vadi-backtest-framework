@@ -247,9 +247,6 @@ public class Portfolio {
 		try {
 		//	double price = Double.parseDouble(sig.getHigh());
 			double price = Double.parseDouble(sig.getOpen());
-			String symbol = sig.getSymbol();
-	
-			
 			if (short_positions > 0) {
 	
 				long lp = short_positions;
@@ -274,7 +271,11 @@ public class Portfolio {
 									
 					} else {
 					log.info("FATAL Cannot cover short " + cash + " " + lp * price);
-					stopOpen = true;
+					log.info("short postions "+short_positions);
+					cash=0;
+					short_positions=0;
+					shortCash=0;
+					stopOpen = false;
 					return;
 				}
 			}
@@ -315,8 +316,8 @@ public class Portfolio {
 		{
 			return;
 		}
-		if( !stopLossExit)
-			return;
+	//	if( !stopLossExit)
+	//		return;
 		if ( positions == 0 && short_positions ==0)
 		{
 			//log.info("no position for "+symbol);
