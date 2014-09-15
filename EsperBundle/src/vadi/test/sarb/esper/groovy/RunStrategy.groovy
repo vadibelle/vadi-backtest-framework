@@ -36,6 +36,7 @@ class RunStrategy {
 	println " long  done"
 	println new Date()
 	new DbScripts().calcSharpe()
+	if ( !Messages.getString('do.chart').equals('true'))
 	System.exit(0)
 	
 	

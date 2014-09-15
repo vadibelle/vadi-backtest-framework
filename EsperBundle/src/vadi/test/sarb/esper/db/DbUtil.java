@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import vadi.test.sarb.esper.Messages;
 import vadi.test.sarb.esper.util.Utility;
 
 public class DbUtil {
@@ -26,12 +27,17 @@ public class DbUtil {
 		//  url="jdbc:h2:/c://Users/Meku-laptop/RnD/ATS";
 		  String dbName = "options";
 		//  String driver = "com.mysql.jdbc.Driver";
-		 String driver = "org.h2.Driver";
+		 String driver = Messages.getString("db.driver");
+		 String url = Messages.getString("db.url");
+		 String user= Messages.getString("db.user");
+		 String passwd = Messages.getString("db.passwd");
+				 //"org.h2.Driver";
 		//  String userName = "root"; 
 		 // String password = "";
 		  try {
 			Class.forName(driver).newInstance();
-			conn =  DriverManager.getConnection(url);
+		//	conn =  DriverManager.getConnection(url);
+			conn = DriverManager.getConnection(url, user, passwd);
 			
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block

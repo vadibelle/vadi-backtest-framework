@@ -6,6 +6,7 @@ import java.awt.image.Kernel;
 import vadi.test.sarb.esper.db.DbUtil
 import vadi.test.sarb.esper.portfolio.PFManager;
 import vadi.test.sarb.esper.util.GenericChart;
+import vadi.test.sarb.event.EODQuote
 import vadi.test.sarb.event.LastEOD
 import vadi.test.sarb.event.LoadPortfolio
 import vadi.test.sarb.event.StartEODQuote
@@ -599,3 +600,62 @@ class ProcessArgs {
 	}
 
 }
+
+
+class Plotter implements UpdateListener {
+		GenericChart chart 
+		
+		Plotter(){
+			chart = Utility.addChart("signal")
+		}
+	
+		public void update(EventBean[] arg0, EventBean[] arg1) {
+			try{
+				def obj = arg0[0].getUnderlying();
+			//	Utility.info("Inserting into "+obj.getClass().getName())
+				if ( obj instanceof EODQuote){
+					def series = obj.getAt('symbol')+'-Eod'
+					def cl = obj.getAt('close') as float
+					def ts = obj.getAt('timestamp')
+					
+					chart.addSeries(series)
+					chart.addData(series,ts,cl)
+				}
+				if ( obj instanceof java.util.Map)
+				{
+					def series = obj.get('symbol')+obj.get('indicator-')+obj.get('signal')
+					def ts = obj.get('price_timestap') as long
+					def cl = obj.get('close') as float
+					chart.addSeries(series)
+					chart.addData(series,ts,cl)
+					
+				}
+				if ( obj instanceof StockSignal )
+				{
+					//Utility.log("Inserting into "+obj.toString());
+					StockSignal sig = (StockSignal)obj;
+					def series = sig.getSymbol()+sig.getIndicator()+sig.getType()
+					def cl = sig.getClose() as float
+					def ts = sig.getPrice_timestamp() as long
+					chart.addSeries(series)
+					chart.addData(series,ts,cl)
+					
+				}
+				if ( obj instanceof StopLoss )
+				{
+					StopLoss sig = (StopLoss)obj;
+					def series = sig.getSymbol()+'-STOPLOSS-'+sig.getType()
+					def cl = sig.getClose() as float
+					def ts = sig.getTimestamp()
+					chart.addSeries(series)
+					chart.addData(series,ts,cl)
+					
+				}	
+				
+			}
+			catch(e){
+				e.printStackTrace();
+			}
+	
+		}
+	}

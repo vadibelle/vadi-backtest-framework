@@ -41,7 +41,7 @@ public class Utility {
 	private  DbUtil dbUtil = null;
 	private   EPServiceProvider epService ;
 	private ConcurrentHashMap<Object,HashMap> map = null;
-	//static final JFrame container ;
+	static  JFrame container ;
 	private static boolean simulationMode = false;
 	private long currentTime = 0;
 	private ArrayList<String> symbolList;
@@ -351,8 +351,19 @@ public static void createStmt(String eventExpr){
 			
 	
 	public static JFrame getContainer() {
-		//return container;
-		return null;
+	container = new JFrame("Dashboard");
+		container.setLayout(new FlowLayout());
+		container.setSize(1000, 1000);
+
+		container.pack();
+		container.setVisible(true);
+		container.addWindowListener(new java.awt.event.WindowAdapter(){		
+		 @Override
+		public void windowClosing(java.awt.event.WindowEvent e){
+             System.exit(0);
+     }});
+		
+		return container;
 	}
 
 	public static GenericChart addChart(String name)
@@ -360,7 +371,7 @@ public static void createStmt(String eventExpr){
 		GenericChart c = new GenericChart();
 		c.setTitle(name);
 		c.setOrientation("V");
-		getContainer().getContentPane().add(c.getChart(name));
+	  getContainer().getContentPane().add(c.getChart(name));
 		return c;
 		 
 	}

@@ -52,7 +52,7 @@ def build()
 	ant.copy(file:src_dir+bundle_dir+bundle,todir:build_dir+bundle_dir)
 	ant.jar(destfile:base_dir+'algo.jar',basedir:build_dir)
 }
-def start()
+def start(args)
 {
 	//ant.groovy(src:"RunStrategy", classpath:"$classpath}"+"${build_dir}")
 	//ant.echo("${classpath}")
@@ -61,9 +61,15 @@ def start()
 	//ant.java(classname:"vadi.test.sarb.esper.groovy.RunStrategy",classpath:"${classpath}")
 	//ant.groovy(src:"${src_dir}/vadi/test/sarb/esper/groovy/RunStrategy.groovy", classpath:"${classpath}", {
 		//arg(line:'-c=/Users/vbelle/git/vadi-backtest-framework/GroovyLauncher/temp.properties -s=/Users/vbelle/git/vadi-backtest-framework/GroovyLauncher/symbol.list')})
-	
-	ant.java(classname:'org.codehaus.groovy.ant.Groovy',classpath:"${classpath}",{
-		arg(line:src_dir+'vadi/test/sarb/esper/groovy/RunStrategy.groovy -c='+home+'/GroovyLauncher/temp.properties -s='+home+'GroovyLauncher/symbol.list')
+	def pargs = new ProcessArgs(args)
+	def cf = home+'/GroovyLauncher/temp.properties'
+	def sf = home+'GroovyLauncher/symbol.list'
+	if (pargs.configFile != '')
+	cf = pargs.configFile
+	if (pargs.symbolList != '')
+	sf = pargs.symbolList
+	ant.java(fork:'true',classname:'org.codehaus.groovy.ant.Groovy',classpath:"${classpath}",{
+		arg(line:src_dir+'vadi/test/sarb/esper/groovy/RunStrategy.groovy -c='+cf+' -s='+sf)
 	})
 	
 }
@@ -71,11 +77,12 @@ def start()
 static void main(args)
 {
 	def b = new BuildNRun()
+
 	println "running builld"
 	b.init()
 	b.clean()
 	b.build()
-	b.start()
+	b.start(args)
 }
 
 }

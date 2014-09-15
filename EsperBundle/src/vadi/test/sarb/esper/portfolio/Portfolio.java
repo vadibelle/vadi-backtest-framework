@@ -276,6 +276,11 @@ public class Portfolio {
 					short_positions=0;
 					shortCash=0;
 					stopOpen = false;
+					double cb = lp*price+slippage;
+					Date dt = new Date(Long.parseLong(sig.price_timestamp));
+					pfm.removeDb(sig.getSymbol(),lp,"CLOSE_SHORT",
+							price,cb,dt);
+					
 					return;
 				}
 			}

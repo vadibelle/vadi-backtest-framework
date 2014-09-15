@@ -178,6 +178,12 @@ def TradeHandler() {
 	}
 	def st = new UpdateStatistics()
 		u.registerEventListener('select * from statistics',st)
+	if ( Messages.getString('do.chart').equals('true')){
+		def plot = new Plotter()
+		u.registerEventListener('select * from EODQuote', plot)
+		u.registerEventListener('select * from StockSignal', plot)
+		u.registerEventListener('select * from StockSignal', plot)
+	}
 	
 //Utility.addEPLFunction("EMA","vadi.test.sarb.esper.util.EsperEMA")
 //u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")

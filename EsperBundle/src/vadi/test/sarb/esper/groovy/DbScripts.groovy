@@ -184,8 +184,8 @@ def calcSharpe()
 		def idd = 0
 		def bhrow = [:]
 
-		//res = sc.rows("select * from results where symbol='SPY' and last_trade_indicator='BUYNHOLD'")
-		res = sc.rows("select * from results where symbol='SPY' ")
+		res = sc.rows("select * from results where symbol='SPY' and last_trade_indicator='BUYNHOLD'")
+		//res = sc.rows("select * from results where symbol='SPY' ")
 		println res
 		assert res.size() != 0
 
@@ -203,11 +203,11 @@ def calcSharpe()
 					//println row
 					bhrow.put(row['SYMBOL'],row.toRowResult())
 				}
-		bhrow.each { println "it "+it }
+		bhrow.each { println "BH return "+it }
 		//	sc.eachRow("select symbol,returns,volatility,last_trade_indicator from results ") { row->println row }
 		sc.eachRow("select symbol,returns,(returns-"+ir+")/"+ivol+" as sharpe ,volatility,drawdown,"
 				+"volatility/"+ivol+" as relVol,drawdown/"+idd+" as relDD,"
-				+"li,si,last_trade_indicator,last_trade_timestamp,"
+				+"li,si,last_trade_indicator,last_trade_timestamp,last_trade_indicator,"
 				+" long_position,short_position,long_short "
 				+ " from results where last_trade_indicator !='BUYNHOLD'"
 				+" order by last_trade_timestamp,sharpe")
@@ -223,14 +223,15 @@ def calcSharpe()
 			//println "s "+s+" d"+d+" cr "+cr+"cv "+cv+" cd "+cd
 
 			tmp.put('relbhret',cr/br)
-
 			tmp.put('relbhdd',cd/bd)
 
+			if ( tmp.getAt("SHARPE") > 0)
 			println tmp
 		}
 	}
 	catch(e){
 		println "Error calculating sharpe... please check the db"
+		//e.printStackTrace()
 		return -1
 	}
 }
