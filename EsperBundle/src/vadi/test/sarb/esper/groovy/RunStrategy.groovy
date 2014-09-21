@@ -7,7 +7,7 @@ import vadi.test.sarb.esper.util.Utility
 class RunStrategy {
 	
 	
-	static void main(String[] args){
+	static void main(args){
 	def st = new Date()
 	println st
 	//println System.getProperty('java.class.path')

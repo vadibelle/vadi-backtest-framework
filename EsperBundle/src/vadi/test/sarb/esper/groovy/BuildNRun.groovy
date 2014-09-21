@@ -1,12 +1,14 @@
-package vadi.test.sarb.esper.groovy
 
+package vadi.test.sarb.esper.groovy
 import org.apache.tools.ant.types.Path.PathElement;
 
 import groovy.util.AntBuilder
 
 class BuildNRun {
 def ant = new AntBuilder()
-def home='/Users/vbelle/git/vadi-backtest-framework/'
+def env = System.getenv()
+//def home='/Users/vbelle/git/vadi-backtest-framework/'
+def home = env['base']
 def base_dir=home+'/EsperBundle/'
 def build_dir=base_dir+'build/'
 def src_dir=base_dir+'src/'
@@ -61,27 +63,29 @@ def start(args)
 	//ant.java(classname:"vadi.test.sarb.esper.groovy.RunStrategy",classpath:"${classpath}")
 	//ant.groovy(src:"${src_dir}/vadi/test/sarb/esper/groovy/RunStrategy.groovy", classpath:"${classpath}", {
 		//arg(line:'-c=/Users/vbelle/git/vadi-backtest-framework/GroovyLauncher/temp.properties -s=/Users/vbelle/git/vadi-backtest-framework/GroovyLauncher/symbol.list')})
-	def pargs = new ProcessArgs(args)
-	def cf = home+'/GroovyLauncher/temp.properties'
-	def sf = home+'GroovyLauncher/symbol.list'
-	if (pargs.configFile != '')
-	cf = pargs.configFile
-	if (pargs.symbolList != '')
-	sf = pargs.symbolList
+	
+	def argslist = ''
+	args.each {
+		argslist += it +' '
+	}
 	ant.java(fork:'true',classname:'org.codehaus.groovy.ant.Groovy',classpath:"${classpath}",{
-		arg(line:src_dir+'vadi/test/sarb/esper/groovy/RunStrategy.groovy -c='+cf+' -s='+sf)
+		arg(line:src_dir+'vadi/test/sarb/esper/groovy/RunStrategy.groovy '+argslist)
 	})
 	
 }
-
-static void main(args)
+ static void main(args)
 {
 	def b = new BuildNRun()
-
-	println "running builld"
+	
+	
 	b.init()
+	if ( System.getProperty('do.compile') != null){
+	
+	println "COMPILING...."+System.getProperty('do.compile')
 	b.clean()
 	b.build()
+	return
+	}
 	b.start(args)
 }
 

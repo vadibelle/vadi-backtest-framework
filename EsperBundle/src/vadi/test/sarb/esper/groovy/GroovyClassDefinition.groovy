@@ -574,15 +574,15 @@ implements AggregationFunctionFactory,com.espertech.esper.epl.agg.aggregator.Agg
 	
 }*/
 
-class ProcessArgs {
+class ProcessArgs_old {
 	def configFile = ''
 	def symbolList = ''
 	def ProcessArgs(args)
 	{
 		def map = [:]
-
+		
 		args.each {param ->
-			//println "param is "+param
+			println "param is "+param
 			def nameAndValue = param.split("=")
 			map.put(nameAndValue[0], nameAndValue[1])
 		}
@@ -599,6 +599,30 @@ class ProcessArgs {
 
 	}
 
+}
+
+class ProcessArgs{
+	def configFile = ''
+	def symbolList = ''
+	def ProcessArgs(args)
+	{
+		def cli = new CliBuilder( usage: 'groovy BuildNRun -c <property file name> -s <symbols list file>')
+		cli.c(argName:'config', longOpt:'config', args:1, required:true, type:GString, 'config')
+		cli.s(argName:'symbol', longOpt:'symbol', args:1, required:false, type:GString, 'symbol')
+		def opt = cli.parse(args)
+		if (!opt)
+		return
+		if ( opt.c)
+		{	
+			configFile = opt.c;
+			 Messages.loadProperties(configFile)
+			 println "$configFile is set"
+			 }
+		if (opt.s )
+			symbolList  = opt.s
+	}
+	
+	
 }
 
 
