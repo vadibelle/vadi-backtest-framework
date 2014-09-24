@@ -184,7 +184,7 @@ def calcSharpe()
 		def idd = 0
 		def bhrow = [:]
 
-		res = sc.rows("select * from results where symbol='SPY' and last_trade_indicator='BUYNHOLD'")
+		res = sc.rows("select * from results where symbol='SPY' and last_trade_indicator='BUYnHOLD'")
 		//res = sc.rows("select * from results where symbol='SPY' ")
 		println res
 		assert res.size() != 0
