@@ -16,7 +16,7 @@ def lib_dir=base_dir+'../EsperDemo_lib/'
 def bundle_dir='vadi/test/sarb/esper/'
 def bundle='messages.properties'
 //def groovy_dir='/Users/vbelle/.gvm/groovy/current/embeddable'
-def ant_dir='/Users/vbelle/Applications/apache-ant-1.9.4/lib/'
+def ant_dir='/usr/share/ant/lib/'
 
 def classpath = ant.path {
 	fileset(dir: "${lib_dir}"){
