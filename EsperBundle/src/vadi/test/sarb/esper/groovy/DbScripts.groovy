@@ -176,6 +176,7 @@ def createTables(){
 
 def calcSharpe()
 {
+	def output=''
 	try {
 		def db = new DbUtil().getConnection()
 		def sc = new Sql(db)
@@ -225,8 +226,10 @@ def calcSharpe()
 			tmp.put('relbhret',cr/br)
 			tmp.put('relbhdd',cd/bd)
 
-			if ( tmp.getAt("SHARPE") > 0)
+			if ( tmp.getAt("SHARPE") > 0){
 			println tmp
+			output += tmp
+			}
 		}
 	}
 	catch(e){
@@ -234,6 +237,7 @@ def calcSharpe()
 		//e.printStackTrace()
 		return -1
 	}
+	output
 }
 
 ProcessArgs pArgs = new ProcessArgs(args)

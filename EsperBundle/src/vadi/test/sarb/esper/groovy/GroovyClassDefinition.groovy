@@ -405,7 +405,7 @@ class ConsolidateOutput implements UpdateListener {
 			if ( Messages.getString('forward.test').equalsIgnoreCase('true'))
 				sm.subject = 'ForwardTest'
 			//	sm.send(output.toString())
-			sm.send(mailStr)
+			//sm.send(mailStr)
 			}
 		//}
 		

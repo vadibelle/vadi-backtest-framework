@@ -2,6 +2,7 @@ package vadi.test.sarb.esper.groovy
 
 import vadi.test.sarb.event.ResetVariables
 import  vadi.test.sarb.esper.Messages
+import vadi.test.sarb.esper.util.SendMail
 import vadi.test.sarb.esper.util.Utility
 
 class RunStrategy {
@@ -35,7 +36,11 @@ class RunStrategy {
 	//sig.generateSignal(args)
 	println " long  done"
 	println new Date()
-	new DbScripts().calcSharpe()
+	def output=new DbScripts().calcSharpe()
+	def sm  = new SendMail()
+	sm.subject = "Result"
+	sm.send(output)
+	
 	if ( !Messages.getString('do.chart').equals('true'))
 	System.exit(0)
 	
