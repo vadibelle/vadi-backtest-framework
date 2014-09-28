@@ -211,6 +211,7 @@ def calcSharpe()
 				+"li,si,last_trade_indicator,last_trade_timestamp,last_trade_indicator,"
 				+" long_position,short_position,long_short "
 				+ " from results where last_trade_indicator !='BUYNHOLD'"
+				+ " and last_trade_timestamp = (select max(last_trade_timestamp) from results ) "
 				+" order by last_trade_timestamp,sharpe")
 		{row->
 
@@ -229,6 +230,7 @@ def calcSharpe()
 			if ( tmp.getAt("SHARPE") > 0){
 			println tmp
 			output += tmp
+			output += '\n\r'
 			}
 		}
 	}

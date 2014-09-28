@@ -37,6 +37,7 @@ class RunStrategy {
 	println " long  done"
 	println new Date()
 	def output=new DbScripts().calcSharpe()
+	println output
 	def sm  = new SendMail()
 	sm.subject = "Result"
 	sm.send(output)
