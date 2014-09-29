@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 #echo "make sure ant_dir in BuildNRun.groovy is set"
 pwd=`pwd`
 export base=`dirname $pwd`
