@@ -228,19 +228,19 @@ def calcSharpe()
 			tmp.put('relbhdd',cd/bd)
 
 			if ( tmp.getAt("SHARPE") > 0){
-			println tmp
-			output += tmp
-			output += '\n\r'
+			//println tmp
+			tmp.each { output += it.key+':'+it.value+','}
+			output += '\n'
 			}
 		}
 	}
 	catch(e){
 		println "Error calculating sharpe... please check the db"
-		//e.printStackTrace()
+		e.printStackTrace()
 		return -1
 	}
 	output
 }
 
 ProcessArgs pArgs = new ProcessArgs(args)
-calcSharpe()
+println calcSharpe()
