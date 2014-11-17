@@ -5,8 +5,6 @@ import java.sql.Date;
  
 import vadi.test.sarb.esper.groovy.*;
 
-create variable integer si=15;
-create variable integer li=60;
 create variable string first='GLD'
 create variable string second='SLV'
 

@@ -22,7 +22,8 @@ q.open as open ,q.timestamp as timestamp, R,corr.ema, q.symbol as symbol
 from varstream.win:length(numSym+1)  cross,
 eodvol.win:length(numSym+1) bup,
 emaslope.win:length(numSym+1) corr,
-EODQuote.win:length(numSym*5) q
+EODQuote.win:length(numSym*5) q,
+adxstream.win:length(si) adx
 where 
 cross.timestamp = q.timestamp and
 cross.symbol = q.symbol and
@@ -34,6 +35,9 @@ bup.vol > 50 and
 corr.timestamp = q.timestamp and
 corr.symbol = q.symbol and
 corr.ema > 0
+and adx.symbol = q.symbol 
+and adx.timestamp = q.timestamp
+and adx.adx > 30
 ;
 
 //context SymbolContext
@@ -43,7 +47,8 @@ q.open as open ,q.timestamp as timestamp, R,corr.ema, q.symbol as symbol
 from varstream.win:length(numSym+1)  cross,
 eodvol.win:length(numSym+1) bup,
 emaslope.win:length(numSym+1) corr,
-EODQuote.win:length(numSym*5) q
+EODQuote.win:length(numSym*5) q,
+adxstream.win:length(si) adx
 where 
 cross.timestamp = q.timestamp and
 cross.symbol = q.symbol and
@@ -55,6 +60,9 @@ bup.vol > 50 and
 corr.timestamp = q.timestamp and
 corr.symbol = q.symbol and
 corr.ema > 0
+and adx.symbol = q.symbol 
+and adx.timestamp = q.timestamp
+and adx.adx > 30
 ;
 
 //context SymbolContext

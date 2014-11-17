@@ -245,8 +245,9 @@ def debug() {
 //.registerEventListener('select * from mstream_tmp',l)
 
 //u.registerEventListener('select * from volatility',l)
-u.registerEventListener('select * from statistics',l)
-u.registerEventListener('select * from volatility',l)
+//u.registerEventListener('select * from statistics',l)
+//u.registerEventListener('select * from volatility',l)
+u.registerEventListener('select * from adxstream',l)
 
 
 //u.registerEventListener('select * from emashort',l)
@@ -341,7 +342,7 @@ u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
 u.addEPLFactory("BUP", "vadi.test.sarb.esper.data.UpIndicator")
 u.addEPLFactory("CORREL", "vadi.test.sarb.esper.util.Correlation")
 u.addEPLFactory('RSI','vadi.test.sarb.esper.util.RSICalculator')
-
+u.addEPLFactory('ADX','vadi.test.sarb.esper.groovy.Adx')
 
 config.addPlugInSingleRowFunction("toDouble",
 	"vadi.test.sarb.esper.util.SingleRowFunction", "toDouble");

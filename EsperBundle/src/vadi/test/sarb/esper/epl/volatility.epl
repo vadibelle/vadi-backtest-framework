@@ -33,3 +33,8 @@ q.timestamp = e.timestamp
 group by q.symbol
 
 ;
+
+insert into atrvol
+select stddev(atr(close,high,low)) as volatility,symbol,timestamp,close
+from EODQuote.win:length(si)
+;

@@ -39,18 +39,18 @@ class GenericListener implements UpdateListener {
 	public void update(EventBean[] arg0, EventBean[] arg1) {
 		try{
 			// TODO Auto-generated method stub
-			def out = new File('/tmp/test.csv')
+		//	def out = new File('/tmp/test.csv')
 			//	println "arg0 length "+arg0.length
 			for ( e in arg0 ){
 				//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
 				println "event "+e.getUnderlying();
 				def p = e.getProperties();
-				for ( i in p.values())
+				/*for ( i in p.values())
 				{
 					out.append(i);
 					out.append(",");
 					out.append("\n");
-				}
+				}*/
 
 			}
 		}

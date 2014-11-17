@@ -27,6 +27,12 @@ q.timestamp = r.timestamp and
 q.symbol = r.symbol and
 q.symbol = m.symbol;
 
+insert into adxstream
+select  q.symbol as symbol,q.timestamp  as timestamp ,
+q.open as open ,q.high as high,q.low as low , q.close as close, q.volume as volume,
+ ADX(q) as adx from 
+EODQuote.win:length(15) q
+;
 
 insert into statistics
 select s.symbol as symbol , s.avgSwing as avgSwing, s.avgVol as avgVol,s.openSwing as openSwing,

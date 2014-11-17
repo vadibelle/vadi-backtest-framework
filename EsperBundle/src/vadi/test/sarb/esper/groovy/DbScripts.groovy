@@ -227,11 +227,11 @@ def calcSharpe()
 			tmp.put('relbhret',cr/br)
 			tmp.put('relbhdd',cd/bd)
 
-			if ( tmp.getAt("SHARPE") > 0){
+			//if ( tmp.getAt("SHARPE") > 0){
 			//println tmp
 			tmp.each { output += it.key+':'+it.value+','}
 			output += '\n'
-			}
+			//}
 		}
 	}
 	catch(e){

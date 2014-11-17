@@ -1,5 +1,5 @@
 #!/bin/bash -x
-pwd=`pwd`
+pwd=$(pwd)
 export base=`dirname $pwd`
 export cmd="$base/EsperBundle/src/vadi/test/sarb/esper/groovy/BuildNRun.groovy -c $base/GroovyLauncher/temp.properties"
 groovy -Ddo.compile="true" $cmd
