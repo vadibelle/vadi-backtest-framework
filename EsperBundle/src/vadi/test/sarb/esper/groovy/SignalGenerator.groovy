@@ -247,7 +247,9 @@ def debug() {
 //u.registerEventListener('select * from volatility',l)
 //u.registerEventListener('select * from statistics',l)
 //u.registerEventListener('select * from volatility',l)
-u.registerEventListener('select * from adxstream',l)
+u.registerEventListener('select * from TradeSignal',l)
+u.registerEventListener("select * from ema3", l)
+//u.registerEventListener("select * from volatility", l)
 
 
 //u.registerEventListener('select * from emashort',l)

@@ -35,6 +35,6 @@ group by q.symbol
 ;
 
 insert into atrvol
-select stddev(atr(close,high,low)) as volatility,symbol,timestamp,close
+select stddev(atr(close,high,low)) as volatility,stddev(cast(close,double)) as vol,symbol,timestamp,close
 from EODQuote.win:length(si)
 ;
