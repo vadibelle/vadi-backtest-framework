@@ -1,43 +1,49 @@
 insert into ema1
-// select EMA(cast(close,double)) as ema,symbol, timestamp ,close
-select avg(cast(close,double)) as ema,symbol, timestamp ,close
+select EMA(cast(close,double)) as ema,symbol, timestamp ,close
+//select avg(cast(close,double)) as ema,symbol, timestamp ,close
  from EODQuote.win:length(si+1) 
 group by symbol ;
 
 insert into ema2
-//select EMA(ema) as ema,symbol,timestamp ,close from ema1.win:length(si+1) group by symbol;
-select avg(ema) as ema,symbol,timestamp ,close from ema1.win:length(si+1) group by symbol;
+select EMA(ema) as ema,symbol,timestamp ,close from ema1.win:length(si+1) group by symbol;
+//select avg(ema) as ema,symbol,timestamp ,close from ema1.win:length(si+1) group by symbol;
 
 insert into ema3
-//select EMA(ema) as ema,stddev(cast(close,double)) as vol,close, symbol,timestamp from ema2.win:length(si+1) group by symbol;
-select avg(ema) as ema,stddev(cast(close,double)) as vol,close, symbol,timestamp from ema2.win:length(si+1) group by symbol;
+select EMA(ema) as ema,stddev(cast(close,double)) as vol,close, symbol,timestamp from ema2.win:length(si+1) group by symbol;
+//select avg(ema) as ema,stddev(cast(close,double)) as vol,close, symbol,timestamp from ema2.win:length(si+1) group by symbol;
 
 insert into crossover
 select 'BUY' as signal, es.ema as ema ,es.timestamp as timestamp,es.symbol as symbol,
 q.open as open,q.high as high ,q.low as low ,q.close as close,q.volume as volume from
 ema3.win:length(1)  es , EODQuote.win:length(si+1) q
+, adxstream.win:length(si+1) a
 where
 es.symbol= q.symbol
 and es.timestamp= q.timestamp
 and 
-((cast(q.close,double) > (es.ema+es.vol) and cast(prev(1,q.close),double) < (es.ema+es.vol)) 
+((cast(q.close,double) > (es.ema) and cast(prev(1,q.close),double) < (es.ema)) 
 //or (cast(q.close,double) > (es.ema-es.vol) and cast(prev(1,q.close),double) < (es.ema-es.vol))
 )
-
+and a.symbol = q.symbol
+and a.timestamp = q.timestamp
+and a.adx > 30
 ;
 
 insert into crossover
 select 'SELL' as signal, es.ema as ema ,es.timestamp as timestamp,es.symbol as symbol,
 q.open as open,q.high as high ,q.low as low ,q.close as close,q.volume as volume from
 ema3.win:length(1)  es , EODQuote.win:length(si+1) q
+, adxstream.win:length(si+1) a
 where
 es.symbol= q.symbol
 and es.timestamp= q.timestamp
 and 
-((cast(q.close,double) < (es.ema-es.vol) and cast(prev(1,q.close),double) > (es.ema-es.vol)) 
+((cast(q.close,double) < (es.ema) and cast(prev(1,q.close),double) > (es.ema)) 
 //or (cast(q.close,double) < (es.ema+es.vol) and cast(prev(1,q.close),double) > (es.ema+es.vol))
 )
-
+and a.symbol = q.symbol
+and a.timestamp = q.timestamp
+and a.adx > 30
 ;
 
 

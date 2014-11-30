@@ -43,8 +43,13 @@ class GenericListener implements UpdateListener {
 			//	println "arg0 length "+arg0.length
 			for ( e in arg0 ){
 				//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
-				println "event "+e.getUnderlying();
-				def p = e.getProperties();
+				Utility.getInstance().trace( "event "+e.getUnderlying())
+				/*def p = e.getProperties();
+				p.each { k,v-> 
+					if ( k == 'timestamp')
+					
+					print k+"="+v+" "} 
+				println " "*/
 				/*for ( i in p.values())
 				{
 					out.append(i);
@@ -431,7 +436,7 @@ class UpdateStatistics implements UpdateListener {
 	def aswing = 0
 	def UpdateStatistics()
 	{
-		
+		Utility.getInstance().trace("CREATED updatedstatistices")
 	}
 	public void update(EventBean[] arg0, EventBean[] arg1){
 		try {
@@ -441,13 +446,22 @@ class UpdateStatistics implements UpdateListener {
 				return
 			def pos = p.getPosition(symbol)
 			
+			// Utility.getInstance().info(arg0[0].getUnderlying().toString())
+			Utility.getInstance().trace("updatestats "+arg0[0].getUnderlying())
+			def p = arg0[0].getProperties()
+			p.each { k ,v->
+				if ( v == null || v.equals('null'))
+				return
+				}
+			
 			 avol =  arg0[0].get('avgVol')
 			 aswing = arg0[0].get('avgSwing')
 			os = arg0[0].get('openSwing')
-			
+		
 			pos.avgVol = avol
 			pos.avgSwing = aswing
 			pos.openSwing = os
+			
 			pos.rsi = arg0[0].get('rsi')
 			pos.macd = arg0[0].get('macd')
 			pos.vol = arg0[0].get('vol')
@@ -455,6 +469,7 @@ class UpdateStatistics implements UpdateListener {
 		}
 		catch(e)
 		{
+			//e.printStackTrace()
 			println e
 		}
 		

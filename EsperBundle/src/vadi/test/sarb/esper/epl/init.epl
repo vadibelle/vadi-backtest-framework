@@ -21,7 +21,7 @@ create variable integer mli=26;
 create variable integer rsint=14;
 */
 
-create variable double multi=1.5;
+//create variable double multi=1.5;
 
 on ResetVariables
 set si = cast(si*multi,int), 

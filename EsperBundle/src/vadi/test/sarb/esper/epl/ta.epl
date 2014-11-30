@@ -10,13 +10,16 @@ emashort.win:length(ml) es,emalong.win:length(ml) el
 where
 es.timestamp = el.timestamp and 
 es.symbol = el.symbol
+group by es.symbol
+
 ;
 
 
 insert into rsi
 //select * ,RSI((cast(close,float) - cast(prev(1,close),float))) as rsi 
 select * ,RSI(cast(atr(high,low,close) - atr(prev(1,high),prev(1,low),prev(1,close)),double)) as rsi 
-from EODQuote.win:length(rsint);
+from EODQuote.win:length(rsint)
+group by symbol;
 
 insert into swingstream
 select avg(diff(q.high,q.low)) as avgSwing,EMA(q.volume) as avgVol, avg(diff(q.open,prev(1,q.close))) as openSwing,
@@ -32,6 +35,7 @@ select  q.symbol as symbol,q.timestamp  as timestamp ,
 q.open as open ,q.high as high,q.low as low , q.close as close, q.volume as volume,
  ADX(q) as adx from 
 EODQuote.win:length(15) q
+group by q.symbol
 ;
 
 insert into statistics
@@ -40,4 +44,6 @@ s.timestamp as timestamp,s.macd as macd, s.rsi as rsi , v.vol as vol
  from swingstream.win:length(5) s,volatility.win:length(5) v
  where
  v.symbol = s.symbol and
- v.timestamp = s.timestamp;
+ v.timestamp = s.timestamp
+ group by v.symbol
+ ;

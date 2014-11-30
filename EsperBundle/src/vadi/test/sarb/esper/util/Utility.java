@@ -3,6 +3,7 @@ package vadi.test.sarb.esper.util;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,7 @@ import vadi.test.sarb.listeners.DummyListener;
 
 public class Utility {
 
-	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.util");
+	final java.util.logging.Logger log = java.util.logging.Logger.getLogger("vadi.test.sarb.esper.util.Utility");
 	static final int NUM_THREADS = 10;
 	private static volatile Utility instance = null;
 	private ExecutorService executor = null;
@@ -88,14 +89,32 @@ public class Utility {
 	public void info(String message)
 	{
 		//String print = vadi.test.sarb.esper.Messages.getString("do.print");
-		if ( print)
-			log.info(message);
+		
+		if ( print){
+		//	log.info(message);
+		Long l = System.currentTimeMillis();
+		System.out.println(new Timestamp(l).toString()+" "+message);
+		}
 	}
 	public void trace(String message)
 	{
 		//String print = vadi.test.sarb.esper.Messages.getString("do.print");
-		if ( trace)
-			log.info(message);
+		if ( trace) {
+		//	log.info(message);
+			Long l = System.currentTimeMillis();
+			System.out.println(new Timestamp(l).toString()+" "+message);
+		}
+		
+	}
+	public void debug(String message)
+	{
+		//String print = vadi.test.sarb.esper.Messages.getString("do.print");
+		if ( trace) {
+		//	log.info(message);
+			Long l = System.currentTimeMillis();
+			System.out.println(new Timestamp(l).toString()+" "+message);
+		}
+		
 	}
 			 
 	public  synchronized ExecutorService getExecutor() {
@@ -302,7 +321,11 @@ public static void createStmt(String eventExpr){
 		EPDeploymentAdmin deployAdmin = getInstance().getEpService().
 				getEPAdministrator().getDeploymentAdmin();
 		try {
+			if ( deployAdmin.isDeployed(did) )
+			{
+			System.out.println("undeploying "+did);
 			deployAdmin.undeployRemove(did);
+			}
 									
 		} 
 		catch(Throwable e)

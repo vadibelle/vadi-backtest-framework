@@ -151,7 +151,7 @@ def TradeHandler() {
 //	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
 	//def trdExp = 'select * from TradeSignal.std:unique(price_timestamp)'
-	def trdExp = 'select * from TradeSignal'
+	def trdExp = 'select * from TradeSignal.win:length(2)'
 	//'.std:unique(price_timestamp) group by symbol'
 	if (Messages.getString('do.debug') == 'true')
 		u.registerEventListener(trdExp, new GenericListener())
@@ -161,7 +161,7 @@ def TradeHandler() {
 	trdExp='select * from StockSignal'
 	def l = new TradeListener()
 	u.registerEventListener(trdExp, l)
-	trdExp='select * from StopLoss'
+	trdExp='select * from StopLoss.win:length(2)'
 	u.registerEventListener(trdExp, l);
 	
 	def lastSig = 'select * from LastEOD'
@@ -177,7 +177,7 @@ def TradeHandler() {
 		println "stop loss intiated"
 	}
 	def st = new UpdateStatistics()
-		u.registerEventListener('select * from statistics',st)
+		u.registerEventListener('select * from statistics.std:unique(timestamp) group by symbol',st)
 	if ( Messages.getString('do.chart').equals('true')){
 		def plot = new Plotter()
 		u.registerEventListener('select * from EODQuote', plot)
@@ -247,8 +247,8 @@ def debug() {
 //u.registerEventListener('select * from volatility',l)
 //u.registerEventListener('select * from statistics',l)
 //u.registerEventListener('select * from volatility',l)
-u.registerEventListener('select * from TradeSignal',l)
-u.registerEventListener("select * from ema3", l)
+u.registerEventListener('select * from TradeSignal.std:unique(price_timestamp)',l)
+u.registerEventListener("select * from adxstream.std:unique(timestamp)", l)
 //u.registerEventListener("select * from volatility", l)
 
 
@@ -337,6 +337,7 @@ u.createDoubleVar('vlimit', Messages.getString("var.vlimit"))
 u.createIntVar('msi', Integer.parseInt(Messages.getString("var.msi")))
 u.createIntVar('mli', Integer.parseInt(Messages.getString("var.mli")))
 u.createIntVar('rsint', Integer.parseInt(Messages.getString("var.rsint")))
+u.createDoubleVar('multi', Messages.getString("var.multi"))
 
 
 u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
