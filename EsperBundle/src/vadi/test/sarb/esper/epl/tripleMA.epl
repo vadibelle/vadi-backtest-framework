@@ -27,7 +27,7 @@ and
 )
 and a.symbol = q.symbol
 and a.timestamp = q.timestamp
-and a.adx > 30
+//and a.adx > 30
 and s.symbol = q.symbol
 and s.timestamp = q.timestamp
 ;
@@ -47,7 +47,7 @@ and
 )
 and a.symbol = q.symbol
 and a.timestamp = q.timestamp
-and a.adx > 30
+//and a.adx > 30
 and s.symbol = q.symbol
 and s.timestamp = q.timestamp
 ;
