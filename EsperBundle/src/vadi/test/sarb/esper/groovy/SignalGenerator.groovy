@@ -245,9 +245,9 @@ def debug() {
 //.registerEventListener('select * from mstream_tmp',l)
 
 //u.registerEventListener('select * from volatility',l)
-//u.registerEventListener('select * from statistics',l)
 //u.registerEventListener('select * from volatility',l)
-u.registerEventListener('select * from TradeSignal.std:unique(price_timestamp)',l)
+//u.registerEventListener('select * from volatility',l)
+//u.registerEventListener('select * from TradeSignal.std:unique(price_timestamp)',l)
 u.registerEventListener("select * from adxstream.std:unique(timestamp)", l)
 //u.registerEventListener("select * from volatility", l)
 

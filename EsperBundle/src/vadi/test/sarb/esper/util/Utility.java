@@ -48,6 +48,7 @@ public class Utility {
 	private ArrayList<String> symbolList;
 	private boolean print = false;
 	private boolean trace = false;
+	private boolean debug = false;
 	private ArrayList<StartEODQuote> quoteList;
 	int maxExecutions = 1;
 	private Semaphore doneSemaphore;
@@ -109,7 +110,7 @@ public class Utility {
 	public void debug(String message)
 	{
 		//String print = vadi.test.sarb.esper.Messages.getString("do.print");
-		if ( trace) {
+		if ( debug) {
 		//	log.info(message);
 			Long l = System.currentTimeMillis();
 			System.out.println(new Timestamp(l).toString()+" "+message);
@@ -153,7 +154,8 @@ public class Utility {
 		
 		if ( Messages.getString("do.trace").equals("true"))
 			trace = true;
-		
+		if ( Messages.getString("do.debug").equals("true"))
+			debug = true;
 		//config.getEngineDefaults().getLogging().setEnableExecutionDebug(true);
 	/*	config.addEventTypeAutoName("vadi.test.sarb.esper");
        config.addEventTypeAutoName("vadi.test.sarb.esper.db");
@@ -321,7 +323,7 @@ public static void createStmt(String eventExpr){
 		EPDeploymentAdmin deployAdmin = getInstance().getEpService().
 				getEPAdministrator().getDeploymentAdmin();
 		try {
-			if ( deployAdmin.isDeployed(did) )
+		//	if ( deployAdmin.isDeployed(did) )
 			{
 			System.out.println("undeploying "+did);
 			deployAdmin.undeployRemove(did);

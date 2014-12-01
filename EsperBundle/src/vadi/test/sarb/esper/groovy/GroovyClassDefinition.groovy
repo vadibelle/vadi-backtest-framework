@@ -43,7 +43,7 @@ class GenericListener implements UpdateListener {
 			//	println "arg0 length "+arg0.length
 			for ( e in arg0 ){
 				//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
-				Utility.getInstance().trace( "event "+e.getUnderlying())
+				Utility.getInstance().debug( "event "+e.getUnderlying())
 				/*def p = e.getProperties();
 				p.each { k,v-> 
 					if ( k == 'timestamp')
@@ -447,7 +447,7 @@ class UpdateStatistics implements UpdateListener {
 			def pos = p.getPosition(symbol)
 			
 			// Utility.getInstance().info(arg0[0].getUnderlying().toString())
-			Utility.getInstance().trace("updatestats "+arg0[0].getUnderlying())
+			Utility.getInstance().debug("updatestats "+arg0[0].getUnderlying())
 			def p = arg0[0].getProperties()
 			p.each { k ,v->
 				if ( v == null || v.equals('null'))

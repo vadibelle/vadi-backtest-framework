@@ -17,16 +17,19 @@ select 'BUY' as signal, es.ema as ema ,es.timestamp as timestamp,es.symbol as sy
 q.open as open,q.high as high ,q.low as low ,q.close as close,q.volume as volume from
 ema3.win:length(1)  es , EODQuote.win:length(si+1) q
 , adxstream.win:length(si+1) a
+, statistics.win:length(si) s
 where
 es.symbol= q.symbol
 and es.timestamp= q.timestamp
 and 
-((cast(q.close,double) > (es.ema) and cast(prev(1,q.close),double) < (es.ema)) 
+((cast(q.close,double) > (es.ema+2*avgSwing) and cast(prev(1,q.close),double) < (es.ema+2*avgSwing)) 
 //or (cast(q.close,double) > (es.ema-es.vol) and cast(prev(1,q.close),double) < (es.ema-es.vol))
 )
 and a.symbol = q.symbol
 and a.timestamp = q.timestamp
 and a.adx > 30
+and s.symbol = q.symbol
+and s.timestamp = q.timestamp
 ;
 
 insert into crossover
@@ -34,16 +37,19 @@ select 'SELL' as signal, es.ema as ema ,es.timestamp as timestamp,es.symbol as s
 q.open as open,q.high as high ,q.low as low ,q.close as close,q.volume as volume from
 ema3.win:length(1)  es , EODQuote.win:length(si+1) q
 , adxstream.win:length(si+1) a
+, statistics.win:length(si) s
 where
 es.symbol= q.symbol
 and es.timestamp= q.timestamp
 and 
-((cast(q.close,double) < (es.ema) and cast(prev(1,q.close),double) > (es.ema)) 
+((cast(q.close,double) < (es.ema-2*avgSwing) and cast(prev(1,q.close),double) > (es.ema-2*avgSwing)) 
 //or (cast(q.close,double) < (es.ema+es.vol) and cast(prev(1,q.close),double) > (es.ema+es.vol))
 )
 and a.symbol = q.symbol
 and a.timestamp = q.timestamp
 and a.adx > 30
+and s.symbol = q.symbol
+and s.timestamp = q.timestamp
 ;
 
 
