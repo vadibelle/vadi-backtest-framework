@@ -1,0 +1,26 @@
+insert into crossover
+select 'SELL' as signal,* from EODQuote.win:length(si+1)
+where
+prev(2,close) < prev(1,close)
+and close < prev(1,close)
+group by symbol
+;
+
+select 'BUY' as signal,* from EODQuote.win:length(si+1)
+where
+prev(2,close) > prev(1,close)
+and close > prev(1,close)
+group by symbol
+;
+insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
+select symbol,open,high,low,close,signal,
+'PIVOT' as indicator, cast(timestamp,string)
+from crossover.win:length(1);
+
+insert into TradeSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,signal,'PIVOT',cast(q.timestamp,string)
+from 
+EODQuote.win:length(numSym+5) q , crossover.win:length(numSym+1) cross
+where
+cross.timestamp=prev(numSym,q.timestamp) and
+cross.symbol=q.symbol ;

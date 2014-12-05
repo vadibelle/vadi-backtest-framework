@@ -185,7 +185,7 @@ public class Portfolio {
 			text.append("\n");
 		}
 		ret += cash;
-		ret += shortCash;
+		//ret += shortCash;
 		text.append(" value=" + ret+"\n");
 		//text.append(" portfolio="+portfolio+"\n");
 		if ( pr && print )
@@ -205,7 +205,7 @@ public class Portfolio {
 			double price = Double.parseDouble(sig.getOpen());
 			String symbol = sig.getSymbol();
 			double close = Double.parseDouble(sig.getClose());
-			double funds = tradeSize * ammount> cash ? cash
+			double funds = tradeSize * ammount> (cash) ? (cash)
 					: (tradeSize * ammount);
 			if ( hasExit ){
 				if (print)
@@ -231,6 +231,7 @@ public class Portfolio {
 			shortCash +=  n * price - slippage;
 			double cb = n*price - slippage;
 			lastPosition = sig.toString();
+			cash += cb;
 			Date dt = new Date(Long.parseLong(sig.price_timestamp));
 			pfm.insertDb(sig.getSymbol(),n,"SELL",
 					price,cb,dt);
@@ -252,8 +253,9 @@ public class Portfolio {
 				long lp = short_positions;
 				if ( print)
 				log.info("@@@ Short cover " + lp + " " + sig.getSymbol());
-				if ((cash+shortCash)*0.9 >= lp * price) {
-					double tmpc = cash+shortCash-slippage;
+				if (cash*0.9 >= (lp * price)+slippage) {
+					//double tmpc = cash+shortCash-slippage;
+					double tmpc = cash-slippage;
 					cash = tmpc - lp * price;
 					shortCash = 0;
 					

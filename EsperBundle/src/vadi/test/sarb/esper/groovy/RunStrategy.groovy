@@ -14,10 +14,12 @@ class RunStrategy {
 	//println System.getProperty('java.class.path')
 	println args
 	new File('C:/temp/output.csv').delete()
+	
 	def sig = new SignalGenerator()	
 	sig.init(args)
 	//Messages.setProperty('init.db','true')
 	sig.initDb()
+	//Messages.setProperty('stop.loss','false')
 	sig.generateSignal(args)
 	//sig.generateSignal(args)
 	println "Long short done"
