@@ -151,13 +151,20 @@ public class StartEOD implements UpdateListener,Serializable {
 					if (line.contains("High") )
 						continue;
 					String []rec = line.split(Messages.getString("StartEOD.field.seperator"));
+					boolean adjust = Boolean.parseBoolean(Messages.getString("Adjust.close"));
+					float af = 1;
+					if ( adjust)
+					{
+						af = Float.parseFloat(rec[6])/Float.parseFloat(rec[4]);
+					}
 					
 					EODQuote q = new EODQuote();
+					
 					q.setSymbol(getTick());
-					q.setOpen(rec[1]);
-					q.setHigh(rec[2]);
-					q.setLow(rec[3]);
-					q.setClose(rec[4]);
+					q.setOpen(Float.toString(Float.parseFloat(rec[1])*af));
+					q.setHigh(Float.toString(Float.parseFloat(rec[2])*af));
+					q.setLow(Float.toString(Float.parseFloat(rec[3])*af));
+					q.setClose(Float.toString(Float.parseFloat(rec[4])*af));
 					try {
 						q.setVolume(Long.parseLong(rec[5]));	
 					}

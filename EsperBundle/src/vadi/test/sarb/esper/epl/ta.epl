@@ -28,7 +28,9 @@ EODQuote.win:length(si+1) q , rsi.win:length(5) r, macd.win:length(5) m
 where q.timestamp = m.timestamp and
 q.timestamp = r.timestamp and
 q.symbol = r.symbol and
-q.symbol = m.symbol;
+q.symbol = m.symbol
+group by q.symbol
+;
 
 insert into adxstream
 select  q.symbol as symbol,q.timestamp  as timestamp ,

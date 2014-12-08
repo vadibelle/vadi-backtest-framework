@@ -30,7 +30,7 @@ public class Portfolio {
 	public double tradeSize = 0.2;
 	PFManager pfm ;
 	public double stopLossAmmount = 1500;
-	 public  double stopLoss = 0.2;
+	 public  double stopLoss = 0.8;
 	 public boolean stopLossExit = true;
 	 public long noOfStopLoss = 0;
 	 public double avgSwing = 0;
@@ -43,8 +43,8 @@ public class Portfolio {
 		super();
 		positions = short_positions = noOfTrades = 0;
 		lastPrice = highPrice = 0.0;
-		
-		
+		//stopLoss = 1 - Double.parseDouble(Messages.getString("stop.loss.exit.ratio"));
+		stopLossAmmount = Double.parseDouble(Messages.getString("stop.loss.ammount"));
 		lowPrice = ammount;
 		drawDown = cash;
 		
@@ -139,6 +139,8 @@ public class Portfolio {
 				cash +=  stock * (price) -slippage;
 				positions = 0;
 			//	portfolio -= stock*price;
+				
+			
 				
 				double cb = stock*price-slippage;
 				lastPosition = sig.toString();
@@ -333,7 +335,7 @@ public class Portfolio {
 						
 		//String sql = "select sum(price*qty)/sum(qty) as cb,lors,symbol from position "+
 		//String sql = "select sum(price*qty) as cb,lors,symbol,sum(qty) as tot from position "+
-		String sql="select max(price) as cb,lors,symbol,sum(qty) from position "+
+		String sql="select max(price) as cb,lors,symbol,sum(qty),sum(cost) as cost from position "+
 				" where symbol='"+symbol+"' group by lors";
 		ArrayList<ArrayList> res = dbutil.execute(sql);
 		
@@ -350,9 +352,18 @@ public class Portfolio {
 		if (i > 1 ) 
 		{
 				ArrayList arr = res.get(j++);
-				cb = Double.parseDouble(arr.get(0).toString());
 				qty = Double.parseDouble(arr.get(3).toString());
-				
+				//cb = Double.parseDouble(arr.get(0).toString())*qty;
+				cb = Double.parseDouble(arr.get(4).toString());
+				if ( print ){
+				StringBuffer msg = new StringBuffer();
+				msg.append("high price "+highPrice);
+				msg.append(" low price "+lowPrice);
+				msg.append(" cb "+cb);
+				msg.append(" qty "+qty);
+				msg.append(" close "+close);
+				log.info(msg.toString());
+				}
 				String act = "";
 				if ( arr.get(1).equals("BUY")){
 					if ( hasExit){
@@ -364,21 +375,30 @@ public class Portfolio {
 						this.closeLongPosition(ts);
 						return;
 					}
-						
+					
 					double chp = highPrice;
 					if ( close > chp ) {
 						highPrice = close;
 						return;
 					}
+					
+					//log.info("exit ?"+(1-stopLoss));
+					//log.info("exit ?"+chp*(1-stopLoss));
+					
 					if ( close < chp*stopLoss){
-						if ( print)
-						log.info("Buy: close "+stopLoss*chp);
+				//	if ( close < chp*(1-0.07)) {
+						if ( print){
+						String mesg = "close="+close+"chp="+chp+"stopLoss="+stopLoss;
+						log.info("Buy: close "+mesg);
+						}
 						eSig=true;
 					}
 					if ((cb - close*qty) > stopLossAmmount ){
 						eSig=true;
-						if (print)
-						log.info("cb-close*qty >"+stopLossAmmount);
+						if (print){
+							String mesg="cb="+cb+"close="+close+"qty="+qty+"stopLossAmmount="+stopLossAmmount;
+						log.info(mesg);
+						}
 					}
 					
 					/*cb = (1-stopLoss)*cb; // for long if stock price falls below stoploss
@@ -404,15 +424,20 @@ public class Portfolio {
 						lowPrice = close;
 						return;
 					}
-					if ( close > chp*(1+stopLoss)){
+					if ( close > chp*(1+(1-stopLoss))){
+				//	if ( close > chp*(1+0.07)){
 						eSig=true;
-						if (print)
-						log.info("sell: close>.1.1*low");
+						if (print){
+							String mesg = "close="+close+"chp="+chp+"stopLoss="+stopLoss;
+						log.info("sell: close"+mesg);
+						}
 					}
 					if ((cb -close*qty) < -stopLossAmmount ){
 						eSig=true;
-						if (print)
-						log.info("cb-close*qty >-1200");
+						if (print){
+						String mesg="cb="+cb+"close="+close+"qty="+qty;
+						log.info(mesg);
+						}
 					}
 					
 					
