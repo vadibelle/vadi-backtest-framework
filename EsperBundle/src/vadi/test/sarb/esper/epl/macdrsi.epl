@@ -9,7 +9,7 @@ q.timestamp = r.timestamp and
 q.symbol = r.symbol and
 m.macd > 0 and
 prev(1,m.macd) < 0
-//and r.rsi < 50
+and r.rsi < 30
 ;
 
 insert into cross
@@ -22,7 +22,7 @@ q.timestamp = r.timestamp and
 q.symbol = r.symbol and
 m.macd < 0 and
 prev(1,m.macd) > 0
-//and r.rsi > 70
+and r.rsi > 70
 ;
 
 insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)

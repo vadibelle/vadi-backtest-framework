@@ -158,7 +158,7 @@ def TradeHandler() {
 	u.registerEventListener(trdExp, new LongPosition())
 	if (vadi.test.sarb.esper.Messages.getString('long.short') == 'true')
 		u.registerEventListener(trdExp, new ShortPosition())
-	trdExp='select * from StockSignal'
+	trdExp='select * from StockSignal.win:length(2)'
 	def l = new TradeListener()
 	u.registerEventListener(trdExp, l)
 	trdExp='select * from StopLoss.win:length(2)'
@@ -244,20 +244,11 @@ def debug() {
 	//def l = new UpdateStatistics()
 //.registerEventListener('select * from mstream_tmp',l)
 
-//u.registerEventListener('select * from volatility',l)
-//u.registerEventListener('select * from volatility',l)
-//u.registerEventListener('select * from volatility',l)
+u.registerEventListener('select * from statistics',l)
+
 //u.registerEventListener('select * from TradeSignal.std:unique(price_timestamp)',l)
-u.registerEventListener("select * from adxstream.std:unique(timestamp)", l)
-//u.registerEventListener("select * from volatility", l)
+//u.registerEventListener("select * from adxstream.std:unique(timestamp)", l)
 
-
-//u.registerEventListener('select * from emashort',l)
-//u.registerEventListener('select * from emalong',l)
-//	u.registerEventListener('select * from bupnumber',l)
-	//u.registerEventListener('select * from nullstr',l)
-	
-	//u.registerEventListener(str,new CpListener());
 	}
 	catch(Throwable e){
 		e.printStackTrace();

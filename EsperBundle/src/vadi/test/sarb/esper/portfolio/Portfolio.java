@@ -147,6 +147,7 @@ public class Portfolio {
 				Date dt = new Date(Long.parseLong(sig.price_timestamp));
 				pfm.removeDb(sig.getSymbol(),stock,"CLOSE_LONG",price,cb,dt);
 				highPrice = 0;
+				lowPrice = ammount;
 				hasExit = false;
 											
 			}
@@ -271,6 +272,7 @@ public class Portfolio {
 							price,cb,dt);
 					
 					lowPrice = ammount;
+					highPrice = 0;
 					hasExit = false;
 									
 					} else {
@@ -522,6 +524,7 @@ public class Portfolio {
 
 	public void addLastTrade(String symbol,String signal)
 	{
+		log.info("Setting last trade "+signal);
 		lastTrade = signal;
 	}
 	

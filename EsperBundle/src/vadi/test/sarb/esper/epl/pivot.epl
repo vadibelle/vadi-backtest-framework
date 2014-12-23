@@ -1,17 +1,31 @@
 insert into crossover
-select 'SELL' as signal,* from EODQuote.win:length(si+1)
+select 'SELL' as signal,q.low as low, q.high as high,q.close as close,q.open as open,
+q.symbol as symbol,q.volume as volume,q.timestamp as timestamp
+ from EODQuote.win:length(si+1) q,
+adxstream.win:length(si) a
 where
-prev(2,close) < prev(1,close)
-and close < prev(1,close)
-group by symbol
+prev(2,q.close) < prev(1,q.close)
+and q.close < prev(1,q.close)
+and a.adx > 40
+and q.timestamp = a.timestamp
+and q.symbol = a.symbol
+group by q.symbol
 ;
 
-select 'BUY' as signal,* from EODQuote.win:length(si+1)
+insert into crossover
+select 'BUY' as signal,q.low as low, q.high as high,q.close as close,q.open as open,
+q.symbol as symbol,q.volume as volume,q.timestamp as timestamp
+from EODQuote.win:length(si+1) q,
+adxstream.win:length(si) a
 where
-prev(2,close) > prev(1,close)
-and close > prev(1,close)
-group by symbol
+prev(2,q.close) > prev(1,q.close)
+and q.close > prev(1,q.close)
+and a.adx > 40
+and q.timestamp = a.timestamp
+and q.symbol = a.symbol
+group by q.symbol
 ;
+
 insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
 select symbol,open,high,low,close,signal,
 'PIVOT' as indicator, cast(timestamp,string)

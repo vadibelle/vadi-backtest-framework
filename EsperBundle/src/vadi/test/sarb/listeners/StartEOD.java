@@ -142,6 +142,7 @@ public class StartEOD implements UpdateListener,Serializable {
 				//String str = ft.get();
 				String str = this.data.get();
 				String arr[] = str.split("\n");
+				boolean lowPriceCheck  = false;
 				for(int i=arr.length-1 ;i > -1;i-- ){
 					try{
 					String line = arr[i];
@@ -165,6 +166,15 @@ public class StartEOD implements UpdateListener,Serializable {
 					q.setHigh(Float.toString(Float.parseFloat(rec[2])*af));
 					q.setLow(Float.toString(Float.parseFloat(rec[3])*af));
 					q.setClose(Float.toString(Float.parseFloat(rec[4])*af));
+					//log.info("Price "+q.getClose());
+					//if ( !lowPriceCheck && (Float.parseFloat(q.getClose()) < 10.0 ))
+					if ( Float.parseFloat(q.getClose()) < 10.0 )
+					{
+						log.info("Stock price is lower than 10 and ignoring ");
+						error = false;
+						break;
+					}
+					lowPriceCheck = true;
 					try {
 						q.setVolume(Long.parseLong(rec[5]));	
 					}

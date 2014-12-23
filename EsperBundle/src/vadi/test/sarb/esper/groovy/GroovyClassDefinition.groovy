@@ -2,6 +2,8 @@ package vadi.test.sarb.esper.groovy
 
 import java.awt.geom.Arc2D.Double;
 import java.awt.image.Kernel;
+import java.sql.Timestamp;
+import java.util.logging.Logger;
 
 import vadi.test.sarb.esper.db.DbUtil
 import vadi.test.sarb.esper.portfolio.PFManager;
@@ -43,13 +45,15 @@ class GenericListener implements UpdateListener {
 			//	println "arg0 length "+arg0.length
 			for ( e in arg0 ){
 				//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
-				Utility.getInstance().debug( "event "+e.getUnderlying())
-				/*def p = e.getProperties();
+				//Utility.getInstance().debug( "event "+e.getUnderlying())
+				def p = e.getProperties();
 				p.each { k,v-> 
 					if ( k == 'timestamp')
-					
-					print k+"="+v+" "} 
-				println " "*/
+					print k+"="+new Timestamp(v)+","
+					else
+					print k+"="+v+","
+					} 
+				println " "
 				/*for ( i in p.values())
 				{
 					out.append(i);
@@ -100,28 +104,45 @@ class CpListener  implements UpdateListener {
 class TradeListener implements UpdateListener {
 
 	public void update(EventBean[] arg0, EventBean[] arg1) {
+		
 		try{
+		//	println "TDL "+arg0
 			Object obj = arg0[0].getUnderlying();
+			
 		//	Utility.info("Inserting into "+obj.getClass().getName())
 			if ( obj instanceof java.util.Map)
 			{
+				//println "TDL1 "+arg0
 				StockSignal sig = new StockSignal(
 					obj.get('symbol'), obj.get('open'),obj.get('high'),
 					obj.get('low'),obj.get('close'),obj.get('signal'),
 					obj.get('indicator'), obj.get('price_timestamp'))
 				PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
 			}
-			if ( obj instanceof StockSignal )
+			else if ( obj instanceof vadi.test.sarb.event.StockSignal )
 			{
+				
 				//Utility.log("Inserting into "+obj.toString());
 				StockSignal sig = (StockSignal)obj;
+				//println "TDL2  symbol "+sig.getSymbol()
 				PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
 			}
-			if ( obj instanceof StopLoss )
+			else if ( obj instanceof vadi.test.sarb.event.StopLoss )
 			{
+				//println "TDL3 "+arg0
 				StopLoss sig = (StopLoss)obj;
 				PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
 			}
+			else if ( obj instanceof vadi.test.sarb.event.TradeSignal )
+			{
+				//println "TDL4 "+arg0
+				TradeSignal sig = (TradeSignal)obj;
+				//System.out.println("\n Trade signal event handler "+obj);
+				PFManager.getInstance().addLastTrade(sig.getSymbol(), sig.toString())
+			}
+			else {
+			Utility.getInstance().info("Trade siganl doesnt match known type "+obj)
+			} 
 			
 			//print "Event1 received"+arg0[0].getUnderlying()+" length "+arg0.length+"\n";
 			//println "TradeReceived "+obj;
