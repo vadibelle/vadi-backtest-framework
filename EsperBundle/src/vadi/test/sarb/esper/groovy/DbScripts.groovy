@@ -209,8 +209,9 @@ def calcSharpe()
 		sc.eachRow("select symbol,returns,(returns-"+ir+")/"+ivol+" as sharpe ,volatility,drawdown,"
 				+"volatility/"+ivol+" as relVol,drawdown/"+idd+" as relDD,"
 				+"li,si,last_trade_indicator,last_trade_timestamp,last_trade_indicator,"
-				+" long_position,short_position,long_short "
+				+" last_trade_type,long_position,short_position,long_short "
 				+ " from results where last_trade_indicator !='BUYNHOLD'"
+				+ " and last_trade_timestamp = (select max(last_trade_timestamp) from results ) "
 				+" order by last_trade_timestamp,sharpe")
 		{row->
 
@@ -226,19 +227,20 @@ def calcSharpe()
 			tmp.put('relbhret',cr/br)
 			tmp.put('relbhdd',cd/bd)
 
-			if ( tmp.getAt("SHARPE") > 0){
+			//if ( tmp.getAt("SHARPE") > 0){
 			//println tmp
-			output += tmp
-			}
+			tmp.each { output += it.key+':'+it.value+','}
+			output += '\n'
+			//}
 		}
 	}
 	catch(e){
 		println "Error calculating sharpe... please check the db"
-		//e.printStackTrace()
+		e.printStackTrace()
 		return -1
 	}
 	output
 }
 
 ProcessArgs pArgs = new ProcessArgs(args)
-calcSharpe()
+println calcSharpe()
