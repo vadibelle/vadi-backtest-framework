@@ -208,7 +208,7 @@ def calcSharpe()
 		//	sc.eachRow("select symbol,returns,volatility,last_trade_indicator from results ") { row->println row }
 		sc.eachRow("select symbol,returns,(returns-"+ir+")/"+ivol+" as sharpe ,volatility,drawdown,"
 				+"volatility/"+ivol+" as relVol,drawdown/"+idd+" as relDD,"
-				+"last_trade_indicator,last_trade_timestamp,last_trade_indicator,"
+				+"last_trade_indicator,last_trade_timestamp,last_trade_indicator,last_trade_type,"
 				+" long_position,short_position,long_short,no_of_trades,no_of_stoploss,open_swing,average_swing "
 				+ " from results where last_trade_indicator !='BUYNHOLD'"
 				+ " and last_trade_timestamp = (select max(last_trade_timestamp) from results ) "
