@@ -1,0 +1,1 @@
+Uses esper, groovy,h2,java based event driven backtesting framework. First attempt.
