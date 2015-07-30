@@ -2,6 +2,7 @@ package vadi.test.sarb.esper.groovy
 
 import vadi.test.sarb.event.ResetVariables
 import  vadi.test.sarb.esper.Messages
+import vadi.test.sarb.esper.util.SendMail
 import vadi.test.sarb.esper.util.Utility
 
 class RunStrategy {
@@ -13,10 +14,12 @@ class RunStrategy {
 	//println System.getProperty('java.class.path')
 	println args
 	new File('C:/temp/output.csv').delete()
+	
 	def sig = new SignalGenerator()	
 	sig.init(args)
 	//Messages.setProperty('init.db','true')
 	sig.initDb()
+	//Messages.setProperty('stop.loss','false')
 	sig.generateSignal(args)
 	//sig.generateSignal(args)
 	println "Long short done"
@@ -35,7 +38,12 @@ class RunStrategy {
 	//sig.generateSignal(args)
 	println " long  done"
 	println new Date()
-	new DbScripts().calcSharpe()
+	def output=new DbScripts().calcSharpe()
+	println output
+	def sm  = new SendMail()
+	sm.subject = "Result"
+	sm.send(output)
+	
 	if ( !Messages.getString('do.chart').equals('true'))
 	System.exit(0)
 	

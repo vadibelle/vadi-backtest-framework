@@ -1,0 +1,71 @@
+insert into ema1
+select EMA(cast(close,double)) as ema,symbol, timestamp ,close
+//select avg(cast(close,double)) as ema,symbol, timestamp ,close
+ from EODQuote.win:length(si+1) 
+group by symbol ;
+
+insert into ema2
+select EMA(ema) as ema,symbol,timestamp ,close from ema1.win:length(si+1) group by symbol;
+//select avg(ema) as ema,symbol,timestamp ,close from ema1.win:length(si+1) group by symbol;
+
+insert into ema3
+select EMA(ema) as ema,stddev(cast(close,double)) as vol,close, symbol,timestamp from ema2.win:length(si+1) group by symbol;
+//select avg(ema) as ema,stddev(cast(close,double)) as vol,close, symbol,timestamp from ema2.win:length(si+1) group by symbol;
+
+insert into crossover
+select 'BUY' as signal, es.ema as ema ,es.timestamp as timestamp,es.symbol as symbol,
+q.open as open,q.high as high ,q.low as low ,q.close as close,q.volume as volume from
+ema3.win:length(1)  es , EODQuote.win:length(si+1) q
+, adxstream.win:length(si+1) a
+, statistics.win:length(si) s
+where
+es.symbol= q.symbol
+and es.timestamp= q.timestamp
+and 
+((cast(q.close,double) > (es.ema+2*avgSwing) and cast(prev(1,q.close),double) < (es.ema+2*avgSwing)) 
+//or (cast(q.close,double) > (es.ema-es.vol) and cast(prev(1,q.close),double) < (es.ema-es.vol))
+)
+and a.symbol = q.symbol
+and a.timestamp = q.timestamp
+and a.adx > 40
+and s.symbol = q.symbol
+and s.timestamp = q.timestamp
+;
+
+insert into crossover
+select 'SELL' as signal, es.ema as ema ,es.timestamp as timestamp,es.symbol as symbol,
+q.open as open,q.high as high ,q.low as low ,q.close as close,q.volume as volume from
+ema3.win:length(1)  es , EODQuote.win:length(si+1) q
+, adxstream.win:length(si+1) a
+, statistics.win:length(si) s
+where
+es.symbol= q.symbol
+and es.timestamp= q.timestamp
+and 
+((cast(q.close,double) < (es.ema-2*avgSwing) and cast(prev(1,q.close),double) > (es.ema-2*avgSwing)) 
+//or (cast(q.close,double) < (es.ema+es.vol) and cast(prev(1,q.close),double) > (es.ema+es.vol))
+)
+and a.symbol = q.symbol
+and a.timestamp = q.timestamp
+and a.adx > 40
+and s.symbol = q.symbol
+and s.timestamp = q.timestamp
+;
+
+
+insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
+select symbol,open,high,low,close,signal,
+'TMA' as indicator, cast(timestamp,string)
+from crossover.win:length(1)
+where hasExit(symbol) != true
+;
+
+insert into TradeSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
+select q.symbol,q.open,q.high,q.low,q.close,signal,'TMA',cast(q.timestamp,string)
+from 
+EODQuote.win:length(numSym+5) q , crossover.win:length(numSym+1) cross
+where
+cross.timestamp=prev(numSym,q.timestamp) and
+cross.symbol=q.symbol
+and hasExit(q.symbol) != true
+ ;

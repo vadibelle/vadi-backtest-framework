@@ -8,5 +8,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/Users/vbelle/.gvm/groovy/2.3.4/lib/ant-1.9.3.jar"/>
 	<classpathentry kind="lib" path="/Users/vbelle/.gvm/groovy/2.3.4/lib/ant-launcher-1.9.3.jar"/>
+	<classpathentry kind="lib" path="/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/lib/tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

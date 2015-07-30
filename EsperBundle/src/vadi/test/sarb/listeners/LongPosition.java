@@ -61,7 +61,7 @@ public class LongPosition implements UpdateListener,Serializable  {
 			Utility.getInstance().info("Old event ignoring "+sig.toString());
 			return;
 		}*/
-		if ( sig.getType().equalsIgnoreCase("BUY") && !sig.getIndicator().equalsIgnoreCase("STOPLOSS"))
+		if ( sig.getType().equalsIgnoreCase("BUY")||(sig.getType().equalsIgnoreCase("CLOSE_SHORT") )&& !sig.getIndicator().equalsIgnoreCase("STOPLOSS"))
 			pfm.addLongPosition(sig);
 		
 			

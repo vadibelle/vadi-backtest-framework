@@ -9,25 +9,37 @@ from avgq.win:length(numSym*si)
 group by symbol;
 
 insert into qstick
-select 'sell' as signal , q,Q,aq.symbol as symbol,aq.timestamp as timestamp,aq.close as close
-from avgq.win:length(numSym*si) aq, avgQ.win:length(numSym*si) aQ
+select 'SELL' as signal , q,Q,aq.symbol as symbol,aq.timestamp as timestamp,aq.close as close
+from avgq.win:length(numSym*si) aq, avgQ.win:length(numSym*si) aQ,adxstream.win:length(si) ax
 where q < Q and 
 prev(numSym,q) > Q and
 aq.symbol = aQ.symbol and
 aq.timestamp = aQ.timestamp and
 aq.q < 0 
+//and ax.symbol = aq.symbol 
+//and ax.timestamp = aq.timestamp
+and ax.adx > 30
 group by aq.symbol;
 
 insert into qstick
-select 'buy' as signal , q,Q,aq.symbol as symbol,aq.timestamp as timestamp,aq.close as close
-from avgq.win:length(numSym*si) aq, avgQ.win:length(numSym*si) aQ
+select 'BUY' as signal , q,Q,aq.symbol as symbol,aq.timestamp as timestamp,aq.close as close
+from avgq.win:length(numSym*si) aq, avgQ.win:length(numSym*si) aQ,adxstream.win:length(si) ax
 where q > Q and 
 prev(numSym,q) < Q and
 aq.symbol = aQ.symbol and
 aq.timestamp = aQ.timestamp and
 aq.q > 0 
+//and ax.symbol = aq.symbol 
+//and ax.timestamp = aq.timestamp
+and ax.adx > 30
 group by aq.symbol;
 
+
+insert into StockSignal(symbol,open,high,low,close,signal,indicator,price_timestamp)
+select symbol,open,high,low,close,signal,
+'QSTICK' as indicator, cast(timestamp,string)
+from
+qstick.win:length(1);
 
 insert into TradeSignal(symbol,open,high,low,close,type,indicator,price_timestamp)
 select q.symbol,q.open,q.high,q.low,q.close,signal,'qstick',cast(q.timestamp,string)

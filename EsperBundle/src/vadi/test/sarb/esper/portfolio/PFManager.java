@@ -148,9 +148,10 @@ public class PFManager {
 
 	public  void addLongPosition(TradeSignal sig) {
 		try {
-			
+			//log.info("stock list "+pfList.toString());
+			//log.info("keys "+pfList.containsKey(sig.symbol));
 			if ( pfList.containsKey(sig.symbol)){
-				//System.out.println(" has symbol "+sig.symbol);
+				//log.info("add position found "+sig.symbol);
 				pfList.get(sig.symbol).addLongPosition(sig);
 				//System.out.println(pfList.get(sig.symbol).toString());
 				return;
@@ -167,6 +168,7 @@ public class PFManager {
 				p.highPrice = Double.parseDouble(sig.high);
 				p.lastPrice = Double.parseDouble(sig.close);
 				p.lowPrice = Double.parseDouble(sig.low);
+				p.lastTrade = sig.toString();
 				
 			//	tradeSize = 0.2; // 20% each time
 				pfList.put(sig.symbol, p);
@@ -831,9 +833,12 @@ public class PFManager {
 	
 	public void addLastTrade(String symbol,String signal)
 	{
-		if ( pfList.containsKey(symbol))
+		log.info("PFList "+pfList.keySet());
+		if ( pfList.containsKey(symbol)){
+			log.info("Looking for symbol "+symbol);
 			pfList.get(symbol).addLastTrade(symbol, signal);
 		//lastTrade.put(symbol,signal);
+		}
 	}
 	public void clear()
 	{

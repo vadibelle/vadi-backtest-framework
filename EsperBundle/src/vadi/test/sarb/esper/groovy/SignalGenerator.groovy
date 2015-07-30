@@ -151,17 +151,17 @@ def TradeHandler() {
 //	u.registerEventListener('select * from LoadPortfolio', new PositionLoader());
 	
 	//def trdExp = 'select * from TradeSignal.std:unique(price_timestamp)'
-	def trdExp = 'select * from TradeSignal'
+	def trdExp = 'select * from TradeSignal.win:length(2)'
 	//'.std:unique(price_timestamp) group by symbol'
 	if (Messages.getString('do.debug') == 'true')
 		u.registerEventListener(trdExp, new GenericListener())
 	u.registerEventListener(trdExp, new LongPosition())
 	if (vadi.test.sarb.esper.Messages.getString('long.short') == 'true')
 		u.registerEventListener(trdExp, new ShortPosition())
-	trdExp='select * from StockSignal'
+	trdExp='select * from StockSignal.win:length(2)'
 	def l = new TradeListener()
 	u.registerEventListener(trdExp, l)
-	trdExp='select * from StopLoss'
+	trdExp='select * from StopLoss.win:length(2)'
 	u.registerEventListener(trdExp, l);
 	
 	def lastSig = 'select * from LastEOD'
@@ -177,7 +177,7 @@ def TradeHandler() {
 		println "stop loss intiated"
 	}
 	def st = new UpdateStatistics()
-		u.registerEventListener('select * from statistics',st)
+		u.registerEventListener('select * from statistics.std:unique(timestamp) group by symbol',st)
 	if ( Messages.getString('do.chart').equals('true')){
 		def plot = new Plotter()
 		u.registerEventListener('select * from EODQuote', plot)
@@ -244,17 +244,11 @@ def debug() {
 	//def l = new UpdateStatistics()
 //.registerEventListener('select * from mstream_tmp',l)
 
-//u.registerEventListener('select * from volatility',l)
 u.registerEventListener('select * from statistics',l)
-u.registerEventListener('select * from volatility',l)
 
+//u.registerEventListener('select * from TradeSignal.std:unique(price_timestamp)',l)
+//u.registerEventListener("select * from adxstream.std:unique(timestamp)", l)
 
-//u.registerEventListener('select * from emashort',l)
-//u.registerEventListener('select * from emalong',l)
-//	u.registerEventListener('select * from bupnumber',l)
-	//u.registerEventListener('select * from nullstr',l)
-	
-	//u.registerEventListener(str,new CpListener());
 	}
 	catch(Throwable e){
 		e.printStackTrace();
@@ -334,6 +328,7 @@ u.createDoubleVar('vlimit', Messages.getString("var.vlimit"))
 u.createIntVar('msi', Integer.parseInt(Messages.getString("var.msi")))
 u.createIntVar('mli', Integer.parseInt(Messages.getString("var.mli")))
 u.createIntVar('rsint', Integer.parseInt(Messages.getString("var.rsint")))
+u.createDoubleVar('multi', Messages.getString("var.multi"))
 
 
 u.addEPLFactory("EMA", "vadi.test.sarb.esper.util.EMAFactory")
@@ -341,7 +336,7 @@ u.addEPLFactory("SLOPE", "vadi.test.sarb.esper.util.Regression")
 u.addEPLFactory("BUP", "vadi.test.sarb.esper.data.UpIndicator")
 u.addEPLFactory("CORREL", "vadi.test.sarb.esper.util.Correlation")
 u.addEPLFactory('RSI','vadi.test.sarb.esper.util.RSICalculator')
-
+u.addEPLFactory('ADX','vadi.test.sarb.esper.groovy.Adx')
 
 config.addPlugInSingleRowFunction("toDouble",
 	"vadi.test.sarb.esper.util.SingleRowFunction", "toDouble");
